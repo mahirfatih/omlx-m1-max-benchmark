@@ -52,6 +52,48 @@ date-based snapshots rather than semver releases.
   [`tongye98/Awesome-Code-Benchmark`](https://github.com/tongye98/Awesome-Code-Benchmark),
   [`ooples/token-optimizer-mcp`](https://github.com/ooples/token-optimizer-mcp).
 
+### Added — local image layer & model licences
+
+- `profiles/mflux-profiles.json` — two local image-generation profiles, kept
+  separate from the oMLX profiles because they run under a different tool:
+  - `klein-q8` — FLUX.2 klein 4B, MLX 8-bit, 4-step distilled, Apache-2.0.
+  - `flux3-klein-q8` — FLUX 3 Image Klein, 16-step distilled, FLUX Kommunity
+    License (conditional).
+  Both use `--compute-precision float16`, the Apple M1-family speed flag.
+- `scripts/measure/image-benchmark.py` — one `mflux` process per prompt, timed
+  end to end, the written PNG verified; refuses to run while another GPU job is
+  active. `--selftest` is offline.
+- `data/image-prompts.json` — eight original prompts across the categories that
+  separate image models (photorealism, hands, legible text, composition, style).
+- `docs/reference/LICENSES.md` — what each model's own card says. **Download is
+  not a licence:** `Ornith-1.5` declares none, the gemma variant is tagged
+  Apache-2.0 but links to the Gemma terms, and FLUX 3 is the conditional
+  Kommunity License (commercial output use under US$5M). It also records the two
+  **video** models queued for download, where the CogVideoX-Fun quant is again
+  tagged `apache-2.0` but its base is under the registration-gated CogVideoX
+  License. `MODELS.md` gains a Licence column; `PROFILES.md` documents both image
+  profiles.
+- `test/test.sh` gains offline steps for the harness and the licence reading.
+
+### Added — local video layer
+
+- `profiles/video-profiles.json` — a **third** runtime layer, with its own runners
+  (neither oMLX nor mflux generates video):
+  - `wan22-ti2v-5b-q8` — Wan2.2 TI2V-5B (mixed q8/BF16) through
+    [`mlx-gen`](https://github.com/lpalbou/mlx-gen), Apache-2.0.
+  - `cogvideox-fun-1.5-5b-inp-q8` — CogVideoX-Fun V1.5 5B InP (int8) through
+    [`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx), under The
+    CogVideoX License.
+- `scripts/measure/video-benchmark.py` — one runner process per prompt, timed end
+  to end, the written clip measured with **ffprobe** (size, frame count, frame
+  rate, duration, codec) rather than trusted from the log. Refuses to run while
+  another GPU job is active. `--selftest` is offline.
+- `data/video-prompts.json` — four original motion prompts (subject motion, a
+  specified camera move, a physical pour, a wide establishing shot).
+- `test/test.sh` gains an offline step for the video harness.
+- No results yet: both models are still downloading and their runners are not
+  installed, so the profiles and the harness are committed ahead of the numbers.
+
 ### Added — repository analysis
 
 - `scripts/measure/repo-analysis-test.py` — measures how each model analyses a

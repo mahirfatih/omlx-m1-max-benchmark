@@ -50,9 +50,10 @@ documents explain what they measured.
 ## Reference — what is in it right now
 
 - [`reference/MODELS.md`](reference/MODELS.md) — all six models, sizes, sources, and the uncensored/heretic classification.
-- [`reference/PROFILES.md`](reference/PROFILES.md) — every oMLX profile and setting, with the reasoning.
+- [`reference/PROFILES.md`](reference/PROFILES.md) — every oMLX profile and setting, with the reasoning, plus the separate `mflux` image profiles and the `mlx-gen` / `VideoX-Fun-mlx` video profiles.
 - [`reference/RESULTS.md`](reference/RESULTS.md) — the measured throughput table, charts, and the raw report location.
 - [`reference/LANGUAGES.md`](reference/LANGUAGES.md) — the 102-language corpus probed by the hallucination test.
+- [`reference/LICENSES.md`](reference/LICENSES.md) — what each model's own card says: which are Apache-2.0, which is conditional, and which declares no licence at all.
 
 ## Security — is the server and are the models safe
 
@@ -89,6 +90,7 @@ documents explain what they measured.
 | "how do I run this myself?" | [`guides/REPRODUCING.md`](guides/REPRODUCING.md) |
 | "which model should I use?" | [`guides/CHOOSING-A-MODEL.md`](guides/CHOOSING-A-MODEL.md) |
 | "which models are uncensored or heretic?" | [`reference/MODELS.md`](reference/MODELS.md) |
+| "can I use these models commercially?" | [`reference/LICENSES.md`](reference/LICENSES.md) |
 | "what are the tuned profiles?" | [`reference/PROFILES.md`](reference/PROFILES.md) |
 | "what were the numbers?" | [`reference/RESULTS.md`](reference/RESULTS.md) |
 | "why is the fastest model fastest?" | [`analysis/README.md`](analysis/README.md) |

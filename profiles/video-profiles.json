@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-11-12",
+  "tool": "mlx-gen / VideoX-Fun-mlx",
+  "note": "Sanitized video-generation profiles for local Apple-Silicon inference. This is a third layer, separate from the oMLX text profiles (omlx-profiles.json) and the mflux image profiles (mflux-profiles.json): oMLX serves text LLMs, mflux the FLUX images, and these two tools the video models. No API keys or secrets included.",
+  "generation_profiles": {
+    "wan22-ti2v-5b-q8": {
+      "name": "wan22-ti2v-5b-q8",
+      "display_name": "wan22-ti2v-5b-q8",
+      "description": "Wan2.2 TI2V-5B, mixed q8/BF16 MLX-Gen package. Text- and image-to-video at up to 720P@24fps.",
+      "task": "text-to-video",
+      "runner": "mlx-gen",
+      "runner_docs": "https://github.com/lpalbou/mlx-gen",
+      "cli": "mlxgen",
+      "invoke": [
+        "mlxgen", "generate",
+        "--model", "{model}",
+        "--prompt", "{prompt}",
+        "--width", "{width}",
+        "--height", "{height}",
+        "--frames", "{frames}",
+        "--fps", "{fps}",
+        "--steps", "{steps}",
+        "--guidance", "{guidance}",
+        "--seed", "{seed}",
+        "--low-ram",
+        "--output", "{output}"
+      ],
+      "model": "AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit",
+      "base_model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "license": "apache-2.0",
+      "license_note": "Apache-2.0, inherited from the base model. No output restrictions beyond the licence's own terms.",
+      "local_path": "~/models/AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit",
+      "on_disk_gb": 16.9,
+      "output_format": "mp4",
+      "settings": {
+        "width": 480,
+        "height": 832,
+        "frames": 25,
+        "fps": 16,
+        "steps": 20,
+        "guidance": 5,
+        "seed": 42
+      },
+      "settings_note": "A conservative baseline chosen to fit a 64 GB M1 Max with --low-ram; it is NOT the uploader's validation profile (that was 1280x704, 17 frames, 20 steps on a 128 GB M5 Max, which peaked at ~104 GiB). TI2V-5B natively supports up to 121 frames; mlx-gen defaults single shots to 81. Adjust and record if a run needs a different canvas.",
+      "sources": [
+        "https://huggingface.co/AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit",
+        "https://huggingface.co/Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+        "https://github.com/lpalbou/mlx-gen"
+      ]
+    },
+    "cogvideox-fun-1.5-5b-inp-q8": {
+      "name": "cogvideox-fun-1.5-5b-inp-q8",
+      "display_name": "cogvideox-fun-1.5-5b-inp-q8",
+      "description": "CogVideoX-Fun V1.5 5B InP, int8 MLX port by dgrauet. Text-to-video and video inpainting.",
+      "task": "text-to-video",
+      "runner": "VideoX-Fun-mlx",
+      "runner_docs": "https://github.com/dgrauet/VideoX-Fun-mlx",
+      "cli": "python3",
+      "invoke": [
+        "python3", "{repo}/scripts/quick_infer.py",
+        "--model-path", "{model}",
+        "--prompt", "{prompt}",
+        "--height", "{height}",
+        "--width", "{width}",
+        "--frames", "{frames}",
+        "--steps", "{steps}",
+        "--guidance-scale", "{guidance}",
+        "--seed", "{seed}",
+        "--output", "{output}"
+      ],
+      "repo": "~/Sites/VideoX-Fun-mlx",
+      "repo_note": "quick_infer.py lives in the cloned VideoX-Fun-mlx repository, not in this benchmark repo. Override with --repo.",
+      "model": "dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8",
+      "base_model": "alibaba-pai/CogVideoX-Fun-V1.5-5b-InP",
+      "license": "The CogVideoX License (the quant is tagged apache-2.0)",
+      "license_note": "The quant repository is tagged apache-2.0, but that tag does not apply: the base model (alibaba-pai/CogVideoX-Fun-V1.5-5b-InP) is under The CogVideoX License. Academic use is free; commercial use requires registering for a basic commercial licence and stays under 1M visits/month; military and illegal uses banned; governed by PRC law. The inference code (VideoX-Fun-mlx) is itself Apache-2.0. See docs/reference/LICENSES.md.",
+      "local_path": "~/models/dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8",
+      "on_disk_gb": 16.0,
+      "output_format": "gif",
+      "settings": {
+        "width": 672,
+        "height": 384,
+        "frames": 5,
+        "steps": 50,
+        "guidance": 6.0,
+        "seed": 42
+      },
+      "settings_note": "quick_infer.py's own defaults (672x384, 5 frames, 50 steps, guidance 6.0). The script writes an animated GIF, so there is no fps flag; ffprobe reads the frame rate from the file. Note this is a 5th of a second at 24fps — the clip is short by design.",
+      "sources": [
+        "https://huggingface.co/dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8",
+        "https://huggingface.co/alibaba-pai/CogVideoX-Fun-V1.5-5b-InP",
+        "https://github.com/dgrauet/VideoX-Fun-mlx"
+      ]
+    }
+  },
+  "model_to_profile": {
+    "AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit": "wan22-ti2v-5b-q8",
+    "dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8": "cogvideox-fun-1.5-5b-inp-q8"
+  }
+}

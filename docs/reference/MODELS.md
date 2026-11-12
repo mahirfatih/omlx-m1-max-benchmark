@@ -5,16 +5,35 @@ mixture-of-experts (MoE); one is dense.
 
 ## Inventory
 
-| Model | Parameters | Type | On disk | Source |
-| :--- | :--- | :--- | ---: | :--- |
-| `Qwen3-Coder-30B-A3B-Instruct-4bit` | 30B (~3B active) | MoE, code | 16 GB | [HF](https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit) |
-| `Qwen3.6-35B-A3B-4bit` | 35B (~3B active) | MoE | 19 GB | [HF](https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-4bit) |
-| `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | 35B (~3B active) | MoE, abliterated | 19 GB | [HF](https://huggingface.co/froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit) |
-| `Ornith-1.5-35B-A3B-MLX-4bit` | 35B (~3B active) | MoE | 18 GB | [HF](https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit) |
-| `gemma-4-26B-A4B-it-heretic-4bit` | 26B (~4B active) | MoE, abliterated | 15 GB | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
-| `Qwen3.8-27B-Uncensored-MLX` | 27B (all active) | dense, abliterated | 15 GB | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
+| Model | Parameters | Type | On disk | Licence | Source |
+| :--- | :--- | :--- | ---: | :--- | :--- |
+| `Qwen3-Coder-30B-A3B-Instruct-4bit` | 30B (~3B active) | MoE, code | 16 GB | Apache-2.0 | [HF](https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit) |
+| `Qwen3.6-35B-A3B-4bit` | 35B (~3B active) | MoE | 19 GB | Apache-2.0 | [HF](https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-4bit) |
+| `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | 35B (~3B active) | MoE, abliterated | 19 GB | Apache-2.0 | [HF](https://huggingface.co/froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit) |
+| `Ornith-1.5-35B-A3B-MLX-4bit` | 35B (~3B active) | MoE | 18 GB | **not declared** | [HF](https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit) |
+| `gemma-4-26B-A4B-it-heretic-4bit` | 26B (~4B active) | MoE, abliterated | 15 GB | **Gemma (tagged Apache-2.0)** | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
+| `Qwen3.8-27B-Uncensored-MLX` | 27B (all active) | dense, abliterated | 15 GB | Apache-2.0 | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
 
 **Total on disk:** ~102 GB. **Runtime:** ~17–20 GB per loaded model.
+
+The **Licence** column is a summary only. "Downloadable" is not "commercially
+usable": one model here declares no licence, and another is tagged Apache-2.0 but
+links to the Gemma terms. The full reading is in
+[`LICENSES.md`](LICENSES.md).
+
+## Image model (separate tool)
+
+The image model is **not** served by oMLX. It runs under
+[`mflux`](https://github.com/filipstrand/mflux), and its settings live in
+[`../../profiles/mflux-profiles.json`](../../profiles/mflux-profiles.json) rather
+than the oMLX profiles. Its licence differs too: FLUX.2 klein is Apache-2.0,
+FLUX 3 Image Klein is the conditional FLUX Kommunity License — see
+[`LICENSES.md`](LICENSES.md) and [`PROFILES.md`](PROFILES.md).
+
+Two **video** models are queued (Wan2.2 TI2V-5B, CogVideoX-Fun-V1.5-5B-InP) but
+are not measured yet, so they have no profile. Their licences are recorded in
+[`LICENSES.md`](LICENSES.md); note that the CogVideoX-Fun quant is tagged
+`apache-2.0` but its base is under the registration-gated CogVideoX License.
 
 ## Base models
 

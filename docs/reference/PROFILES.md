@@ -90,3 +90,92 @@ python3 scripts/config/apply-profiles.py --apply
 `--apply` backs up each live file first (`<file>.bak-<timestamp>`). Run without
 `--apply` for a dry-run diff, or with `--check` to exit non-zero when the live
 configuration has drifted from the snapshot.
+
+## Image generation — a separate layer (mflux)
+
+The profiles above configure **oMLX**, which serves the text LLMs. The image
+model is **not** served by oMLX and has no oMLX profile: it is run by
+[`mflux`](https://github.com/filipstrand/mflux), a native-MLX diffusion tool, so
+its settings live in a separate file,
+[`profiles/mflux-profiles.json`](../../profiles/mflux-profiles.json). Keeping
+them apart matters — `apply-profiles.py` writes the oMLX snapshot to
+`~/.omlx/`, and an image entry there would be applied to a server that cannot
+run it.
+
+| Setting | `klein-q8` | `flux3-klein-q8` |
+| :--- | ---: | ---: |
+| Model | `mflux-community/flux2-klein-4b-mflux-q8` | `VisualInference/FLUX-3-Image-Klein-MLX-8bit` |
+| Base model | `black-forest-labs/FLUX.2-klein-4B` | `black-forest-labs/flux-3-image-klein` |
+| CLI | `mflux-generate-flux2` | `mflux-generate-flux3` |
+| Quantization | MLX affine, 8-bit | MLX affine, 8-bit (modified) |
+| Width × height | 1024 × 1024 | 1024 × 1024 |
+| Steps | 4 | 16 |
+| Guidance scale | 1.0 | — (none; distilled) |
+| Seed | 42 | 42 |
+| Compute precision | `float16` | `float16` |
+| Licence | Apache-2.0 | **FLUX Kommunity License** |
+
+**`klein-q8`** — the quantization is 8-bit MLX affine across the text encoder,
+transformer and VAE, stored in the weights (no `--quantize` flag). The 4 steps and
+guidance 1.0 are the distilled-sampling values from the [FLUX.2 \[klein\] model
+card](https://huggingface.co/black-forest-labs/FLUX.2-klein-4B); width, height
+and seed are fixed so a run is reproducible. It inherits Apache-2.0 from the base
+model.
+
+**`flux3-klein-q8`** — FLUX 3 Image Klein is a 5.6B transformer with a Qwen3-VL-4B
+text encoder; the distilled checkpoint runs **16 steps with no guidance**, and
+`--guidance` is ignored on it. The uploader modified the MLX build: the transformer
+is 8-bit and the **text encoder is truncated to layers 0–31** and quantized to
+8-bit — worth remembering when reading a quality difference. Its licence is the
+[FLUX Kommunity License v1.0](https://huggingface.co/black-forest-labs/flux-3-image-klein-base/blob/main/LICENSE.md),
+**not** Apache-2.0; the output rules (including the US$5M revenue line) are in
+[`LICENSES.md`](LICENSES.md).
+
+Both run **float16 compute** (`--compute-precision float16`): the Apple M1 family has
+no native bfloat16, and MLX's matmul and attention kernels are fastest in float16
+there. mflux measured FLUX.2 klein 4B (q4) at 6.8 → 5.0 s/step (−22%) with the flag.
+It changes the image slightly for a given seed, so the run records it.
+
+## Video profiles
+
+Video is a **third layer** with its own runners and its own file,
+[`profiles/video-profiles.json`](../../profiles/video-profiles.json). Neither mflux
+nor oMLX generates video: [**mlx-gen**](https://github.com/lpalbou/mlx-gen) runs
+Wan2.2, and [**VideoX-Fun-mlx**](https://github.com/dgrauet/VideoX-Fun-mlx) runs
+CogVideoX-Fun. Setting the three layers apart is deliberate: `apply-profiles.py`
+writes only the oMLX snapshot to `~/.omlx/`, and an image or video entry there would
+be applied to a server that cannot run it.
+
+| Setting | `wan22-ti2v-5b-q8` | `cogvideox-fun-1.5-5b-inp-q8` |
+| :--- | ---: | ---: |
+| Model | `AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit` | `dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8` |
+| Base model | `Wan-AI/Wan2.2-TI2V-5B-Diffusers` | `alibaba-pai/CogVideoX-Fun-V1.5-5b-InP` |
+| Runner | `mlxgen generate` | `python scripts/quick_infer.py` |
+| Quantization | mixed q8 / BF16 | int8 (transformer block linears) |
+| Width × height | 480 × 832 | 672 × 384 |
+| Frames | 25 | 5 |
+| fps | 16 | — (GIF) |
+| Steps | 20 | 50 |
+| Guidance | 5 | 6.0 |
+| Seed | 42 | 42 |
+| Output | `.mp4` | animated `.gif` |
+| Licence | Apache-2.0 | **The CogVideoX License** |
+
+**`wan22-ti2v-5b-q8`** — Wan2.2 TI2V-5B is a 5B MoE video model with a Wan2.2-VAE
+(16×16×4 compression), supporting text- and image-to-video up to 720P@24fps. The
+canvas, frame count and step count here are a **conservative baseline for a 64 GB
+machine** with `--low-ram`, deliberately smaller than the uploader's validation
+profile (1280×704, 17 frames, 20 steps on 128 GB, which peaked near 104 GiB). The
+licence is Apache-2.0, inherited from the base model.
+
+**`cogvideox-fun-1.5-5b-inp-q8`** — CogVideoX-Fun V1.5 5B is a diffusers-style DiT
+ported to MLX; `quick_infer.py` writes an animated GIF and has its own defaults (used
+here: 672×384, 5 frames, 50 steps, guidance 6.0). Its licence is **not** the
+`apache-2.0` tag on the quant: the base model is under **The CogVideoX License**
+(academic free, commercial registration-gated) — see [`LICENSES.md`](LICENSES.md).
+The runner *code* (VideoX-Fun-mlx) is Apache-2.0; the *weights* are not.
+
+A real run of either profile needs its runner installed and its model downloaded;
+`scripts/measure/video-benchmark.py` refuses to start while any other GPU job is
+active, and reads the finished clip's size, frame count, frame rate and duration
+back with **ffprobe** rather than trusting the runner's log.

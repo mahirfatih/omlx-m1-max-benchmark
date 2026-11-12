@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "note": "Text-to-image prompts for the image benchmark. Original to this repository. Kept small and fixed so a run is reproducible and comparable across models; the categories are chosen to separate the things diffusion models differ on (photorealism, hands, legible text, multi-subject composition, style control).",
+  "categories": {
+    "photoreal": "Realistic photographic rendering.",
+    "portrait": "A single human face and hands, the classic failure surface.",
+    "text": "Legible text rendered inside the image.",
+    "composition": "Several distinct subjects that must all appear and stay separate.",
+    "stylised": "A strong non-photographic style that must be held consistently.",
+    "product": "A studio product shot with controlled light and reflection."
+  },
+  "prompts": [
+    {
+      "id": "photoreal-market",
+      "category": "photoreal",
+      "prompt": "Photorealistic rainy-night street market in Istanbul, wet cobblestones reflecting red and yellow awnings, steam rising from a food stall, shallow depth of field, shot on 35mm, natural colour grading."
+    },
+    {
+      "id": "portrait-hands",
+      "category": "portrait",
+      "prompt": "Close-up portrait of an older fisherman mending a net, weathered hands clearly visible with all fingers, warm low sun from the left, detailed skin and rope texture, neutral background."
+    },
+    {
+      "id": "text-poster",
+      "category": "text",
+      "prompt": "Minimalist swiss-style poster with the exact headline \"LOCAL FIRST\" in bold black Helvetica on an off-white background, a single thin red horizontal rule below the text, generous margins, flat vector look."
+    },
+    {
+      "id": "composition-stilllife",
+      "category": "composition",
+      "prompt": "Overhead still life on a dark oak table: exactly three objects — a white ceramic mug, a brass pocket watch, and a ripe pomegranate cut in half. Warm side light, soft shadows, each object distinct and fully in frame."
+    },
+    {
+      "id": "stylised-risograph",
+      "category": "stylised",
+      "prompt": "Two-colour risograph print of a fox sitting in tall grass at dusk, visible paper grain and slight misregistration, limited palette of teal and warm orange, bold shapes, no outlines."
+    },
+    {
+      "id": "product-headphones",
+      "category": "product",
+      "prompt": "Studio product shot of matte-black over-ear headphones on a seamless light-grey backdrop, three-point softbox lighting, subtle reflection on the surface below, crisp edges, commercial catalogue style."
+    },
+    {
+      "id": "photoreal-architecture",
+      "category": "photoreal",
+      "prompt": "Wide architectural photograph of a concrete brutalist library at golden hour, long shadows across a plaza, a single figure walking, tilt-shift correction so verticals are straight, high dynamic range."
+    },
+    {
+      "id": "text-signage",
+      "category": "text",
+      "prompt": "Photograph of a small neighbourhood coffee shop window at night with the hand-painted sign reading \"OPEN\" in warm neon-green light, condensation on the glass, brass fittings, cinematic bokeh of the street behind."
+    }
+  ]
+}

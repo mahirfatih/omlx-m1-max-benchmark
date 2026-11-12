@@ -1,7 +1,10 @@
 # `scripts/measure/` — the measurements
 
-What produces the numbers. Every script here talks to a running oMLX server and
-prints Markdown (or JSON with `--json`).
+What produces the numbers. Every script here talks to a running oMLX server —
+except [`image-benchmark.py`](image-benchmark.py), which drives `mflux`, and
+[`video-benchmark.py`](video-benchmark.py), which drives `mlx-gen` / `VideoX-Fun-mlx`.
+All three are separate tools from oMLX, and from each other — and prints Markdown
+(or JSON with `--json`).
 
 | Script | Measures | Needs a model |
 | :--- | :--- | :---: |
@@ -15,6 +18,8 @@ prints Markdown (or JSON with `--json`).
 | [`merge-code-benchmark.py`](merge-code-benchmark.py) | Merge two coding-benchmark JSON runs (a re-run overrides a model's earlier row). | no |
 | [`collect-system-info.py`](collect-system-info.py) | The environment header: chip, RAM, OS, oMLX version, API endpoint. | no |
 | [`model-sizes.py`](model-sizes.py) | Weights-vs-folder size per model on disk. | no |
+| [`image-benchmark.py`](image-benchmark.py) | Local image generation: seconds per image through [`mflux`](https://github.com/filipstrand/mflux) (separate from oMLX), from `profiles/mflux-profiles.json`. Refuses to run while another GPU job is active. `--selftest` is offline. | no |
+| [`video-benchmark.py`](video-benchmark.py) | Local video generation: seconds per clip through [`mlx-gen`](https://github.com/lpalbou/mlx-gen) or [`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx), from `profiles/video-profiles.json`; the written clip is measured with **ffprobe**. Refuses to run while another GPU job is active. `--selftest` is offline. | no |
 
 ## Running
 
@@ -29,6 +34,10 @@ python3 scripts/measure/grammar-test.py --selftest
 python3 scripts/measure/context-memory-test.py --selftest
 python3 scripts/measure/hallucination-test.py --selftest
 python3 scripts/measure/repo-analysis-test.py --repo ~/Sites/net-traffic-control-catalog
+python3 scripts/measure/image-benchmark.py --selftest
+python3 scripts/measure/image-benchmark.py --profile klein-q8
+python3 scripts/measure/video-benchmark.py --selftest
+python3 scripts/measure/video-benchmark.py --profile wan22-ti2v-5b-q8 --limit 1
 ```
 
 `benchmark.py` reads the API key from `~/.omlx/settings.json` and unloads every

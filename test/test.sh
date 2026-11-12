@@ -132,4 +132,24 @@ assert doc.exists(), "docs/reference/LANGUAGES.md is missing"
 print(f"{len(langs)} languages, twins derived, corpus documented")
 PY
 
+step "15. Image harness — the mflux command and the PNG reader agree"
+python3 scripts/measure/image-benchmark.py --selftest
+
+step "16. Model licences — documented, and the conditional ones are flagged"
+python3 - <<'PY'
+import pathlib
+doc = pathlib.Path("docs/reference/LICENSES.md")
+assert doc.exists(), "docs/reference/LICENSES.md is missing"
+text = doc.read_text()
+# The point of the file: download is not a licence, and two models are not open.
+for needle in ("FLUX Kommunity License", "not declared", "Apache-2.0"):
+    assert needle in text, f"licences doc no longer mentions: {needle}"
+models = pathlib.Path("docs/reference/MODELS.md").read_text()
+assert "LICENSES.md" in models, "MODELS.md does not point at the licence reading"
+print("licences documented; conditional and undeclared models flagged")
+PY
+
+step "17. Video harness — the runner command and the ffprobe reader agree"
+python3 scripts/measure/video-benchmark.py --selftest
+
 printf '\n\033[1;32mAll checks passed.\033[0m\n'
