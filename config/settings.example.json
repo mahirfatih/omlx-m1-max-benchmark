@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "model": {
+    "model_dirs": [
+      "/Users/you/models"
+    ]
+  },
+  "memory": {
+    "prefill_memory_guard": true,
+    "memory_guard_tier": "aggressive",
+    "soft_threshold": 0.85,
+    "hard_threshold": 0.95
+  },
+  "scheduler": {
+    "max_concurrent_requests": 1,
+    "chunked_prefill": true
+  },
+  "auth": {
+    "api_key": "REPLACE_WITH_YOUR_KEY"
+  },
+  "sampling": {
+    "max_context_window": 32768,
+    "max_context_window_policy": null,
+    "max_tokens": 2048,
+    "temperature": 0.2,
+    "top_p": 0.95,
+    "top_k": 20,
+    "repetition_penalty": 1.1
+  },
+  "idle_timeout": {
+    "idle_timeout_seconds": 180
+  }
+}

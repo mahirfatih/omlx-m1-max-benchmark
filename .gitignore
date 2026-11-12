@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Generated reports
+*.local.md
+
+# Secrets
+.env
+*.key
+secrets.json
+
+# Machine-specific
+*.log
