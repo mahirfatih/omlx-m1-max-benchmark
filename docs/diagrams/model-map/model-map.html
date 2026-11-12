@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yerel LLM Haritam · 7 model, oMLX, M1 Max — mockup</title>
+<style>
+  :root{
+    --bg:#08080a; --panel:#0d0d0f; --ink:#f3f1ea; --muted:#8b8b8f;
+    --rule:#26262b; --track:#232327; --accent:#e8a33d; --accent-dim:#b9822c;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  html[data-theme="light"]{
+    --bg:#f2f0eb; --panel:#faf9f6; --ink:#141414; --muted:#6b6b6b;
+    --rule:#dcdad3; --track:#e4e2db; --accent:#c9770f; --accent-dim:#a8630c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; padding:40px 20px 64px;
+  }
+  .poster{max-width:880px;margin:0 auto;background:var(--panel);border:1px solid var(--rule);
+    padding:clamp(28px,4vw,56px);border-radius:2px}
+
+  /* header */
+  .top{display:flex;justify-content:space-between;align-items:center;gap:16px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--muted);
+    text-transform:uppercase;flex-wrap:wrap}
+  .top .right{color:var(--muted)}
+
+  h1{font-size:clamp(38px,8vw,74px);line-height:.98;letter-spacing:-.02em;font-weight:800;
+    margin:34px 0 6px}
+  .sub{font-size:clamp(20px,4vw,30px);font-weight:800;color:var(--accent);letter-spacing:-.01em;
+    margin:0 0 8px}
+  .lede{margin:14px 0 0;color:var(--muted);font-size:14px;line-height:1.5;max-width:52ch}
+
+  .source{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+    margin-top:36px;padding-bottom:10px;border-bottom:1px solid var(--rule);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .source .hint{letter-spacing:.12em;color:var(--accent-dim)}
+
+  /* rows */
+  .rows{margin:0}
+  .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;
+    padding:18px 0;border-bottom:1px solid var(--rule);align-items:center;transition:background .15s}
+  .row:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .task .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:700}
+  .task .d{color:var(--muted);font-size:13.5px;margin-top:5px;line-height:1.35}
+  .pick{display:flex;flex-direction:column;gap:9px}
+  .pick .m{font-weight:700;font-size:15.5px;letter-spacing:-.01em}
+  .pick .m .tiny{font-family:var(--mono);font-weight:400;color:var(--muted);font-size:11.5px;
+    letter-spacing:.04em}
+  .bar{display:flex;align-items:center;gap:12px}
+  .flag{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-dim);border-radius:20px;
+    padding:2px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+  .flag.off{color:var(--muted);border-color:var(--rule)}
+  .track{position:relative;flex:1;height:9px;background:var(--track);border-radius:20px;overflow:hidden}
+  .fill{position:absolute;inset:0 auto 0 0;height:100%;border-radius:20px;
+    background:linear-gradient(90deg,var(--accent-dim),var(--accent))}
+  .val{font-family:var(--mono);font-size:12px;color:var(--ink);min-width:66px;text-align:right;letter-spacing:.02em}
+
+  /* bottom cards */
+  .cards{margin-top:40px}
+  .cards .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:color-mix(in srgb,var(--ink) 5%,transparent);border:1px solid var(--rule);
+    border-radius:3px;padding:20px 18px;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
+  .card .big{font-size:clamp(30px,5vw,44px);font-weight:800;color:var(--accent);letter-spacing:-.02em;line-height:1}
+  .card .lbl{color:var(--muted);font-size:12.5px;line-height:1.35;margin-top:12px}
+
+  footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:46px;
+    font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;flex-wrap:wrap}
+  footer .name{color:var(--ink);font-weight:700;letter-spacing:.02em}
+
+  .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-dim);
+    border-radius:20px;padding:4px 10px;margin-top:22px}
+
+  /* runtime strip — the stack every number below was measured on */
+  .runtime{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;
+    padding:14px 16px;border:1px solid var(--rule);border-radius:3px;
+    background:color-mix(in srgb,var(--accent) 4%,transparent)}
+  .runtime .rlabel{font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);margin-right:4px}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.05em;color:var(--ink);background:var(--track);border:1px solid var(--rule);
+    border-radius:20px;padding:5px 11px}
+  .chip b{color:var(--accent);font-weight:700}
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .toggle{background:none;border:1px solid var(--rule);color:var(--muted);font-family:var(--mono);
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:6px 10px;border-radius:20px;cursor:pointer}
+  .toggle:hover{color:var(--accent);border-color:var(--accent-dim)}
+
+  /* the other two layers — image and video. Not oMLX, so deliberately separate
+     from the token/s table above: different server, different unit. */
+  .layers{margin-top:40px;border:1px solid var(--rule);border-radius:3px;padding:22px 22px 20px;
+    background:color-mix(in srgb,var(--muted) 7%,transparent)}
+  .layers .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .layers .where{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+    color:var(--muted);margin-bottom:18px}
+  .layers .where b{color:var(--ink);font-weight:700}
+  .layers .lr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;
+    padding:14px 0;border-bottom:1px solid var(--rule);align-items:center}
+  .layers .lr:last-child{border-bottom:none;padding-bottom:0}
+  .layers .lk{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:700}
+  .layers .ld{color:var(--muted);font-size:13px;margin-top:5px;line-height:1.35}
+  .layers .ld b{color:var(--ink)}
+  .layers .lm{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .layers .lm .tiny{font-family:var(--mono);font-weight:400;color:var(--muted);font-size:11.5px;
+    letter-spacing:.04em}
+  .layers .lbar{display:flex;align-items:center;gap:12px;margin-top:8px}
+  .layers .track{position:relative;flex:1;height:9px;background:var(--track);border-radius:20px;overflow:hidden}
+  .layers .fill{position:absolute;inset:0 auto 0 0;height:100%;border-radius:20px;
+    background:linear-gradient(90deg,var(--muted),var(--ink));opacity:.55}
+  .layers .val{font-family:var(--mono);font-size:12px;color:var(--ink);min-width:74px;text-align:right}
+  .warn{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-dim);border-radius:20px;
+    padding:2px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+  .layers .note{margin:16px 0 0;color:var(--muted);font-size:12px;line-height:1.45;
+    padding-top:14px;border-top:1px solid var(--rule)}
+  .layers .note b{color:var(--accent)}
+  @media (max-width:600px){
+    .layers .lr{grid-template-columns:1fr;gap:10px}
+  }
+
+  /* in practice — what actually gets loaded, day to day */
+  .practice{margin-top:40px;border:1px solid var(--rule);border-radius:3px;
+    background:color-mix(in srgb,var(--accent) 4%,transparent);padding:22px 22px 20px}
+  .practice .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+  .practice .where{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+    color:var(--muted);margin-bottom:18px}
+  .practice .g{display:grid;grid-template-columns:1.35fr 1fr;gap:26px}
+  .practice h3{font-size:13px;font-weight:700;letter-spacing:.02em;margin:0 0 10px;color:var(--ink)}
+  .practice h3 span{font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);display:block;margin-top:3px}
+  .practice ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .practice li{font-size:13px;line-height:1.4;padding-left:20px;position:relative;color:var(--ink)}
+  .practice li::before{content:"";position:absolute;left:0;top:6px;width:8px;height:8px;
+    border-radius:50%;background:var(--accent)}
+  .practice li .nm{font-weight:700}
+  .practice li .why{color:var(--muted)}
+  .practice .off li::before{background:transparent;border:1px solid var(--accent-dim)}
+
+  @media (max-width:600px){
+    .row{grid-template-columns:1fr;gap:12px}
+    .practice .g{grid-template-columns:1fr;gap:20px}
+    .grid{grid-template-columns:1fr}
+    .val{min-width:54px}
+  }
+  .hf{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
+    color:var(--accent);border:1px solid var(--accent-dim);border-radius:20px;
+    padding:2px 8px;margin-left:8px;text-decoration:none;vertical-align:2px;
+    white-space:nowrap}
+  .hf:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+</style>
+</head>
+<body>
+<main class="poster">
+  <div class="top">
+    <span>Yerel LLM Haritam</span>
+    <span class="right">M1 Max · 64 GB · oMLX · MLX · Bulut yok</span>
+  </div>
+
+  <h1>Yerelde hangi LLM?</h1>
+  <p class="sub">7 yerel model, oMLX üzerinde, ölçüldü.</p>
+  <p class="lede">Yedi yerel LLM, tek Mac'te, <strong>oMLX</strong> üzerinde <strong>Apple MLX</strong> ile
+    çalışıyor — buluta çıkmadan. Aşağısı hangi işi hangi modelin taşıdığı ve ölçtüğümüz gerçek hız.
+    Barlar saniyedeki token sayısını gösterir, sağdaki kartlar ölçümün ne dediğidir. Bu sayfada
+    yalnızca oMLX'in servis ettiği 7 model var — görsel ve video oMLX'te çalışmadığı için yok.</p>
+  <span class="badge">v1 · mockup · rakamların hepsi bu makinede ölçüldü</span>
+
+  <div class="runtime">
+    <span class="rlabel">Çalışma ortamı</span>
+    <span class="chip"><span class="dot"></span><b>oMLX</b> 0.7.3</span>
+    <span class="chip"><span class="dot"></span>Apple <b>MLX</b></span>
+    <span class="chip"><span class="dot"></span>Metal · Apple Silicon</span>
+    <span class="chip"><span class="dot"></span><b>MacBookPro18,2</b> · M1 Max</span>
+    <span class="chip"><span class="dot"></span>KV <b>4-bit</b> · 400 GB/s</span>
+    <span class="chip"><span class="dot"></span><b>127 GB</b> diskte</span>
+    <span class="chip"><span class="dot"></span>tamamı yerel, API yok</span>
+  </div>
+
+  <div class="source">
+    <span>İş</span>
+    <span class="hint">Model · Hız (tok/s) — lg ölçek değil, doğrusal</span>
+  </div>
+
+  <div class="rows">
+    <div class="row">
+      <div class="task">
+        <div class="k">Tek model, her iş</div>
+        <div class="d">Kodlamada <b>56/56</b>, halüsinasyon <b>%0</b>. Buradaki en hızlı model; neredeyse her şey için bunu yükle.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Qwen3.6-35B-A3B <span class="tiny">· MoE ~3B · qwen3</span> <a class="hf" href="https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-4bit">HF</a><span class="flag">varsayılan</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:100%"></div></div><span class="val">73,4</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Süzgeçsiz, kayıpsız</div>
+        <div class="d">Abliterated. Aligned modele göre kod <b>56/56</b>, halüsinasyon <b>%0</b> — sadece reddetmiyor.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Qwen3.6-35B-Heretic <span class="tiny">· MoE ~3B · qwen36-heretic</span> <a class="hf" href="https://huggingface.co/froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit">HF</a><span class="flag off">ihtiyaç durumunda</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:97%"></div></div><span class="val">71,1</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Farklı aile, çapraz kontrol</div>
+        <div class="d">Qwen/Gemma türevi değil, bağımsız RL modeli. Kod <b>56/56</b>. "İki model de aynı şeyi diyorsa" kontrolü.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Ornith-1.5-35B-A3B <span class="tiny">· MoE ~3B · qwen3</span> <a class="hf" href="https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit">HF</a><span class="flag">ikinci görüş</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:82%"></div></div><span class="val">60,2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Süzgeçsiz, farklı aile</div>
+        <div class="d">Gemma tabanlı heretic. Kod <b>56/56</b>, halüsinasyon <b>%0</b>. Diskte en küçük: 15 GB.</div>
+      </div>
+      <div class="pick">
+        <div class="m">gemma-4-26B-Heretic <span class="tiny">· MoE ~4B · gemma4-heretic</span> <a class="hf" href="https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit">HF</a><span class="flag off">ihtiyaç durumunda</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:82%"></div></div><span class="val">60,1</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Kod, hız önce gelirse</div>
+        <div class="d">Küçük ve hızlı ama <b>45/46</b> — bir sözdizimi hatası. En doğru kod modeli değil.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Qwen3-Coder-30B-A3B <span class="tiny">· MoE ~3B · qwen3</span> <a class="hf" href="https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit">HF</a></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:58%"></div></div><span class="val">42,6</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Uzun belge · <span style="color:var(--accent)">doğruluk önce</span></div>
+        <div class="d">Uzun bağlamda <b>3/3</b> — toplama sorusunu geçen <b>tek</b> model. Kodda <b>55/56</b>, hiçbir fonksiyonu eksik bırakmadı. Yavaş: 12,4 tok/s.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Devstral-Small-2-24B <span class="tiny">· dense 24B · devstral</span> <a class="hf" href="https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit">HF</a></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:17%"></div></div><span class="val">12,4</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Bu makinede çalıştırma</div>
+        <div class="d">Tek <i>dense</i> Qwen: her token 27B'yi okuyor. Uzun bağlamda <b>0/3</b>, kodda 5 fonksiyonun 3'ünü yazdı. Ölçülen hiçbir şey bunu haklı çıkarmıyor.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Qwen3.8-27B-Uncensored <span class="tiny">· dense 27B · qwen36-heretic</span> <a class="hf" href="https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX">HF</a></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:25%"></div></div><span class="val">18,2</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="practice">
+    <div class="cap">Pratikte ne kullanıyoruz?</div>
+    <div class="where">OpenCode Desktop harness üzerinde · günlük sürücüler</div>
+    <div class="g">
+      <div>
+        <h3>Her zaman açık <span>iki model, iki rol</span></h3>
+        <ul>
+          <li><span class="nm">Qwen3.6-35B-A3B</span> <span class="why">— varsayılan. Hız 73,4 tok/s, kod 56/56, halüsinasyon %0. Sıradan işlerin çoğu bu.</span></li>
+          <li><span class="nm">Ornith-1.5-35B-A3B</span> <span class="why">— ikinci görüş. Qwen türevi değil, farklı aile; "iki model de aynı şeyi diyorsa" kontrolü için.</span></li>
+        </ul>
+      </div>
+      <div class="off">
+        <h3>İhtiyaç durumunda <span>süzgeçsiz çift</span></h3>
+        <ul>
+          <li><span class="nm">Qwen3.6-35B-Heretic</span> <span class="why">— abliterated Qwen. Kod 56/56, %0 halüsinasyon; sadece reddetmiyor.</span></li>
+          <li><span class="nm">gemma-4-26B-Heretic</span> <span class="why">— Gemma tabanlı heretic. Farklı aile, 15 GB ile diskte en küçüğü.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="cap">Ölçüm ne diyor?</div>
+    <div class="grid">
+      <div class="card">
+        <div class="big">4/7</div>
+        <div class="lbl">model kod benchmark'ında tam puan (56/56)</div>
+      </div>
+      <div class="card">
+        <div class="big">%0</div>
+        <div class="lbl">halüsinasyon — 5 model, 102 dil, 204 sonda</div>
+      </div>
+      <div class="card">
+        <div class="big">3/3</div>
+        <div class="lbl">uzun bağlamda tek geçen: Devstral</div>
+      </div>
+      <div class="card">
+        <div class="big">4/5</div>
+        <div class="lbl">kırmızı takım — süzgeçsiz modeller de aynı puan</div>
+      </div>
+      <div class="card">
+        <div class="big">0/7</div>
+        <div class="lbl">model tersine mühendislik görevini çözemedi</div>
+      </div>
+      <div class="card">
+        <div class="big">5,9×</div>
+        <div class="lbl">en hızlı ile en yavaş arasındaki hız farkı</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layers">
+    <div class="cap">Ölçüm yöntemi</div>
+    <div class="where">Her model boşaltılır, istek üzerine yüklenir, aynı prompt <b>İngilizce ve Türkçe</b>
+      iki kez sorulur. Hız = <code>completion_tokens / duvar saati</code>.</div>
+    <p class="note">ctx <b>32768</b> · temp <b>0.2</b> · max_tokens <b>220</b> · düşünme kapalı.
+      Sayıların hepsi <b>github.com/mahirfatih/omlx-m1-max-benchmark</b> içinde, run dosyasına kadar izlenebilir.</p>
+  </div>
+
+  <footer>
+    <div>
+      <span class="name">Mahir F. ÜNAL</span><br>
+      <span style="opacity:.7">7 model ölçüldü · hepsi oMLX üzerinde, hepsi bu sayfada</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <button class="toggle" id="themeBtn" type="button">◐ tema</button>
+      <span>github.com/mahirfatih/omlx-m1-max-benchmark</span>
+    </div>
+  </footer>
+</main>
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  const root = document.documentElement;
+  btn.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+</script>
+</body>
+</html>

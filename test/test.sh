@@ -193,6 +193,7 @@ if command -v mmdc >/dev/null 2>&1 && [ -n "$CHROME" ]; then
     trap 'rm -rf "$tmpdir"' EXIT
     i=0
     fail=0
+    # shellcheck disable=SC2013
     for f in $(grep -rl '```mermaid' --include='*.md' . | grep -v .git); do
         python3 - "$f" "$tmpdir" <<'PY'
 import re, pathlib, sys
@@ -220,3 +221,30 @@ PY
 else
     echo "mmdc or a browser not found; structure check only"
 fi
+
+step "17. Model map — files, PNGs, and HF links agree"
+python3 - <<'PY'
+import pathlib, re, struct, sys
+root = pathlib.Path(".")
+base = root / "docs" / "diagrams" / "model-map"
+for name in ["model-map.html", "model-map-dark.png", "model-map-light.png", "README.md"]:
+    assert (base / name).exists(), f"missing {name}"
+html = (base / "model-map.html").read_text()
+for png_name in ["model-map-dark.png", "model-map-light.png"]:
+    data = (base / png_name).read_bytes()
+    w, h = struct.unpack(">II", data[16:24])
+    assert w == 2000, f"{png_name}: width {w} != 2000"
+    assert 1000 < h < 8000, f"{png_name}: height {h} out of range"
+# every HF URL published in README must appear in the poster
+readme = pathlib.Path("README.md").read_text()
+urls = set()
+for line in readme.splitlines():
+    if "[HF](" in line:
+        urls.update(re.findall(r"https://huggingface\.co/[A-Za-z0-9._/-]+", line))
+assert urls, "no HF URLs found in README"
+missing = [u for u in urls if u not in html]
+assert not missing, f"HF URLs missing from poster: {missing}"
+# self-contained: no external resources
+assert "<script src" not in html and "<link rel=\"stylesheet\"" not in html, "external resource found"
+print(f"model map OK · {len(urls)} HF links agree · PNG 2000 px")
+PY

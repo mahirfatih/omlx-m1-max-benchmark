@@ -72,6 +72,7 @@ documents explain what they measured.
 
 - [`diagrams/architecture/architecture.html`](diagrams/architecture/architecture.html) — the interactive, click-through diagram.
 - [`diagrams/architecture/architecture.md`](diagrams/architecture/architecture.md) — the written companion.
+- [`diagrams/model-map/model-map.html`](diagrams/model-map/model-map.html) — the model map: which model for which job, with dark and light PNGs.
 - [`diagrams/README.md`](diagrams/README.md) — how the pair is generated.
 
 ## Testing — how do I verify it
