@@ -104,9 +104,9 @@ came from.
 
 ## Model map
 
-![Model map (dark)](docs/diagrams/model-map/model-map-dark.png)
+![Model map (dark)](docs/diagrams/model-map/model-map-light.png)
 
-[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — the interactive version (theme toggle). [`model-map-light.png`](docs/diagrams/model-map/model-map-light.png) for the light theme.
+[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — the interactive version (theme toggle). [`model-map-dark.png`](docs/diagrams/model-map/model-map-dark.png) for the light theme.
 
 Which model for which job, at the speed it actually ran, in one picture.
 
