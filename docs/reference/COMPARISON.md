@@ -205,12 +205,19 @@ and
 
 Run through [mlx-gen](https://github.com/lpalbou/mlx-gen) and
 [VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx), measured with
-`ffprobe`.
+`ffprobe`. Seconds per clip, model load included, on the same M1 Max.
 
-| Model | Licence | Runner | Status |
-| :--- | :--- | :--- | :--- |
-| `Wan2.2-TI2V-5B` | Apache-2.0 | mlx-gen | pending |
-| `CogVideoX-Fun-V1.5-5b-InP` | **The CogVideoX License** | VideoX-Fun-mlx | pending |
+| Model | Licence | Runner | s/clip | Output | Status |
+| :--- | :--- | :--- | ---: | :--- | :--- |
+| `CogVideoX-Fun-V1.5-5b-InP` (int8) | **The CogVideoX License** | VideoX-Fun-mlx | **265.9** | 672×384, 5 frames, GIF | ✅ 4/4 |
+| `Wan2.2-TI2V-5B` | Apache-2.0 | mlx-gen | pending | — | — |
+
+CogVideoX-Fun renders a 5-frame 672×384 clip in ~266 s (four prompts, 265.2–267.2 s),
+which is ~4.4 minutes of waiting for a clip that plays for 1.6 s. The frame count
+is this model's ceiling, not a choice: `--frames` is not linear and 5 is as far as
+it decodes, so more steps or a larger request buys nothing. All four clips — with
+the prompt under each — are in
+[`evidence/video-benchmark-2026-11-12.md`](../../evidence/video-benchmark-2026-11-12.md).
 
 The licence column matters more here than anywhere else on this page: the
 quantised repository tags itself `apache-2.0` while the base model it derives

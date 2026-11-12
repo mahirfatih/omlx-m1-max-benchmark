@@ -46,6 +46,7 @@ though the problems and cases here are original.
 - [Coding benchmark](#coding-benchmark)
 - [Hallucination & error risk](#hallucination--error-risk)
 - [Image generation](#image-generation)
+- [Video generation](#video-generation)
 - [Reproducing](#reproducing)
 - [Repository structure](#repository-structure)
 - [Notes & disclaimer](#notes--disclaimer)
@@ -314,6 +315,27 @@ clean on both.
 
 Full reading and the second model: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md)
 and [`evidence/image-benchmark-2026-11-12.md`](evidence/image-benchmark-2026-11-12.md).
+
+## Video generation
+
+Video is a **third layer**, run by an MLX video tool rather than by oMLX or mflux.
+Here it is [VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) driving
+CogVideoX-Fun V1.5 5B (int8). One runner process per prompt, timed end to end, and
+every clip verified with `ffprobe` — the file, not the runner's log line.
+
+| Model (profile) | Licence | s/clip | Output | Frames | OK |
+| :--- | :--- | ---: | :--- | ---: | :---: |
+| `dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8` (`cogvideox-fun-1.5-5b-inp-q8`) | **The CogVideoX License** | **265.9** | 672×384, 1.6 s, GIF | 5 | ✅ 4/4 |
+
+~266 s for a 5-frame 672×384 clip — four prompts, 265.2–267.2 s — so a clip that
+plays for 1.6 s costs about 4.4 minutes of GPU. Five frames is the model's ceiling,
+not a setting: `--frames` is not linear (4 → 1 frame, 8 → the same 5 as 5, an odd
+count raises a reshape error), so asking for more does not get you more.
+
+The clips themselves, each with the prompt that produced it:
+[`evidence/video-benchmark-2026-11-12.md`](evidence/video-benchmark-2026-11-12.md).
+The licence is the trap on this one — the quant is tagged `apache-2.0`, the base
+model is not. See [`docs/reference/LICENSES.md`](docs/reference/LICENSES.md).
 
 ## Reproducing
 
