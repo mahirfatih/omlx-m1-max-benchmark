@@ -9,7 +9,7 @@ If you run the benchmark on different hardware, please include:
 - Chip, RAM, macOS version
 - oMLX version
 - Quantization and context settings
-- The raw output of `python3 scripts/benchmark.py`
+- The raw output of `python3 scripts/measure/benchmark.py`
 
 Open an issue or a pull request with the generated Markdown report under `benchmarks/`.
 

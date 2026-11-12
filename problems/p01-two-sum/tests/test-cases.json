@@ -1,0 +1,18 @@
+{
+  "function": "two_sum",
+  "unordered": true,
+  "cases": [
+    {"name": "basic", "args": [[2, 7, 11, 15], 9], "expected": [0, 1]},
+    {"name": "middle", "args": [[3, 2, 4], 6], "expected": [1, 2]},
+    {"name": "duplicates", "args": [[3, 3], 6], "expected": [0, 1]},
+    {"name": "negatives", "args": [[-1, -2, -3, -4, -5], -8], "expected": [2, 4]},
+    {"name": "zero_target", "args": [[-5, 0, 5, 10], 0], "expected": [0, 2]},
+    {"name": "large_values", "args": [[1000000000, -1000000000, 500000000], 0], "expected": [0, 1]},
+    {"name": "minimum_size", "args": [[1, 2], 3], "expected": [0, 1]},
+    {"name": "at_end", "args": [[1, 2, 3, 4, 5, 6], 11], "expected": [4, 5]},
+    {"name": "mixed_signs", "args": [[-10, 5, 15, -5, 20], 25], "expected": [1, 4]},
+    {"name": "first_pair", "args": [[5, 75, 25], 100], "expected": [1, 2]},
+    {"name": "unsorted", "args": [[230, 863, 916, 585, 981, 404, 316, 785, 88, 12, 70, 435, 384, 778, 887, 755, 740, 337, 86, 92], 1318], "expected": [4, 17]},
+    {"name": "two_large_negatives", "args": [[-3, -3, -4], -6], "expected": [0, 1]}
+  ]
+}

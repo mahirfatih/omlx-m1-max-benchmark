@@ -1,0 +1,59 @@
+{
+  "note": "Model source registry. Each entry is a local model id and its verified upstream.",
+  "models": [
+    {
+      "id": "Qwen3-Coder-30B-A3B-Instruct-4bit",
+      "hf": "mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit",
+      "base": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
+    },
+    {
+      "id": "Qwen3.6-35B-A3B-4bit",
+      "hf": "mlx-community/Qwen3.6-35B-A3B-4bit",
+      "base": "Qwen/Qwen3.6-35B-A3B",
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
+    },
+    {
+      "id": "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
+      "hf": "froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
+      "base": "llmfan46/Qwen3.6-35B-A3B-uncensored-heretic",
+      "quant": "4-bit",
+      "type": "uncensored+heretic",
+      "uncensored": true,
+      "heretic": true
+    },
+    {
+      "id": "Ornith-1.5-35B-A3B-MLX-4bit",
+      "hf": "ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit",
+      "base": null,
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
+    },
+    {
+      "id": "gemma-4-26B-A4B-it-heretic-4bit",
+      "hf": "mlx-community/gemma-4-26B-A4B-it-heretic-4bit",
+      "base": "coder3101/gemma-4-26B-A4B-it-heretic",
+      "quant": "4-bit",
+      "type": "heretic+uncensored",
+      "uncensored": true,
+      "heretic": true
+    },
+    {
+      "id": "Qwen3.8-27B-Uncensored-MLX",
+      "hf": "orcarouter/Qwen3.8-27B-Uncensored-MLX",
+      "base": "Qwen/Qwen3.8-27B",
+      "quant": "4-bit",
+      "type": "uncensored+abliterated",
+      "uncensored": true,
+      "heretic": true
+    }
+  ]
+}

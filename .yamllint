@@ -1,0 +1,24 @@
+# yamllint configuration for this repository.
+#
+# `line-length` is off on purpose: the workflow files carry long single-line
+# commands, and the value of yamllint here is structural — indentation, duplicate
+# keys, tabs, trailing spaces — not wrapping prose.
+#
+# Keys are not checked: GitHub Actions spells a key `on:`, which is not a boolean.
+#
+# Generated directories carry YAML we never edit by hand, so linting them is
+# noise rather than a finding.
+---
+extends: default
+
+ignore: |
+  __pycache__/
+  node_modules/
+  .git/
+
+rules:
+  document-start: disable
+  line-length: disable
+  truthy:
+    allowed-values: ["true", "false", "YES", "NO"]
+    check-keys: false

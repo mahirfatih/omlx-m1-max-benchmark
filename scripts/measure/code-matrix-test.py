@@ -1,4 +1,12 @@
-import json, urllib.request, urllib.error, time, subprocess, tempfile, os, re, sys
+import json
+import urllib.request
+import urllib.error
+import time
+import subprocess
+import tempfile
+import os
+import re
+import sys
 
 API = json.load(open('/Users/MahirFatih/.omlx/settings.json'))['auth']['api_key']
 BASE = "http://127.0.0.1:8000/v1"
@@ -56,7 +64,8 @@ def validate(lang, code):
             return True, "python compile OK"
         if lang == 'nodejs':
             with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as f:
-                f.write(code); p = f.name
+                f.write(code)
+                p = f.name
             r = subprocess.run(['node', '--check', p], capture_output=True, text=True, timeout=30)
             os.unlink(p)
             return (r.returncode == 0), ("node --check OK" if r.returncode == 0 else r.stderr.strip()[:120])
@@ -65,7 +74,8 @@ def validate(lang, code):
             return (r.returncode == 0), ("bash -n OK" if r.returncode == 0 else r.stderr.strip()[:120])
         if lang == 'swift':
             with tempfile.NamedTemporaryFile('w', suffix='.swift', delete=False) as f:
-                f.write(code); p = f.name
+                f.write(code)
+                p = f.name
             r = subprocess.run(['swiftc', '-parse', p], capture_output=True, text=True, timeout=60)
             os.unlink(p)
             return (r.returncode == 0), ("swiftc -parse OK" if r.returncode == 0 else r.stderr.strip()[:120])
@@ -93,13 +103,15 @@ MODELS = [
 ]
 
 if not wait_health():
-    print("SERVER healthy DEGIL"); sys.exit(1)
+    print("SERVER healthy DEGIL")
+    sys.exit(1)
 print("SERVER healthy\n", flush=True)
 
 for model, prof in MODELS:
     print("=" * 70)
     print("MODEL:", model, "| profil:", prof, flush=True)
-    unload_all(); time.sleep(4)
+    unload_all()
+    time.sleep(4)
     for lang, prompt in TASKS.items():
         t0 = time.time()
         try:

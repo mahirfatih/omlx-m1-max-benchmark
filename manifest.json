@@ -1,0 +1,12 @@
+{
+  "manifest_version": 1,
+  "report": "benchmarks/2026-11-11-m1max.md",
+  "report_bytes": 11894,
+  "report_sha256": "907e377bb75eedc0cc980c36b38155166cbf45731e80daa6409fe8d0140597c0",
+  "results": "reference/results.json",
+  "results_sha256": "cc855ac363736a018984bd7a96569ab0217e13f041a4643905ce4d117a44dbaf",
+  "generated": "2026-11-11",
+  "models": 6,
+  "challenges": 5,
+  "generated_unix": 1794433149
+}

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>oMLX request path — M1 Max</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#141b31; --ink:#e8ecf8; --muted:#9aa6c4;
+    --line:#2b3555; --accent:#5b8cff; --ok:#39d98a; --warn:#ffb020;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f4f6fb; --panel:#ffffff; --ink:#0d1224; --muted:#5a6480;
+           --line:#d7dcec; --accent:#2f5bd7; --ok:#0f9d58; --warn:#b26a00; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+  header{padding:28px 32px 8px}
+  h1{margin:0 0 4px;font-size:22px;letter-spacing:-.01em}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .wrap{display:grid;grid-template-columns:1fr 320px;gap:20px;padding:20px 32px 40px}
+  @media (max-width:900px){ .wrap{grid-template-columns:1fr} }
+  .canvas{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  svg{width:100%;height:auto;display:block}
+  .node rect{fill:var(--panel);stroke:var(--line);stroke-width:1.5;rx:12;cursor:pointer;
+             transition:stroke .15s,filter .15s}
+  .node:hover rect,.node.active rect{stroke:var(--accent);stroke-width:2.5;
+             filter:drop-shadow(0 0 8px rgba(91,140,255,.35))}
+  .node .label{fill:var(--ink);font-weight:600;font-size:15px;pointer-events:none}
+  .node .detail{fill:var(--muted);font-size:11px;pointer-events:none}
+  .node.outside rect{stroke-dasharray:5 4}
+  .edge{stroke:var(--line);stroke-width:2;fill:none;marker-end:url(#arrow)}
+  .edge-label{fill:var(--muted);font-size:10.5px}
+  aside{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;height:auto}
+  aside h2{margin:0 0 8px;font-size:15px}
+  aside .k{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+  aside .v{margin:2px 0 14px;font-size:14px}
+  aside ul{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+  .hint{color:var(--muted);font-size:12px;margin-top:10px}
+  .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:999px;
+       border:1px solid var(--line);color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>oMLX request path — Apple M1 Max</h1>
+  <p>One OpenAI-compatible request, from client to tokens. Click a node for detail.</p>
+</header>
+<div class="wrap">
+  <div class="canvas">
+    <svg viewBox="0 0 620 640" role="img" aria-label="Request flow diagram">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/>
+        </marker>
+      </defs>
+      <g id="edges"></g>
+      <g id="nodes"></g>
+    </svg>
+  </div>
+  <aside>
+    <div class="k">Selected</div>
+    <h2 id="sel-title">—</h2>
+    <div class="k">Detail</div>
+    <div class="v" id="sel-detail">Click a node.</div>
+    <div class="k">Group</div>
+    <div class="v"><span class="tag" id="sel-group">—</span></div>
+    <div class="k">Connections</div>
+    <ul id="sel-edges"><li>—</li></ul>
+    <p class="hint">Source: <code>docs/architecture/source.json</code></p>
+  </aside>
+</div>
+<script>
+const DATA = {
+  nodes: [
+    {id:"client", label:"Client", detail:"OpenCode · script · curl", group:"outside"},
+    {id:"api", label:"oMLX API", detail:"FastAPI/uvicorn · 127.0.0.1:8000 · auth", group:"server"},
+    {id:"guard", label:"Memory guard", detail:"prefill estimate · aggressive tier", group:"server"},
+    {id:"sched", label:"Scheduler", detail:"continuous batching · 1 request", group:"server"},
+    {id:"runtime", label:"MLX runtime", detail:"4-bit weights · 4-bit KV cache", group:"gpu"},
+    {id:"disk", label:"SSD KV cache", detail:"turboquant blocks · LRU", group:"gpu"}
+  ],
+  edges: [
+    {from:"client", to:"api", label:"POST /v1/chat/completions"},
+    {from:"api", to:"guard", label:"load estimate"},
+    {from:"guard", to:"sched", label:"accept / reject"},
+    {from:"sched", to:"runtime", label:"batched prompt"},
+    {from:"runtime", to:"disk", label:"restore prefix"},
+    {from:"runtime", to:"client", label:"stream tokens"}
+  ]
+};
+
+// Simple layered layout: two columns.
+const pos = {};
+const colX = {outside:110, server:110, gpu:110};
+const startY = 70, gap = 95;
+let row = 0;
+for (const n of DATA.nodes) {
+  // client alone on top; server stack; gpu stack offset right
+  let x = 230, y;
+  if (n.id === "client") { y = 50; }
+  else if (n.group === "server") { y = 170 + (row++) * gap; }
+  else { y = 170 + (row++) * gap; }
+  pos[n.id] = {x, y};
+}
+// Put gpu nodes to the right and compact
+pos.runtime = {x: 430, y: 210};
+pos.disk    = {x: 430, y: 360};
+pos.api     = {x: 230, y: 140};
+pos.guard   = {x: 230, y: 260};
+pos.sched   = {x: 230, y: 380};
+pos.client  = {x: 230, y: 40};
+
+const NS = "http://www.w3.org/2000/svg";
+const nodesG = document.getElementById("nodes");
+const edgesG = document.getElementById("edges");
+const W = 190, H = 58;
+
+function edgePath(a, b){
+  const ax = pos[a].x + W/2, ay = pos[a].y + H;
+  const bx = pos[b].x + W/2, by = pos[b].y;
+  // down-flow: straight; cross: curve
+  if (Math.abs(ax - bx) < 4){
+    return `M ${ax} ${ay} L ${bx} ${by}`;
+  }
+  const mx = (ax + bx)/2;
+  return `M ${ax} ${ay} C ${ax} ${ay+40}, ${bx} ${by-40}, ${bx} ${by}`;
+}
+
+// edges
+for (const e of DATA.edges){
+  if (!pos[e.from] || !pos[e.to]) continue;
+  // Skip a couple that would overlap oddly (api->guard shown, guard->sched, sched->runtime)
+  const p = document.createElementNS(NS, "path");
+  p.setAttribute("d", edgePath(e.from, e.to));
+  p.setAttribute("class", "edge");
+  edgesG.appendChild(p);
+  const tx = (pos[e.from].x + pos[e.to].x)/2 + W/2;
+  const ty = (pos[e.from].y + pos[e.to].y)/2 + H/2;
+  const t = document.createElementNS(NS, "text");
+  t.setAttribute("x", tx); t.setAttribute("y", ty - 4);
+  t.setAttribute("text-anchor","middle");
+  t.setAttribute("class","edge-label");
+  t.textContent = e.label;
+  edgesG.appendChild(t);
+}
+
+// nodes
+for (const n of DATA.nodes){
+  const g = document.createElementNS(NS, "g");
+  g.setAttribute("class", "node " + (n.group === "outside" ? "outside" : ""));
+  g.dataset.id = n.id;
+  const r = document.createElementNS(NS, "rect");
+  r.setAttribute("x", pos[n.id].x); r.setAttribute("y", pos[n.id].y);
+  r.setAttribute("width", W); r.setAttribute("height", H);
+  r.setAttribute("rx", 12);
+  const l = document.createElementNS(NS, "text");
+  l.setAttribute("x", pos[n.id].x + 14); l.setAttribute("y", pos[n.id].y + 24);
+  l.setAttribute("class","label"); l.textContent = n.label;
+  const d = document.createElementNS(NS, "text");
+  d.setAttribute("x", pos[n.id].x + 14); d.setAttribute("y", pos[n.id].y + 42);
+  d.setAttribute("class","detail"); d.textContent = n.detail;
+  g.append(r, l, d);
+  g.addEventListener("click", () => select(n));
+  nodesG.appendChild(g);
+}
+
+function select(n){
+  document.querySelectorAll(".node").forEach(el => el.classList.toggle("active", el.dataset.id === n.id));
+  document.getElementById("sel-title").textContent = n.label;
+  document.getElementById("sel-detail").textContent = n.detail;
+  document.getElementById("sel-group").textContent = n.group;
+  const list = document.getElementById("sel-edges");
+  list.innerHTML = "";
+  const conns = DATA.edges.filter(e => e.from === n.id || e.to === n.id);
+  if (!conns.length){ list.innerHTML = "<li>—</li>"; return; }
+  for (const e of conns){
+    const li = document.createElement("li");
+    li.textContent = `${e.from} → ${e.to} (${e.label})`;
+    list.appendChild(li);
+  }
+}
+select(DATA.nodes[1]);
+</script>
+</body>
+</html>

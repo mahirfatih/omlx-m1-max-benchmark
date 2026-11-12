@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-12",
+  "target": {
+    "name": "net-traffic-control-catalog",
+    "url": "https://github.com/mahirfatih/net-traffic-control-catalog",
+    "version": 1,
+    "generated": "2026-10-20",
+    "hosts": 6731,
+    "categories": 27,
+    "services": 22,
+    "bytes": 232151
+  },
+  "expected_facts": [
+    "6731",
+    "27",
+    "22",
+    "catalog.json",
+    "seeds",
+    "manifest",
+    "CC0",
+    "scripts",
+    "docs",
+    "test",
+    "finance",
+    "domain"
+  ],
+  "models": [
+    {
+      "model": "Qwen3.6-35B-A3B-4bit",
+      "profile": "qwen3",
+      "load_s": 8.0,
+      "answer_s": 4.76,
+      "tokens": 298,
+      "tps": 62.6,
+      "recovered": 6,
+      "of": 12,
+      "coverage": 0.5,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "manifest",
+        "CC0",
+        "test"
+      ],
+      "excerpt": "1. **Project Definition:** This is a static JSON-based data catalog mapping network hostnames to categories and services, designed as an input source for a \"Net Traffic Control\" application.\n\n2. **Structure:** The repository is heavily skewed toward automation: `scripts/` contains 6,863 files (98.4% of all tracked files), while human-readable content (`docs/`, `README.md`) and core data (`catalog.json`) constitute a tiny fraction. The architecture separates source definitions (`seeds/`), validation logic, and the final generated `catalog.json`.\n\n3. **Data Risk:** There is a severe class imbala"
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
+      "profile": "qwen36-heretic",
+      "load_s": 7.5,
+      "answer_s": 4.65,
+      "tokens": 269,
+      "tps": 57.8,
+      "recovered": 5,
+      "of": 12,
+      "coverage": 0.417,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "seeds",
+        "manifest",
+        "CC0",
+        "test"
+      ],
+      "excerpt": "1. **Project Definition:** This is a static JSON-based data catalog mapping internet hostnames to categories and services, designed as an external source for a \"Net Traffic Control\" application.\n\n2. **Structure:** The repository is heavily skewed toward automation: `scripts/` contains 6,863 files (98.4% of the tree), handling analysis and catalog generation, while `docs/` (39 files) provides reference material. The core data resides in `catalog.json`, supported by seed definitions and CI workflows.\n\n3. **Data Risk:** There is a severe category imbalance: \"finance\" hosts (3,570) constitute 53% "
+    },
+    {
+      "model": "Ornith-1.5-35B-A3B-MLX-4bit",
+      "profile": "qwen3",
+      "load_s": 6.4,
+      "answer_s": 6.84,
+      "tokens": 366,
+      "tps": 53.5,
+      "recovered": 10,
+      "of": 12,
+      "coverage": 0.833,
+      "missing": [
+        "manifest",
+        "CC0"
+      ],
+      "excerpt": "**1. One sentence:** A JSON catalog mapping ~6,700 hostnames to categories and services, consumed by a network-traffic-control app to group/label domains.\n\n**2. Structure:** Data lives in `catalog.json` (6,731 hosts, 27 categories, 22 services) with canonical inputs under `seeds/`; ~98% of tracked files are `scripts/` (analysis, catalog, checks, release, sources), backed by docs and an offline `test.sh` gate.\n\n**3. Data-quality risk:** Extreme category skew — *finance* alone is 3,570 of 6,731 hosts (53%), with the top two categories (*finance* + *government*) at 68% and the bottom ten (health,"
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-heretic-4bit",
+      "profile": "gemma4-heretic",
+      "load_s": 8.4,
+      "answer_s": 4.33,
+      "tokens": 167,
+      "tps": 38.6,
+      "recovered": 4,
+      "of": 12,
+      "coverage": 0.333,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "catalog.json",
+        "manifest",
+        "CC0",
+        "test",
+        "domain"
+      ],
+      "excerpt": "1. This project is a data catalog that maps hostnames to specific categories and services for use in network traffic control applications.\n\n2. The repository is structured as a data-generation pipeline: `seeds/` contains the base definitions, `scripts/` handles the logic for processing and generating the catalog, and `docs/` provides the necessary documentation and coverage analysis.\n\n3. There is a significant data skew risk: the `finance` category contains 3,570 hosts (over 53% of the total 6,731 hosts), which may indicate an imbalance in data granularity or a heavy bias toward specific secto"
+    },
+    {
+      "model": "Qwen3-Coder-30B-A3B-Instruct-4bit",
+      "profile": "qwen3",
+      "load_s": 4.6,
+      "answer_s": 6.57,
+      "tokens": 235,
+      "tps": 35.8,
+      "recovered": 7,
+      "of": 12,
+      "coverage": 0.583,
+      "missing": [
+        "6731",
+        "manifest",
+        "CC0",
+        "test",
+        "finance"
+      ],
+      "excerpt": "1. **What is this project, in one sentence?**  \nThis is a catalog of domain categories and services used for traffic control on networks.\n\n2. **How is it structured (the parts that matter)?**  \nIt's structured around a `catalog.json` file containing 6,731 host entries and 22 services. Key directories include `scripts/` for automation, `docs/` for documentation and analysis, and `seeds/` with seed data files.\n\n3. **One concrete data-quality or design risk?**  \nThe catalog has only 22 services but 27 distinct categories, suggesting potential inconsistency or underutilization of service definitio"
+    },
+    {
+      "model": "Qwen3.8-27B-Uncensored-MLX",
+      "profile": "qwen36-heretic",
+      "load_s": 7.3,
+      "answer_s": 46.11,
+      "tokens": 700,
+      "tps": 15.2,
+      "recovered": 0,
+      "of": 12,
+      "coverage": 0.0,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "catalog.json",
+        "seeds",
+        "manifest",
+        "CC0",
+        "scripts",
+        "docs",
+        "test",
+        "finance",
+        "domain"
+      ],
+      "excerpt": ""
+    }
+  ]
+}

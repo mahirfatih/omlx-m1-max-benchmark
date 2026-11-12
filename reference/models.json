@@ -1,0 +1,66 @@
+{
+  "note": "Public model reference. Sizes are on-disk, 4-bit MLX builds.",
+  "models": [
+    {
+      "id": "Qwen3-Coder-30B-A3B-Instruct-4bit",
+      "parameters": "30B MoE (~3B active)",
+      "disk_gb": 16,
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit"
+    },
+    {
+      "id": "Qwen3.6-35B-A3B-4bit",
+      "parameters": "35B MoE (~3B active)",
+      "disk_gb": 19,
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-4bit"
+    },
+    {
+      "id": "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
+      "parameters": "35B MoE (~3B active)",
+      "disk_gb": 19,
+      "quant": "4-bit",
+      "type": "uncensored+heretic",
+      "uncensored": true,
+      "heretic": true,
+      "hf": "https://huggingface.co/froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit"
+    },
+    {
+      "id": "Ornith-1.5-35B-A3B-MLX-4bit",
+      "parameters": "35B MoE (~3B active)",
+      "disk_gb": 18,
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit"
+    },
+    {
+      "id": "gemma-4-26B-A4B-it-heretic-4bit",
+      "parameters": "26B MoE (~4B active)",
+      "disk_gb": 15,
+      "quant": "4-bit",
+      "type": "heretic+uncensored",
+      "uncensored": true,
+      "heretic": true,
+      "hf": "https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit"
+    },
+    {
+      "id": "Qwen3.8-27B-Uncensored-MLX",
+      "parameters": "27B dense",
+      "disk_gb": 15,
+      "quant": "4-bit",
+      "type": "uncensored+abliterated",
+      "uncensored": true,
+      "heretic": true,
+      "hf": "https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX"
+    }
+  ],
+  "total_disk_gb": 102
+}

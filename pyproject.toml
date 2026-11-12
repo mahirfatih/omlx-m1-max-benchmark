@@ -1,0 +1,16 @@
+# Ruff configuration for this repository.
+#
+# The scripts under scripts/ are the test harness: they decide whether a model
+# passed or failed, so a bug in them silently corrupts every number in the
+# README. Ruff is the first line of defence — pyflakes (F) catches undefined
+# names and unused variables, and the E7/E9 checks catch broken statements.
+#
+# `E501` (line length) is off: the harness prints report tables inline, and
+# wrapping a format string to 100 columns makes it unreadable.
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "W"]
+ignore = ["E501"]

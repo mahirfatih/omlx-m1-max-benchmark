@@ -1,0 +1,66 @@
+name: checks
+
+# The static checks that need no model and no network: script syntax, the
+# environment report, and the model inventory. The measurement and security
+# scripts need a running oMLX server and are run by hand on the host. The
+# `lint` job runs the same `scripts/lint.sh` a contributor runs locally; it
+# fetches ruff/yamllint/markdownlint-cli2 at pinned versions, so a green local
+# run and a green CI run are the same bytes.
+#
+# Manual only (workflow_dispatch) — nothing runs on a push.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: astral-sh/setup-uv@v5
+      - name: Install the native linters
+        run: brew install shellcheck actionlint
+      - name: Run every linter
+        run: ./scripts/lint.sh
+
+  static:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Python syntax
+        run: python3 -m py_compile scripts/*/*.py
+      - name: Environment report
+        run: python3 scripts/measure/collect-system-info.py
+      - name: Model inventory (empty on CI is fine)
+        run: python3 scripts/measure/model-sizes.py
+      - name: Markdown links are relative and resolvable
+        run: |
+          python3 - <<'PY'
+          import re, os, sys
+          bad = []
+          for root, _, files in os.walk('.'):
+              if '/.git' in root:
+                  continue
+              for name in files:
+                  if not name.endswith('.md'):
+                      continue
+                  path = os.path.join(root, name)
+                  text = open(path, encoding='utf-8').read()
+                  for link in re.findall(r'\]\(([^)]+)\)', text):
+                      if link.startswith(('http://', 'https://', '#', 'mailto:')):
+                          continue
+                      target = link.split('#')[0]
+                      if not target:
+                          continue
+                      resolved = os.path.normpath(os.path.join(root, target))
+                      if not os.path.exists(resolved):
+                          bad.append(f'{path}: {link}')
+          if bad:
+              print('\n'.join(bad))
+              sys.exit(1)
+          print('all relative links resolve')
+          PY

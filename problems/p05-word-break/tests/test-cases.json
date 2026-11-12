@@ -1,0 +1,17 @@
+{
+  "function": "word_break",
+  "cases": [
+    {"name": "classic_true", "args": ["leetcode", ["leet", "code"]], "expected": true},
+    {"name": "reuse", "args": ["applepenapple", ["apple", "pen"]], "expected": true},
+    {"name": "prefix_trap", "args": ["catsandog", ["cats", "dog", "sand", "and", "cat"]], "expected": false},
+    {"name": "empty_string", "args": ["", ["a"]], "expected": false},
+    {"name": "single_word", "args": ["a", ["a"]], "expected": true},
+    {"name": "no_match", "args": ["abcd", ["a", "abc", "b", "cd"]], "expected": true},
+    {"name": "seam", "args": ["abcd", ["ab", "cd", "abc"]], "expected": true},
+    {"name": "whole_word", "args": ["aaaa", ["aaaa"]], "expected": true},
+    {"name": "many_singles", "args": ["aaaaaaa", ["a"]], "expected": true},
+    {"name": "overlap_words", "args": ["goalspecial", ["go", "goal", "goals", "special"]], "expected": true},
+    {"name": "two_piece", "args": ["cars", ["car", "ca", "rs"]], "expected": true},
+    {"name": "impossible_tail", "args": ["cars", ["car", "ca", "r"]], "expected": false}
+  ]
+}

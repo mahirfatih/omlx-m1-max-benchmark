@@ -1,0 +1,50 @@
+{
+  "title": "oMLX local request path — M1 Max",
+  "subtitle": "One OpenAI-compatible request, from client to tokens",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client",
+      "detail": "OpenCode · script · curl",
+      "group": "outside"
+    },
+    {
+      "id": "api",
+      "label": "oMLX API",
+      "detail": "FastAPI/uvicorn · 127.0.0.1:8000 · auth",
+      "group": "server"
+    },
+    {
+      "id": "guard",
+      "label": "Memory guard",
+      "detail": "prefill estimate · aggressive tier",
+      "group": "server"
+    },
+    {
+      "id": "sched",
+      "label": "Scheduler",
+      "detail": "continuous batching · 1 request",
+      "group": "server"
+    },
+    {
+      "id": "runtime",
+      "label": "MLX runtime",
+      "detail": "4-bit weights · 4-bit KV cache",
+      "group": "gpu"
+    },
+    {
+      "id": "disk",
+      "label": "SSD KV cache",
+      "detail": "turboquant blocks · LRU",
+      "group": "gpu"
+    }
+  ],
+  "edges": [
+    { "from": "client", "to": "api", "label": "POST /v1/chat/completions" },
+    { "from": "api", "to": "guard", "label": "load estimate" },
+    { "from": "guard", "to": "sched", "label": "accept / reject" },
+    { "from": "sched", "to": "runtime", "label": "batched prompt" },
+    { "from": "runtime", "to": "disk", "label": "restore prefix" },
+    { "from": "runtime", "to": "client", "label": "stream tokens" }
+  ]
+}

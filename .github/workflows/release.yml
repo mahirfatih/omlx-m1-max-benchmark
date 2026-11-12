@@ -1,0 +1,105 @@
+name: release
+
+# A release publishes one dated benchmark snapshot as a GitHub Release: the exact
+# report bytes an application can pin to, the machine-readable results, and the
+# manifest with the SHA-256 that proves them.
+#
+# Manual only: nothing runs on a push or a tag. A maintainer starts the run from
+# the Actions tab and picks the tag name. A release is immutable — the only way to
+# find out that this workflow is broken is to have already shipped it — so
+# `publish` defaults to false: the run does every step, prints the notes and the
+# assets it would attach, and stops. Set `publish` to true to create the tag and
+# the release for real, from `main`.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag and release name (created at the run's commit)"
+        required: true
+        default: "v2026-11-11"
+      publish:
+        description: "Actually create the release. Leave false to rehearse only."
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # false by default: run every step, then stop before the release.
+      REHEARSAL: ${{ inputs.publish && '0' || '1' }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Run the checks
+        run: ./test/test.sh
+      - name: Verify the manifest describes the report and results
+        run: python3 scripts/release/build-manifest.py --check
+      - name: Write the checksum
+        run: |
+          REPORT="$(python3 -c 'import json;print(json.load(open("manifest.json"))["report"])')"
+          shasum -a 256 "$REPORT" | awk -v r="$REPORT" '{print $1 "  " r}' > report.sha256
+      - name: Write the release notes
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          python3 - > notes.md <<'PY'
+          import json, os
+          tag = os.environ["TAG"]
+          m = json.load(open("manifest.json"))
+          print(f"""## Benchmark snapshot {tag}
+
+          | | |
+          | :--- | :--- |
+          | Report | `{m['report']}` |
+          | Generated | {m['generated']} |
+          | Models | {m['models']} |
+          | Challenges | {m['challenges']} |
+          | Size | {m['report_bytes']} bytes |
+          | SHA-256 | `{m['report_sha256']}` |
+
+          Pinned source:
+
+          ```
+          https://raw.githubusercontent.com/mahirfatih/omlx-m1-max-benchmark/{tag}/{m['report']}
+          ```
+
+          Verify with `shasum -a 256 -c report.sha256`. What the numbers mean is in
+          `docs/reference/RESULTS.md`; what changed is in `CHANGELOG.md`.
+          """)
+          PY
+      - name: Rehearse the release
+        if: env.REHEARSAL == '1'
+        run: |
+          echo "::notice::rehearsal only — nothing was published"
+          echo
+          cat notes.md
+          echo
+          echo "=== assets that would be attached ==="
+          ls -l manifest.json report.sha256
+          echo
+          cat report.sha256
+      - name: Publish the release
+        if: env.REHEARSAL == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          REPORT="$(python3 -c 'import json;print(json.load(open("manifest.json"))["report"])')"
+          gh release create "$TAG" \
+            "$REPORT" \
+            reference/results.json \
+            manifest.json \
+            report.sha256 \
+            --target "${{ github.sha }}" \
+            --title "$TAG" \
+            --notes-file notes.md

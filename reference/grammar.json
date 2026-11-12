@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-12",
+  "tasks": [
+    "person",
+    "verdict",
+    "matrix"
+  ],
+  "models": [
+    {
+      "model": "Qwen3.6-35B-A3B-4bit",
+      "profile": "qwen3",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.5,
+          "raw": "{\"name\": \"Elena Vance\", \"age\": 34, \"skills\": [\"Python\", \"Kubernetes\"]}"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.4,
+          "raw": "{\"verdict\":\"pass\",\"confidence\":1.0}"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.4,
+          "raw": "[[1, 2], [3, 4]]"
+        }
+      }
+    },
+    {
+      "model": "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
+      "profile": "qwen36-heretic",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.6,
+          "raw": "{\"name\": \"Elena Rostova\", \"age\": 34, \"skills\": [\"Python\", \"Kubernetes\"]}"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.5,
+          "raw": "{\"verdict\":\"pass\",\"confidence\":0.95}"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.4,
+          "raw": "[[1, 2], [3, 4]]"
+        }
+      }
+    },
+    {
+      "model": "Ornith-1.5-35B-A3B-MLX-4bit",
+      "profile": "qwen3",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.7,
+          "raw": "{\"name\": \"Maya Okonkwo\", \"age\": 34, \"skills\": [\"Python\", \"Kubernetes\", \"GraphQL\"]}"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.6,
+          "raw": "{\"verdict\": \"pass\", \"confidence\": 0.98}"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.5,
+          "raw": "[[1, 2], [3, 4]]"
+        }
+      }
+    },
+    {
+      "model": "gemma-4-26B-A4B-it-heretic-4bit",
+      "profile": "gemma4-heretic",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 1.2,
+          "raw": "```json\n{\n  \"name\": \"Elara Vance\",\n  \"age\": 29,\n  \"skills\": [\n    \"Rust\",\n    \"Distributed Systems\",\n    \"Kubernetes\"\n  ]\n}\n```"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.8,
+          "raw": "```json\n{\n  \"verdict\": \"pass\",\n  \"confidence\": 1.0\n}\n```"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.5,
+          "raw": "[[1, 2], [3, 4]]"
+        }
+      }
+    },
+    {
+      "model": "Qwen3-Coder-30B-A3B-Instruct-4bit",
+      "profile": "qwen3",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 1.1,
+          "raw": "{\n  \"name\": \"Luna Martinez\",\n  \"age\": 28,\n  \"skills\": [\"Python\", \"React\", \"Node.js\", \"AWS\"]\n}"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.7,
+          "raw": "{\n  \"verdict\": \"pass\",\n  \"confidence\": 0.95\n}"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 0.4,
+          "raw": "[[1,2],[3,4]]"
+        }
+      }
+    },
+    {
+      "model": "Qwen3.8-27B-Uncensored-MLX",
+      "profile": "qwen36-heretic",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 5.5,
+          "raw": "{\"name\":\"Ava Chen\",\"age\":29,\"skills\":[\"Python\",\"Docker\"]}"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 5.6,
+          "raw": "{\"verdict\":\"pass\",\"confidence\":1.0}"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 5.7,
+          "raw": "[[0, 0], [0, 0]]"
+        }
+      }
+    }
+  ]
+}

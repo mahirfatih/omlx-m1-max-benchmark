@@ -1,0 +1,33 @@
+{
+  // markdownlint-cli2 configuration for this repository.
+  //
+  // Three rules are off on purpose, and each is a deliberate writing choice
+  // rather than an accident:
+  //
+  //   MD013 (line-length)         the documents wrap by paragraph; breaking a
+  //                               table row to fit 80 columns makes it unreadable.
+  //   MD033 (no-inline-html)      a few documents keep two values in one cell
+  //                               with <br>.
+  //   MD060 (table-column-style)  the tables are aligned for the source, not for
+  //                               one fixed pipe style.
+  //
+  // MD024 stays on, but siblings only: CHANGELOG.md repeats `### Added` once per
+  // release, which is the correct Keep a Changelog shape.
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD060": false,
+    "MD028": false,
+    "MD036": false,
+    "MD024": {
+      "siblings_only": true
+    }
+  },
+  "globs": ["**/*.md"],
+  "ignores": [
+    "**/node_modules/**",
+    "**/__pycache__/**",
+    "benchmarks/**"
+  ]
+}

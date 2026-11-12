@@ -1,0 +1,16 @@
+# Who owns what. A review request follows the path of the change.
+*                                   @mahirfatih
+
+# The measured data. A change here moves a number people cite.
+/benchmarks/                        @mahirfatih
+
+# The configuration people copy. A change here changes how their server runs.
+/profiles/                          @mahirfatih
+/config/                            @mahirfatih
+
+# The guarantees. If one of these is weakened, the docs are only assertions.
+/scripts/                           @mahirfatih
+/.github/workflows/                 @mahirfatih
+
+# The security story.
+/docs/security/                     @mahirfatih

@@ -20,7 +20,16 @@ It covers:
 - **Model sizes** on disk and parameter counts.
 - **Uncensored / heretic / abliterated** classification with source evidence.
 - **Tuned oMLX profiles** that keep RAM usage stable (no OOM, no GPU stalls).
-- **Reproduction scripts** (benchmark + multi-language code validation).
+- **Reproduction scripts** (benchmark + multi-language code validation + repository analysis).
+- **Coding correctness**: models solve algorithmic problems whose code is *executed* against hidden cases, not just parsed.
+- **Repository analysis**: the models analyse a real project — [`mahirfatih/net-traffic-control-catalog`](https://github.com/mahirfatih/net-traffic-control-catalog) — and are scored on the facts they recover.
+
+The repository layout mirrors that reference project, and one benchmark asks the
+models to analyse it directly (see [Repository analysis](#repository-analysis)).
+A second capability benchmark *runs* the models' code (see
+[Coding benchmark](#coding-benchmark)); the problem catalogue it uses was
+inspired by [`liohunter1/llm-coding-benchmark`](https://github.com/liohunter1/llm-coding-benchmark),
+though the problems and cases here are original.
 
 > All numbers below were measured on the machine described in [Hardware & Software](#hardware--software). Results vary with prompt length, quantization and background load.
 
@@ -31,6 +40,8 @@ It covers:
 - [Benchmark results](#benchmark-results)
 - [Uncensored / Heretic classification](#uncensored--heretic-classification)
 - [Profiles](#profiles)
+- [Repository analysis](#repository-analysis)
+- [Coding benchmark](#coding-benchmark)
 - [Reproducing](#reproducing)
 - [Repository structure](#repository-structure)
 - [Notes & disclaimer](#notes--disclaimer)
@@ -97,7 +108,7 @@ xychart-beta
     bar [74.7, 73.0, 60.4, 60.7, 41.8, 18.1]
 ```
 
-_Series order: 1st bar = EN, 2nd bar = TR._
+*Series order: 1st bar = EN, 2nd bar = TR.*
 
 ### Cold load time (s)
 
@@ -143,6 +154,7 @@ xychart-beta
 **Local behavior test** (`Qwen3.8-27B-Uncensored:qwen36-heretic`), 3 benign red-team probes (profanity / dark humor / manipulation monologue): **3/3 no refusal**.
 
 **Summary**
+
 - **Uncensored + Heretic/Abliterated:** Heretic, gemma-4-heretic, Qwen3.8-Uncensored
 - **Standard / censored:** Qwen3-Coder, Qwen3.6-35B, Ornith-1.5
 - **Fastest uncensored:** Qwen3.6-35B-Heretic (~71 tok/s)
@@ -183,6 +195,56 @@ The full, machine-readable configuration is in [`profiles/omlx-profiles.json`](p
 - **`is_pinned = false` for all models** → no startup RAM spike; models load on demand and unload after 180 s idle.
 - **temperature 0.2 + presence 0.3 + repetition 1.1** → stable code, fewer loops.
 
+## Repository analysis
+
+A second capability benchmark: how each model analyses a real repository. The
+target is [`mahirfatih/net-traffic-control-catalog`](https://github.com/mahirfatih/net-traffic-control-catalog)
+— a shipped CC0 catalog of 6,731 hosts, 27 categories and 22 services, the same
+shape this repository mirrors. Every model gets the same digest (file tree,
+README, data statistics) and the same task; the score is how many of the
+repository's own facts the answer cites.
+
+| Model | Answer (s) | tok/s | Facts recovered | Score |
+| :--- | ---: | ---: | ---: | ---: |
+| `Ornith-1.5-35B-A3B` | 6.8 | 53.5 | 10/12 | **83%** |
+| `Qwen3-Coder-30B-A3B-Instruct` | 6.6 | 35.8 | 7/12 | **58%** |
+| `Qwen3.6-35B-A3B` | 4.8 | 62.6 | 6/12 | **50%** |
+| `Qwen3.6-35B-A3B-Uncensored-Heretic` | 4.7 | 57.8 | 5/12 | **42%** |
+| `gemma-4-26B-A4B-it-heretic` | 4.3 | 38.6 | 4/12 | **33%** |
+| `Qwen3.8-27B-Uncensored-MLX` | 46.1 | 15.2 | 0/12 | **0%** |
+
+**The fastest answer was not the best.** Ornith-1.5 cited the real numbers
+(host count, finance skew); Qwen3.6-35B answered 30% faster and recovered half
+as many. Two models *invented* a file count ("6,863 files in `scripts/`"; the
+true figure is **136**) — a fluent analysis with a fabricated structure. The
+slowest model returned nothing at all.
+
+Full reading: [`docs/analysis/net-traffic-control-catalog.md`](docs/analysis/net-traffic-control-catalog.md).
+
+## Coding benchmark
+
+A third capability benchmark, and the strictest: the model's code is **executed**,
+not read. Each model is asked for a Python solution to five problems
+([`problems/`](problems/README.md), 56 hidden cases) and the code is run against
+those cases under a 20-second timeout.
+
+| Model | p01 | p02 | p03 | p04 | p05 | Total |
+| :--- | :---: | :---: | :---: | :---: | :---: | ---: |
+| `Qwen3.6-35B-A3B` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Qwen3.6-35B-A3B-Uncensored-Heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Ornith-1.5-35B-A3B` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `gemma-4-26B-A4B-it-heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Qwen3-Coder-30B-A3B-Instruct` | 12/12 | 10/10 | ❌ syntax | 12/12 | 11/12 | **45/46** |
+| `Qwen3.8-27B-Uncensored-MLX` | 12/12 | 10/10 | ❌ not defined | 12/12 | ❌ not defined | **34/34** |
+
+**Four models solved everything.** The failures are concrete, not stylistic:
+Qwen3-Coder emitted invalid indentation after an `else` (the module import fails);
+Qwen3.8 did not define the requested function name at all on two problems. The
+cases with a total below 56 are problems the model's code failed to *load*, so no
+case could run — a hard zero, reported as ❌.
+
+Full reading: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
+
 ## Reproducing
 
 1. Install and start [oMLX](https://omlx.ai) (OpenAI-compatible server on `127.0.0.1:8000`).
@@ -191,32 +253,52 @@ The full, machine-readable configuration is in [`profiles/omlx-profiles.json`](p
 4. Run the benchmark:
 
 ```bash
-python3 scripts/benchmark.py
+python3 scripts/measure/benchmark.py
 ```
 
-5. Validate multi-language code generation (Python / Node.js / Bash / Swift):
+1. Validate multi-language code generation (Python / Node.js / Bash / Swift):
 
 ```bash
-python3 scripts/code-matrix-test.py
+python3 scripts/measure/code-matrix-test.py
+```
+
+1. Analyse a real repository and score the models on it:
+
+```bash
+python3 scripts/measure/repo-analysis-test.py --repo ~/Sites/net-traffic-control-catalog
+```
+
+1. Score coding correctness — the model's code is *run* against hidden cases:
+
+```bash
+python3 scripts/measure/code-benchmark.py --selftest   # no model needed
+python3 scripts/measure/code-benchmark.py --models Qwen3.6-35B-A3B-4bit:qwen3
 ```
 
 > The scripts read the API key from `~/.omlx/settings.json` and write a Markdown report.
 
 ## Repository structure
 
-```
+```text
 omlx-m1-max-benchmark/
-├── README.md
-├── LICENSE
-├── benchmarks/
-│   └── 2026-11-11-m1max.md      # full raw report
-├── profiles/
-│   └── omlx-profiles.json       # sanitized oMLX profiles
-├── config/
-│   └── settings.example.json    # example global settings
-└── scripts/
-    ├── benchmark.py             # throughput benchmark (EN + TR)
-    └── code-matrix-test.py      # Python / Node / Bash / Swift validation
+├── README.md · README.tr.md
+├── benchmarks/                 # the raw, dated benchmark report
+├── reference/                  # machine-readable data (results, models, runs)
+├── config/                     # example settings + schema + model sources
+├── profiles/omlx-profiles.json # sanitized oMLX profiles
+├── problems/                   # coding problems with executable hidden cases
+├── data/languages.json         # the 102-language hallucination corpus
+├── evidence/                   # raw output of the security/red-team/benchmark runs
+├── docs/                       # overview · guides · reference · analysis ·
+│                               # architecture · diagrams · security · release · testing
+├── scripts/
+│   ├── measure/                # benchmark, code, grammar, memory, hallucination, analysis
+│   ├── security/               # server probe, red-team, lab, RE challenge
+│   ├── config/                 # health check, apply-profiles
+│   ├── analysis/               # results renderer
+│   ├── checks/                 # naming, docs-fresh
+│   └── release/                # manifest
+└── test/test.sh                # offline gate
 ```
 
 ## Notes & disclaimer

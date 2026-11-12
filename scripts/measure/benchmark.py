@@ -1,4 +1,9 @@
-import json, urllib.request, urllib.error, time, os, datetime
+import json
+import urllib.request
+import urllib.error
+import time
+import os
+import datetime
 
 SETTINGS = json.load(open('/Users/MahirFatih/.omlx/settings.json'))
 API = SETTINGS['auth']['api_key']
@@ -74,7 +79,8 @@ results = []
 for model, prof in TARGETS:
     print("=" * 70, flush=True)
     print("MODEL:", model, "| profil:", prof, flush=True)
-    unload_all(); time.sleep(3)
+    unload_all()
+    time.sleep(3)
     # warmup (load + ilk cevap)
     try:
         load_t, _, _ = call(model, "Merhaba, tek kelime yaz.", max_tokens=8)
@@ -107,7 +113,8 @@ ram = int(os.popen("sysctl -n hw.memsize").read().strip()) // (1024**3)
 rows = []
 for r in results:
     if r.get("err") and not r.get("EN") and not r.get("TR"):
-        rows.append(r); continue
+        rows.append(r)
+        continue
     allv = [x["tps"] for x in r.get("EN", []) + r.get("TR", [])]
     en = [x["tps"] for x in r.get("EN", [])]
     tr = [x["tps"] for x in r.get("TR", [])]
@@ -123,9 +130,9 @@ lines = []
 lines.append("# oMLX Model Hız Testi (token akışı)\n")
 lines.append(f"- **Tarih:** {now}")
 lines.append(f"- **Donanım:** {chip}, {ram} GB RAM")
-lines.append(f"- **Sunucu:** oMLX (`127.0.0.1:8000`)")
-lines.append(f"- **Yöntem:** Her model tek tek yüklendi; İngilizce ve Türkçe prompt, her dil **2 kez** çalıştırıldı. Hız = `completion_tokens / geçen süre` (tok/s). Önce model boşaltıldı, sonra ısındırma + ölçüm.")
-lines.append(f"- **Ayarlar:** ctx 32768, temp 0.2, max_tokens 220, thinking kapalı, KV 4-bit\n")
+lines.append("- **Sunucu:** oMLX (`127.0.0.1:8000`)")
+lines.append("- **Yöntem:** Her model tek tek yüklendi; İngilizce ve Türkçe prompt, her dil **2 kez** çalıştırıldı. Hız = `completion_tokens / geçen süre` (tok/s). Önce model boşaltıldı, sonra ısındırma + ölçüm.")
+lines.append("- **Ayarlar:** ctx 32768, temp 0.2, max_tokens 220, thinking kapalı, KV 4-bit\n")
 lines.append("## Sıralama (en hızlıdan en yavaşa)\n")
 lines.append("| # | Model | Profil | EN tok/s | TR tok/s | Ortalama tok/s | Yükleme (s) |")
 lines.append("|---|---|---|---|---|---|---|")
