@@ -11,6 +11,7 @@
       "runner": "mlx-gen",
       "runner_docs": "https://github.com/lpalbou/mlx-gen",
       "cli": "mlxgen",
+      "cli_note": "mlx-gen is installed on its own (a dedicated virtualenv), because its console scripts overlap mflux's and `uv tool install mlx-gen` refuses to overwrite them. Put that venv's bin directory on PATH before running: `export PATH=\"$HOME/Sites/.mlxgen-venv/bin:$PATH\"`. The harness invokes `mlxgen` by name, so PATH is what selects it.",
       "invoke": [
         "mlxgen", "generate",
         "--model", "{model}",

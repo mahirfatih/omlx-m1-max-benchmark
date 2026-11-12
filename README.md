@@ -42,6 +42,8 @@ though the problems and cases here are original.
 - [Profiles](#profiles)
 - [Repository analysis](#repository-analysis)
 - [Coding benchmark](#coding-benchmark)
+- [Hallucination & error risk](#hallucination--error-risk)
+- [Image generation](#image-generation)
 - [Reproducing](#reproducing)
 - [Repository structure](#repository-structure)
 - [Notes & disclaimer](#notes--disclaimer)
@@ -244,6 +246,46 @@ cases with a total below 56 are problems the model's code failed to *load*, so n
 case could run — a hard zero, reported as ❌.
 
 Full reading: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
+
+## Hallucination & error risk
+
+Does a model invent APIs that do not exist? Each of 102 languages is probed with a
+**real** documented API and a **fabricated twin** (`functools.reducex`, `{#eachx}`),
+and the model must judge which is which.
+
+| Model | Hallucination (fake → "real") | False alarm (real → "fake") | Brier ↓ |
+| :--- | ---: | ---: | ---: |
+| `Qwen3.6-35B-A3B` | **0%** (0/102) | 0% (0/102) | 0.001 |
+| `Qwen3.6-35B-A3B-Uncensored-Heretic` | **0%** (0/102) | 0% (0/102) | 0.001 |
+| `Ornith-1.5-35B-A3B` | **0%** (0/102) | 2% (2/102) | 0.009 |
+| `gemma-4-26B-A4B-it-heretic` | **0%** (0/102) | 0% (0/102) | 0.0 |
+| `Qwen3-Coder-30B-A3B-Instruct` | **0%** (0/91) | 2% (2/91) | 0.006 |
+
+**No model invented an API.** Where the models miss, they err toward calling a
+real API fake — the safe direction. `Qwen3.8-27B-Uncensored` is absent on purpose:
+across three attempts it used ~5.2 hours of GPU time and still did not finish the
+corpus the others complete in 1–2 minutes each.
+
+Full reading: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
+
+## Image generation
+
+The text benchmark measures oMLX; images are a **separate layer** run by
+[`mflux`](https://github.com/filipstrand/mflux). One `mflux-generate-*` process per
+prompt, timed end to end, the written PNG verified.
+
+| Model (profile) | Licence | s/img | s/step | Size |
+| :--- | :--- | ---: | ---: | :--- |
+| `mflux-community/flux2-klein-4b-mflux-q8` (`klein-q8`) | Apache-2.0 | **22.5** | 5.6 | 1024×1024 |
+| `mflux-community/flux-3-image-klein-base-mflux-q8` (`flux3-klein-q8`) | FLUX Kommunity License | 180.4 | 11.3 | 1024×1024 |
+
+A 4-step distilled 4B model runs ~22.5 s per 1024×1024 image (the first is slower,
+~28 s, because the model loads); FLUX 3 at 16 steps and a 5.6B transformer takes
+~180 s. Legible text and correct hands — the classic failure surfaces — come out
+clean on both.
+
+Full reading and the second model: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md)
+and [`evidence/image-benchmark-2026-11-12.md`](evidence/image-benchmark-2026-11-12.md).
 
 ## Reproducing
 

@@ -108,9 +108,48 @@
     "Qwen3.8-27B-Uncensored-MLX": "qwen36-heretic",
     "Qwen3.6-35B-A3B-4bit": "qwen3",
     "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit": "qwen36-heretic",
-    "gemma-4-26B-A4B-it-heretic-4bit": "gemma4-heretic"
+    "gemma-4-26B-A4B-it-heretic-4bit": "gemma4-heretic",
+    "Devstral-Small-2-24B-Instruct-2512-8bit": "devstral"
   },
   "model_profiles": {
+    "Devstral-Small-2-24B-Instruct-2512-8bit": {
+      "devstral": {
+        "name": "devstral",
+        "display_name": "devstral",
+        "api_name": "devstral",
+        "description": "Coding model (Mistral Devstral Small 2, 24B dense, 8-bit MLX). mistral3 architecture; oMLX ships mlx_lm/models/mistral3.py, so it loads.",
+        "source_template": "qwen3",
+        "expose_as_model": true,
+        "created_at": "2026-11-12T00:00:00+00:00",
+        "updated_at": "2026-11-12T00:00:00+00:00",
+        "settings": {
+          "max_context_window": 32768,
+          "max_tokens": 2048,
+          "temperature": 0.2,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "max_tool_result_tokens": 0,
+          "enable_thinking": false,
+          "thinking_budget_enabled": false,
+          "thinking_budget_tokens": 8192,
+          "guided_grammar_enabled": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "qwen35_ane_prefill_enabled": false,
+          "a8_prefill_enabled": false,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false
+        }
+      }
+    },
     "Qwen3.8-27B-Uncensored-MLX": {
       "qwen36-heretic": {
         "name": "qwen36-heretic",

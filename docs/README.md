@@ -42,10 +42,8 @@ documents explain what they measured.
 - [`analysis/redteam.md`](analysis/redteam.md) — the offensive-capability reading: web exploitation vs reverse engineering.
 - [`analysis/net-traffic-control-catalog.md`](analysis/net-traffic-control-catalog.md) — the models on a real repository: answer time, decode speed, and how much of it they recover.
 - [`analysis/code-benchmark.md`](analysis/code-benchmark.md) — the models' code, executed: which pass hidden cases and where they fail.
+- [`analysis/hallucination.md`](analysis/hallucination.md) — 102 languages × 2 probes (a real API and a fabricated twin): whether the models invent APIs, and the slow model that was dropped.
 - [`analysis/external-benchmarks.md`](analysis/external-benchmarks.md) — the outside projects we looked at, their licences, and what we took.
-- Hallucination and error risk across 102 languages — which model invents APIs. The probe is
-  [`scripts/measure/hallucination-test.py`](../scripts/measure/hallucination-test.py); its reading
-  lands with the completed run.
 
 ## Reference — what is in it right now
 
@@ -95,7 +93,7 @@ documents explain what they measured.
 | "what were the numbers?" | [`reference/RESULTS.md`](reference/RESULTS.md) |
 | "why is the fastest model fastest?" | [`analysis/README.md`](analysis/README.md) |
 | "do the models' solutions actually pass tests?" | [`analysis/code-benchmark.md`](analysis/code-benchmark.md) |
-| "do they invent APIs that do not exist?" | [`scripts/measure/hallucination-test.py`](../scripts/measure/hallucination-test.py) |
+| "do they invent APIs that do not exist?" | [`analysis/hallucination.md`](analysis/hallucination.md) |
 | "can the models actually hack?" | [`security/OFFENSIVE-BENCHMARK.md`](security/OFFENSIVE-BENCHMARK.md) |
 | "is the server exposed?" | [`security/README.md`](security/README.md) |
 | "how does a request flow?" | [`diagrams/architecture/architecture.md`](diagrams/architecture/architecture.md) |

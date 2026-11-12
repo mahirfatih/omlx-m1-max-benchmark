@@ -681,6 +681,8 @@ def render(date, data):
         if line == "" and out and out[-1] == "":
             continue
         out.append(line)
+    while out and out[-1] == "":
+        out.pop()
     return "\n".join(out) + "\n"
 
 

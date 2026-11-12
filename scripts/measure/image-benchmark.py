@@ -232,8 +232,17 @@ def render(date, rows):
     lines.append("_s/img is what a person waits for one finished image on this "
                  "machine. Because each CLI call reloads the model, it is a cold "
                  "number; the steady-state per-step cost is the `s/step` column._")
-    lines.append("")
-    return "\n".join(lines) + "\n"
+    # Collapse any run of blank lines to one and drop trailing blanks, so the
+    # report is lint-clean however many rows there are (same fix as the
+    # hallucination harness, whose section-skipping produced the same MD012).
+    out = []
+    for line in lines:
+        if line == "" and out and out[-1] == "":
+            continue
+        out.append(line)
+    while out and out[-1] == "":
+        out.pop()
+    return "\n".join(out) + "\n"
 
 
 def main():

@@ -5,6 +5,9 @@ What the measurements mean, beyond the table.
 - [`README.md`](README.md) — this file: the analysis and the red-team reading.
 - [`redteam.md`](redteam.md) — the offensive-capability analysis in full.
 - [`net-traffic-control-catalog.md`](net-traffic-control-catalog.md) — how the six models analyse a real repository, measured.
+- [`code-benchmark.md`](code-benchmark.md) — the models' code, executed: which pass hidden cases and where they fail.
+- [`hallucination.md`](hallucination.md) — 102 languages, each probed with a real API and a fabricated twin: do the models invent APIs, and what did the one slow model cost.
+- [`external-benchmarks.md`](external-benchmarks.md) — the outside projects we looked at.
 
 ## Throughput: why the order is what it is
 

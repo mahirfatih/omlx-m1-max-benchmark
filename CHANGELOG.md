@@ -41,6 +41,14 @@ date-based snapshots rather than semver releases.
   Offline `--selftest`.
 - `docs/analysis/hallucination.md`, `docs/analysis/external-benchmarks.md`, and
   the raw runs under `evidence/` and `reference/`.
+- The first full run. No model invented an API (0/102 fabricated names called real
+  on every model that finished); the rare misses are false alarms, the safe
+  direction. `Qwen3.8-27B-Uncensored` was dropped from the table: three attempts
+  spent ~5.2 hours of GPU time without finishing the corpus the others complete in
+  1–2 minutes. The harness gained four robustness fixes found during the run — a
+  truncated answer escalates its budget, a partial batch is re-asked for the names
+  it left out, a decorated key (`'Svelte: "{#eachx}"'`) is unwrapped, and a mangled
+  JSON object is salvaged rather than scored as zero.
 - The external projects consulted (and why most were cited rather than copied)
   are recorded in [`docs/analysis/external-benchmarks.md`](docs/analysis/external-benchmarks.md):
   [`liohunter1`](https://github.com/liohunter1/llm-coding-benchmark),
@@ -65,6 +73,13 @@ date-based snapshots rather than semver releases.
   active. `--selftest` is offline.
 - `data/image-prompts.json` — eight original prompts across the categories that
   separate image models (photorealism, hands, legible text, composition, style).
+- The first real run: `klein-q8` renders a 1024×1024 image in **~22.5 s** (5.6
+  s/step, 4 steps; the first image is ~28 s because the model loads). Legible
+  text and hands come out clean. The saved PNGs are in `evidence/images/`. The
+  `flux3-klein-q8` profile was corrected to the model actually on disk
+  (`mflux-community/flux-3-image-klein-base-mflux-q8`, `--base-model
+  flux3-klein-base`) — the earlier entry pointed at a repository that is not the
+  one mflux downloaded.
 - `docs/reference/LICENSES.md` — what each model's own card says. **Download is
   not a licence:** `Ornith-1.5` declares none, the gemma variant is tagged
   Apache-2.0 but links to the Gemma terms, and FLUX 3 is the conditional

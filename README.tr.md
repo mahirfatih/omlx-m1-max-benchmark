@@ -48,6 +48,7 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 - [Güvenlik](#güvenlik)
 - [Depo analizi](#depo-analizi)
 - [Kod benchmark'ı](#kod-benchmarkı)
+- [Halüsinasyon ve hata riski](#halüsinasyon-ve-hata-riski)
 - [Çoğaltma](#çoğaltma)
 - [Depo yapısı](#depo-yapısı)
 - [Lisans](#lisans)
@@ -196,6 +197,27 @@ fonksiyon adını hiç tanımlamadı. Toplamı 56'nın altında olan satırlar, 
 kodunun *yüklenemediği* problemlerdir; hiç vaka çalışmadığı için kesin sıfırdır.
 
 Tam analiz: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
+
+## Halüsinasyon ve hata riski
+
+Bir model var olmayan API'leri uyduruyor mu? 102 dilin her biri, gerçek bir
+dokümante API ile **uydurma bir eşi** (`functools.reducex`, `{#eachx}`) üzerinden
+yoklanır ve modelin hangisinin gerçek olduğunu söylemesi istenir.
+
+| Model | Halüsinasyon (uydurma → "gerçek") | Yanlış alarm (gerçek → "uydurma") | Brier ↓ |
+| :--- | ---: | ---: | ---: |
+| `Qwen3.6-35B-A3B` | **0%** (0/102) | 0% (0/102) | 0.001 |
+| `Qwen3.6-35B-A3B-Uncensored-Heretic` | **0%** (0/102) | 0% (0/102) | 0.001 |
+| `Ornith-1.5-35B-A3B` | **0%** (0/102) | 2% (2/102) | 0.009 |
+| `gemma-4-26B-A4B-it-heretic` | **0%** (0/102) | 0% (0/102) | 0.0 |
+| `Qwen3-Coder-30B-A3B-Instruct` | **0%** (0/91) | 2% (2/91) | 0.006 |
+
+**Hiçbir model API uydurmadı.** Modellerin kaçırdığı yerlerde hata, gerçek bir
+API'ye "uydurma" demek yönünde — yani güvenli tarafta. `Qwen3.8-27B-Uncensored`
+tabloda yok, bilerek: üç denemede **~5,2 saat** GPU zamanı harcayıp diğerlerinin
+1–2 dakikada bitirdiği korpüsü yine de tamamlayamadı.
+
+Tam analiz: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
 
 ## Çoğaltma
 
