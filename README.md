@@ -47,6 +47,7 @@ though the problems and cases here are original.
 - [Benchmark results](#benchmark-results)
 - [Uncensored / Heretic classification](#uncensored--heretic-classification)
 - [Profiles](#profiles)
+- [Long prompts — `omlx-prompt-shrink`](#long-prompts--omlx-prompt-shrink)
 - [Repository analysis](#repository-analysis)
 - [Coding benchmark](#coding-benchmark)
 - [Hallucination & error risk](#hallucination--error-risk)
@@ -237,6 +238,34 @@ The full, machine-readable configuration is in [`profiles/omlx-profiles.json`](p
 - **32K context + 4-bit KV cache** keeps the runtime footprint at ~17–20 GB per model, preventing the memory guard from rejecting loads.
 - **`is_pinned = false` for all models** → no startup RAM spike; models load on demand and unload after 180 s idle.
 - **temperature 0.2 + presence 0.3 + repetition 1.1** → stable code, fewer loops.
+
+## Long prompts — `omlx-prompt-shrink`
+
+32K is a deliberate trade-off, not a limit imposed by the models: it keeps the KV
+cache at ~17–20 GB and keeps prefill short. The cost shows up in a long session,
+when the accumulated prompt crosses the ceiling and oMLX refuses the request:
+
+```text
+Prompt is too long: 39514 tokens > 32768 maximum context length
+```
+
+Raising `max_context_window` pushes that wall further out but does not remove it,
+and every extra token of context is paid for in memory and prefill time. Keeping
+32K and sending a smaller prompt is the cheaper answer, so this repository
+recommends **[`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink)** —
+an MCP server that measures the context before the request and drops the oldest
+messages instead of letting the server reject the call.
+
+| Tool | What it returns |
+| :--- | :--- |
+| `estimate_context` | Estimated tokens, remaining budget, `should_trim` |
+| `trim_context` | The message list with the oldest messages dropped |
+
+It is a single Python file, runs on the same Mac with the system `python3`
+(`pip install mcp`), and defaults to this repository's profile
+(`max_context_tokens 32768`, `keep_last 8`). Details and the OpenCode
+configuration are in [its README](https://github.com/mahirfatih/omlx-prompt-shrink#readme);
+the profile-level note is in [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--omlx-prompt-shrink).
 
 ## Repository analysis
 

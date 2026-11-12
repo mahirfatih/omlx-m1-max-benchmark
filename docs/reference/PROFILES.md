@@ -77,6 +77,31 @@ are never included**; the example uses the placeholder `REPLACE_WITH_YOUR_KEY`.
 - **`max_tokens 4096` on `qwen3`.** Coding tasks emit whole files; chat does not,
   so the heretic profiles stay at 2048.
 
+## Long prompts — `omlx-prompt-shrink`
+
+32K context is a deliberate speed/memory trade-off, so a long session can still
+end with the server refusing the request:
+
+```text
+Prompt is too long: 39514 tokens > 32768 maximum context length
+```
+
+Raising `max_context_window` moves that wall but does not remove it, and it costs
+prefill time and KV cache. If you would rather keep 32K, use
+[`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink),
+an MCP server that measures the context before the request and drops the oldest
+messages when the estimate crosses the limit:
+
+| Tool | What it does |
+| :--- | :--- |
+| `estimate_context` | Approximate token count, remaining budget and `should_trim` |
+| `trim_context` | Returns the message list with the oldest messages dropped |
+
+It is plain Python and runs with the system `python3`
+(`pip install mcp`), so it works beside `omlx-server` on the same Mac. Defaults
+match this repository's profile: `max_context_tokens 32768`, `keep_last 8`.
+
+
 ## Changing a profile
 
 Either edit it in the oMLX dashboard, or change

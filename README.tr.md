@@ -45,6 +45,7 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 - [Benchmark sonuçları](#benchmark-sonuçları)
 - [Uncensored / Heretic sınıflandırması](#uncensored--heretic-sınıflandırması)
 - [Profiller](#profiller)
+- [Uzun prompt'lar — `omlx-prompt-shrink`](#uzun-promptlar--omlx-prompt-shrink)
 - [Güvenlik](#güvenlik)
 - [Depo analizi](#depo-analizi)
 - [Kod benchmark'ı](#kod-benchmarkı)
@@ -140,6 +141,34 @@ Kanıtlar, HF alıntıları ve yerel davranış testleri:
 | KV cache 4-bit | ✅ | ✅ | ✅ |
 
 Tam ayarlar: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
+
+## Uzun prompt'lar — `omlx-prompt-shrink`
+
+32K bilinçli bir tercih: KV cache'i ~17–20 GB'ta ve prefill'i kısa tutuyor. Bedeli
+uzun oturumlarda görünür — biriken prompt tavanı aşınca oMLX isteği reddeder:
+
+```text
+Prompt is too long: 39514 tokens > 32768 maximum context length
+```
+
+`max_context_window`'u yükseltmek duvarı ileri taşır ama kaldırmaz; fazladan her
+token bellekte ve prefill süresinde ödenir. 32K'da kalıp **daha küçük prompt**
+göndermek daha ucuz bir çözüm, bu yüzden bu depo
+**[`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink)**
+MCP sunucusunu öneriyor: istekten önce context'i ölçer, sunucunun isteği
+reddetmesini beklemek yerine en eski mesajları düşürür.
+
+| Araç | Ne döner |
+| :--- | :--- |
+| `estimate_context` | Tahmini token, kalan bütçe, `should_trim` |
+| `trim_context` | En eski mesajlar düşürülmüş mesaj listesi |
+
+Tek dosyalık Python; aynı Mac'te sistem `python3`'ü ile çalışır (`pip install mcp`)
+ve bu depodaki profille aynı varsayılanları kullanır
+(`max_context_tokens 32768`, `keep_last 8`). Kurulum ve OpenCode yapılandırması
+[README'sinde](https://github.com/mahirfatih/omlx-prompt-shrink#readme); profil
+düzeyindeki not [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--omlx-prompt-shrink)
+içinde.
 
 ## Güvenlik
 
