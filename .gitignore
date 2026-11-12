@@ -8,6 +8,11 @@ __pycache__/
 venv/
 .venv-*/
 
+# Linter caches (ruff writes .ruff_cache/ beside the config it is run from)
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
 # Generated reports
 *.local.md
 
