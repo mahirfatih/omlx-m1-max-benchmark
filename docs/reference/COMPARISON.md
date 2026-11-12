@@ -189,6 +189,18 @@ by 8×** and is the one to use unless you need FLUX 3 specifically. The PNGs are
 committed in [`evidence/images/`](../../evidence/images/); legible text and
 correct hands came out clean on both.
 
+The same prompt — a poster whose whole point is whether the two words render as
+words — on both models. The cheap one did not need the expensive one's help here:
+
+| `flux2-klein-4b` (22.5 s) | `flux-3-klein-base` (180.4 s) |
+| :---: | :---: |
+| ![LOCAL FIRST poster, klein-q8](../../evidence/images/klein-q8--text-poster.png) | ![LOCAL FIRST poster, flux-3-klein q8](../../evidence/images/flux3-klein-q8--text-poster.png) |
+
+Every one of the sixteen images, with the prompt that produced it, is in
+[`evidence/image-benchmark-2026-11-12.md`](../../evidence/image-benchmark-2026-11-12.md)
+and
+[`evidence/image-benchmark-flux3-2026-11-12.md`](../../evidence/image-benchmark-flux3-2026-11-12.md).
+
 ## Video generation — a separate layer
 
 Run through [mlx-gen](https://github.com/lpalbou/mlx-gen) and

@@ -104,8 +104,8 @@ run it.
 
 | Setting | `klein-q8` | `flux3-klein-q8` |
 | :--- | ---: | ---: |
-| Model | `mflux-community/flux2-klein-4b-mflux-q8` | `VisualInference/FLUX-3-Image-Klein-MLX-8bit` |
-| Base model | `black-forest-labs/FLUX.2-klein-4B` | `black-forest-labs/flux-3-image-klein` |
+| Model | `mflux-community/flux2-klein-4b-mflux-q8` | `mflux-community/flux-3-image-klein-base-mflux-q8` |
+| Base model | `black-forest-labs/FLUX.2-klein-4B` | `black-forest-labs/flux-3-image-klein-base` |
 | CLI | `mflux-generate-flux2` | `mflux-generate-flux3` |
 | Quantization | MLX affine, 8-bit | MLX affine, 8-bit (modified) |
 | Width × height | 1024 × 1024 | 1024 × 1024 |
@@ -148,7 +148,7 @@ be applied to a server that cannot run it.
 
 | Setting | `wan22-ti2v-5b-q8` | `cogvideox-fun-1.5-5b-inp-q8` |
 | :--- | ---: | ---: |
-| Model | `AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit` | `dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8` |
+| Model (as the runner resolves it) | `Wan-AI/Wan2.2-TI2V-5B-Diffusers` | `dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8` |
 | Base model | `Wan-AI/Wan2.2-TI2V-5B-Diffusers` | `alibaba-pai/CogVideoX-Fun-V1.5-5b-InP` |
 | Runner | `mlxgen generate` | `python scripts/quick_infer.py` |
 | Quantization | mixed q8 / BF16 | int8 (transformer block linears) |
@@ -168,6 +168,12 @@ machine** with `--low-ram`, deliberately smaller than the uploader's validation
 profile (1280×704, 17 frames, 20 steps on 128 GB, which peaked near 104 GiB). The
 licence is Apache-2.0, inherited from the base model.
 
+The model id is `Wan-AI/Wan2.2-TI2V-5B-Diffusers` and this is not cosmetic:
+mlx-gen resolves a model **against its own Hugging Face cache** and does not read
+the oMLX-style quantised folder at `~/models/AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit`
+(16.9 GB on this machine). Pointing it there fails; the download that makes the
+profile runnable is `mlxgen download --model Wan-AI/Wan2.2-TI2V-5B-Diffusers`.
+
 **`cogvideox-fun-1.5-5b-inp-q8`** — CogVideoX-Fun V1.5 5B is a diffusers-style DiT
 ported to MLX; `quick_infer.py` writes an animated GIF and has its own defaults (used
 here: 672×384, 5 frames, 50 steps, guidance 6.0). Its licence is **not** the
@@ -179,3 +185,103 @@ A real run of either profile needs its runner installed and its model downloaded
 `scripts/measure/video-benchmark.py` refuses to start while any other GPU job is
 active, and reads the finished clip's size, frame count, frame rate and duration
 back with **ffprobe** rather than trusting the runner's log.
+
+## Running these yourself
+
+The tables above describe the settings; these are the commands. Three separate
+tools, one GPU — **never run two of them at once**, text, image and video
+included. The harness checks this itself (`scripts/measure/video-benchmark.py`
+refuses to start next to another GPU job), but if you are typing the commands by
+hand, that is on you.
+
+### Text — oMLX
+
+Profiles are applied through oMLX, not through a flag. Point the client at
+`http://127.0.0.1:8000/v1` and select the model; oMLX picks the profile from the
+model → profile map above.
+
+```bash
+curl -s http://127.0.0.1:8000/v1/chat/completions \
+  -H "Authorization: Bearer $OMLX_KEY" -H 'Content-Type: application/json' \
+  -d '{"model":"Qwen3.6-35B-A3B-4bit",
+       "messages":[{"role":"user","content":"hello"}],
+       "max_tokens":220,"temperature":0.2}'
+```
+
+Reconcile a live install with the committed snapshot:
+
+```bash
+python3 scripts/config/apply-profiles.py            # dry-run diff
+python3 scripts/config/apply-profiles.py --check    # non-zero if drifted
+python3 scripts/config/apply-profiles.py --apply    # write, with a .bak first
+```
+
+### Image — mflux
+
+The CLI is one-shot: it loads the model, generates, writes the PNG, exits. The
+first image therefore includes model load (see the `s/img` note in the image
+evidence). Output size is whatever `--height`/`--width` say.
+
+```bash
+# klein-q8 — the 22.5 s/image profile. Steps and guidance come from the model card.
+mflux-generate-flux2 \
+  --model mflux-community/flux2-klein-4b-mflux-q8 \
+  --base-model flux2-klein-4b \
+  --prompt "Photorealistic rainy-night street market in Istanbul, wet cobblestones" \
+  --width 1024 --height 1024 --steps 4 --guidance 1.0 --seed 42 \
+  --compute-precision float16 \
+  --output market.png
+```
+
+```bash
+# flux3-klein-q8 — the 180.4 s/image profile. Distilled: 16 steps, no guidance.
+mflux-generate-flux3 \
+  --model mflux-community/flux-3-image-klein-base-mflux-q8 \
+  --base-model flux3-klein-base \
+  --prompt "Minimalist swiss-style poster with the exact headline \"LOCAL FIRST\"" \
+  --width 1024 --height 1024 --steps 16 --seed 42 \
+  --compute-precision float16 \
+  --output poster.png
+```
+
+`--guidance` is ignored on the FLUX 3 distilled checkpoint — passing it does
+nothing rather than erroring, which is worth knowing before you tune it.
+
+To run the whole eight-prompt suite instead of one prompt:
+
+```bash
+python3 scripts/measure/image-benchmark.py --profile klein-q8 --out-dir ~/Desktop/out
+```
+
+### Video — mlx-gen and VideoX-Fun-mlx
+
+```bash
+# wan22-ti2v-5b-q8 — the venv is not on PATH by default.
+export PATH="$HOME/Sites/.mlxgen-venv/bin:$PATH"
+mlxgen download --model Wan-AI/Wan2.2-TI2V-5B-Diffusers   # once
+mlxgen generate \
+  --model Wan-AI/Wan2.2-TI2V-5B-Diffusers \
+  --prompt "a cup of coffee steaming on a windowsill, morning light" \
+  --width 480 --height 832 --frames 25 --fps 16 \
+  --steps 20 --guidance 5 --seed 42 \
+  --low-ram --output clip.mp4
+```
+
+```bash
+# cogvideox-fun-1.5-5b-inp-q8 — the runner writes a GIF, not an mp4.
+python3 ~/Sites/VideoX-Fun-mlx/scripts/quick_infer.py \
+  --model-path ~/Sites/VideoX-Fun-mlx/models/cogvideox-fun-q8 \
+  --prompt "a cup of coffee steaming on a windowsill, morning light" \
+  --width 672 --height 384 --frames 5 --steps 50 \
+  --guidance-scale 6.0 --seed 42 \
+  --output clip.gif
+```
+
+Two traps, both already hit here:
+
+- `quick_infer.py`'s `--model-path` defaults to the uploader's own machine
+  (`/Users/dgrauet/Work/...`). Always pass your own downloaded path.
+- The CogVideoX weights download **very unevenly**. `huggingface_hub` with
+  `HF_HUB_ENABLE_HF_TRANSFER=1` measured **0.40 MB/s** for this repo and stalled;
+  plain `curl -C -` against the resolve endpoint measured **7.7 MB/s**, 19× faster,
+  and resumed cleanly. If a large video download looks stuck, switch to curl.

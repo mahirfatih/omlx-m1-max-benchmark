@@ -1,18 +1,18 @@
 # oMLX · M1 Max · Local LLM Benchmark
 
-> Token throughput, model sizes, profile tuning and an **uncensored / heretic** classification of 6 local LLMs served by [oMLX](https://omlx.ai) on an Apple **M1 Max (64 GB)**.
+> Token throughput, model sizes, profile tuning and an **uncensored / heretic** classification of 7 local LLMs served by [oMLX](https://omlx.ai) on an Apple **M1 Max (64 GB)**.
 
 [![Platform](https://img.shields.io/badge/platform-Apple%20Silicon%20(arm64)-000?logo=apple&logoColor=white)](#hardware--software)
 [![oMLX](https://img.shields.io/badge/oMLX-0.7.3-blue)](#hardware--software)
 [![macOS](https://img.shields.io/badge/macOS-26.7.2-lightgrey)](#hardware--software)
-[![Models](https://img.shields.io/badge/models-6-purple)](#models)
+[![Models](https://img.shields.io/badge/models-7-purple)](#models)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
 
 ## Overview
 
-This repository documents a reproducible benchmark of **6 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
+This repository documents a reproducible benchmark of **7 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
 
 It covers:
 
@@ -109,20 +109,22 @@ came from.
 | 4 | `gemma-4-26B-A4B-it-heretic` | `gemma4-heretic` | 59.5 | 60.7 | **60.1** | 9.0 |
 | 5 | `Qwen3-Coder-30B-A3B-Instruct` | `qwen3` | 43.4 | 41.8 | **42.6** | 4.7 |
 | 6 | `Qwen3.8-27B-Uncensored` | `qwen36-heretic` | 18.3 | 18.1 | **18.2** | 6.6 |
-| 7 | `Devstral-Small-2-24B-Instruct` | `devstral` | 11.4 | 10.6 | **11.0** | 9.1 |
+| 7 | `Devstral-Small-2-24B-Instruct` | `devstral` | 12.3 | 12.6 | **12.4** | 9.1 |
 
 Rows 1–6 come from the same throughput sweep in
 [`reference/results.json`](reference/results.json); Devstral was measured on its
-own pass, on the same machine and prompts, after the coding run.
+own pass, on the same machine and prompts, after the coding run — three direct
+requests (12.3, 12.6, 12.3 tok/s), because the sweep script re-runs every model
+and would have overwritten the earlier results.
 
 ### Average throughput (tok/s)
 
 ```mermaid
 xychart-beta
     title "Average decode throughput (tok/s) — higher is faster"
-    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Qwen3-Coder", "Qwen3.8"]
+    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Qwen3-Coder", "Qwen3.8", "Devstral"]
     y-axis "tok/s" 0 --> 80
-    bar [73.4, 71.1, 60.2, 60.1, 42.6, 18.2]
+    bar [73.4, 71.1, 60.2, 60.1, 42.6, 18.2, 12.4]
 ```
 
 ### English vs Turkish (tok/s)
@@ -130,10 +132,10 @@ xychart-beta
 ```mermaid
 xychart-beta
     title "EN vs TR throughput (tok/s)"
-    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Qwen3-Coder", "Qwen3.8"]
+    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Qwen3-Coder", "Qwen3.8", "Devstral"]
     y-axis "tok/s" 0 --> 80
-    bar [72.2, 69.2, 60.0, 59.5, 43.4, 18.3]
-    bar [74.7, 73.0, 60.4, 60.7, 41.8, 18.1]
+    bar [72.2, 69.2, 60.0, 59.5, 43.4, 18.3, 12.3]
+    bar [74.7, 73.0, 60.4, 60.7, 41.8, 18.1, 12.6]
 ```
 
 *Series order: 1st bar = EN, 2nd bar = TR.*
