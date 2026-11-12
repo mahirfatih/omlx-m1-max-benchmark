@@ -107,27 +107,53 @@ def batch_prompt(group):
     return "\n".join(lines)
 
 
+def name_prompt(items):
+    """A follow-up prompt listing only the names a batch left unanswered.
+
+    A model will answer six of sixteen names and stop; asking again for the rest,
+    on their own, gets them. items is a list of (language name, API name).
+    """
+    lines = ["For each language below, decide whether the given API or feature name "
+             "is a real, documented one for that language, or invented.",
+             "",
+             "Return ONLY a JSON object that maps each name (exactly as written) to "
+             '{"is_real": true|false, "confidence": 0.0-1.0}. No prose.', ""]
+    for lang_name, name in items:
+        lines.append(f'- {lang_name}: "{name}"')
+    return "\n".join(lines)
+
+
 def extract_json(text):
     text = text.strip()
-    m = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
-    if m:
-        text = m.group(1).strip()
+    # Try the bare object first. Content inside the JSON can itself contain
+    # backticks — the markdown probe is literally ```{r} — so a fence must never
+    # be guessed at before the plain parse has been tried.
     try:
         return json.loads(text)
     except Exception:
         pass
-    start = text.find("{")
+    body = text
+    # Only a reply that *opens* with a fence is fenced; strip that fence and the
+    # closing one, wherever the object inside happens to put its own backticks.
+    if body.startswith("```"):
+        body = re.sub(r"^```[a-zA-Z]*[ \t]*\r?\n?", "", body)
+        body = re.sub(r"\r?\n?```\s*$", "", body).strip()
+        try:
+            return json.loads(body)
+        except Exception:
+            pass
+    start = body.find("{")
     if start == -1:
         return None
     depth = 0
-    for i in range(start, len(text)):
-        if text[i] == "{":
+    for i in range(start, len(body)):
+        if body[i] == "{":
             depth += 1
-        elif text[i] == "}":
+        elif body[i] == "}":
             depth -= 1
             if depth == 0:
                 try:
-                    return json.loads(text[start:i + 1])
+                    return json.loads(body[start:i + 1])
                 except Exception:
                     return None
     return None
@@ -175,11 +201,30 @@ def coerce_entry(entry):
     return None, None
 
 
+def _key_variants(key):
+    """The forms a model key can take when it decorates the name.
+
+    A model will answer with the bare name ("{#eachx}") or wrap it as
+    'Svelte: "{#eachx}"'. The value is the same; only the key needs unwrapping,
+    so the lookup indexes every reasonable reading of a key.
+    """
+    out = [key]
+    s = key.strip().strip('"').strip()
+    out.append(s)
+    if ": " in s:
+        tail = s.split(": ", 1)[1].strip().strip('"').strip()
+        out.append(tail)
+        if tail.endswith('"'):
+            out.append(tail.rstrip('"').strip())
+    return [v for v in out if v]
+
+
 def parse_verdicts(obj, group):
     """Map name -> (is_real, confidence, role) from a model answer object.
 
-    Names are matched exactly, then case-insensitively, because a model will
-    happily re-case an identifier it otherwise got right.
+    Names are matched exactly, then case-insensitively, then through the
+    decorations a model adds (a language prefix, surrounding quotes), because a
+    model will happily re-case or wrap an identifier it otherwise got right.
     """
     out = {}
     if not isinstance(obj, dict):
@@ -187,7 +232,8 @@ def parse_verdicts(obj, group):
     lower = {}
     for k, v in obj.items():
         if isinstance(k, str):
-            lower.setdefault(k.strip().lower(), v)
+            for variant in _key_variants(k):
+                lower.setdefault(variant.lower(), v)
     for lang in group:
         for role, name in probes(lang):
             entry = obj.get(name)
@@ -200,6 +246,81 @@ def parse_verdicts(obj, group):
                 continue
             out[name] = (is_real, conf, role)
     return out
+
+
+def _unescape_key(key):
+    """Turn the JSON escapes a model may have half-written back into characters.
+
+    A key comes out of the raw text as it was typed, so `\\"` and `\\\\` are the
+    literal backslash sequences; decode those two and leave everything else
+    (a LaTeX name's own backslash) alone.
+    """
+    out = []
+    i = 0
+    while i < len(key):
+        c = key[i]
+        if c == "\\" and i + 1 < len(key) and key[i + 1] in '"\\':
+            out.append(key[i + 1])
+            i += 2
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
+
+
+def salvage_object(text):
+    """Recover name -> entry pairs from a JSON object a model mangled.
+
+    Some models emit nearly-valid JSON: an unescaped quote inside a key
+    ('"Handlebars: "{{#each}}"'), a dropped closing quote, a nested value where a
+    boolean belongs. `json.loads` then rejects the whole object and every good
+    entry in it is lost. Each entry still has the shape `KEY: {"is_real": ...}`
+    on its own, so this scans for that shape, walks back to the key and forward
+    to the confidence, and rebuilds what it can. It is deliberately forgiving on
+    the key (parse_verdicts unwraps decorations afterwards) and strict enough
+    not to invent a verdict that is not in the text.
+    """
+    out = {}
+    for m in re.finditer(r'"is_real"\s*:\s*(true|false)', text, re.IGNORECASE):
+        pre = text[:m.start()]
+        # The `{` that opens this entry's value is the last one with no brace
+        # after it — not simply the previous `{`, which belongs to an earlier
+        # entry and would misread every key but the first.
+        mb = re.search(r"\{[^{}]*\Z", pre)
+        if not mb:
+            continue
+        prefix = pre[:mb.start()]
+        colon = prefix.rfind(":")
+        if colon == -1:
+            continue
+        key = re.split(r"[\n,]", prefix[:colon])[-1].strip()
+        key = _unescape_key(key).strip().strip('"').strip()
+        if not key:
+            continue
+        tail = text[m.end():m.end() + 160]
+        cm = re.search(r'"confiden[ce]*"\s*:\s*([0-9.]+)', tail, re.IGNORECASE)
+        conf = None
+        if cm:
+            try:
+                conf = float(cm.group(1))
+            except ValueError:
+                conf = None
+        out[key] = {"is_real": m.group(1).lower() == "true", "confidence": conf}
+    return out
+
+
+def verdicts_from(text, group):
+    """Map a model's raw answer to verdicts, salvaging a mangled object.
+
+    The clean path is a valid JSON object; when that fails, the object is
+    salvaged entry by entry so one bad quote does not zero a whole batch.
+    """
+    obj = extract_json(text)
+    verdicts = parse_verdicts(obj, group) if obj is not None else {}
+    if verdicts:
+        return verdicts
+    salvaged = salvage_object(text)
+    return parse_verdicts(salvaged, group) if salvaged else {}
 
 
 def wait_health(t=240):
@@ -306,6 +427,44 @@ def selftest():
             or v2.get("functools.reducex", (None,))[0] is not False):
         ok = False
         print("FAIL: string/dict verdicts not parsed:", v2)
+    # a model decorates the key with the language name and quotes rather than
+    # returning the bare name; dropping that shape zeroes a whole batch.
+    decorated = {'Python: "functools.reduce"': {"is_real": True, "confidence": 0.9},
+                 'Python: "functools.reducex"': {"is_real": False, "confidence": 0.9}}
+    v3 = parse_verdicts(decorated, sl)
+    if (v3.get("functools.reduce", (None,))[0] is not True
+            or v3.get("functools.reducex", (None,))[0] is not False):
+        ok = False
+        print("FAIL: decorated keys not parsed:", v3)
+    if '{#eachx}' not in _key_variants('Svelte: "{#eachx}"'):
+        ok = False
+        print("FAIL: _key_variants:", _key_variants('Svelte: "{#eachx}"'))
+    # extract_json must not mistake backticks *inside* a valid object for a code
+    # fence: the markdown probe is ```{r}, and reading it as a fence drops the
+    # whole batch. A bare object and a genuinely fenced one both parse.
+    raw = '{"markdown": {"is_real": true}, "```{r}": {"is_real": false}}'
+    if extract_json(raw) != json.loads(raw):
+        ok = False
+        print("FAIL: extract_json mangled backticks in content:", extract_json(raw))
+    fenced = "```json\n" + raw + "\n```"
+    if extract_json(fenced) != json.loads(raw):
+        ok = False
+        print("FAIL: extract_json missed a fenced object:", extract_json(fenced))
+    # a mangled object: an unescaped quote in the key (and a second entry after
+    # it), which json.loads rejects wholesale. Both verdicts must still surface.
+    mangled = ('{"Python: "functools.reduce"": {"is_real": true, "confidence": 0.9},\n'
+               ' "Python: "functools.reducex": {"is_real": false, "confidence": 0.4}}')
+    if extract_json(mangled) is not None:
+        ok = False
+        print("FAIL: mangled sample was not actually invalid:", extract_json(mangled))
+    v4 = verdicts_from(mangled, sl)
+    if (v4.get("functools.reduce", (None,))[0] is not True
+            or v4.get("functools.reducex", (None,))[0] is not False):
+        ok = False
+        print("FAIL: mangled object not salvaged:", v4)
+    if v4.get("functools.reducex", (None, None, None))[1] != 0.4:
+        ok = False
+        print("FAIL: salvage lost the confidence:", v4)
     if coerce_entry({"is_real": True, "confidence": "0.8"}) != (True, 0.8):
         ok = False
         print("FAIL: confidence coercion")
@@ -345,7 +504,7 @@ def main():
     ap.add_argument("--models", default="")
     ap.add_argument("--langs", default="", help="comma-separated language ids (default: all)")
     ap.add_argument("--batch", type=int, default=8, help="languages per request")
-    ap.add_argument("--max-tokens", type=int, default=2048)
+    ap.add_argument("--max-tokens", type=int, default=4096)
     ap.add_argument("--out", default="")
     ap.add_argument("--json-out", default="")
     args = ap.parse_args()
@@ -384,15 +543,25 @@ def main():
         records = []
         for bi, group in enumerate(batches, 1):
             prompt = batch_prompt(group)
+            # A reasoning model can spend the whole budget on its scratchpad and
+            # return either empty content or a truncated answer (finish_reason
+            # "length"). Escalate the budget until the JSON parses, so a
+            # non-answer is never recorded as a wrong one.
+            budgets = [args.max_tokens,
+                       max(args.max_tokens * 2, 4096),
+                       max(args.max_tokens * 4, 8192)]
+            elapsed, answer, finish, verdicts = 0.0, "", "", {}
             try:
-                elapsed, answer, finish = call(headers, model, prompt, args.max_tokens)
-                if not answer.strip():
-                    # A reasoning model can spend the whole budget thinking and
-                    # return an empty content. Give it room; do not record a
-                    # non-answer as a wrong one.
-                    extra, answer, finish = call(headers, model, prompt,
-                                                 max(args.max_tokens * 2, 2048))
+                for budget in budgets:
+                    extra, answer, finish = call(headers, model, prompt, budget)
                     elapsed += extra
+                    verdicts = verdicts_from(answer, group)
+                    if verdicts:
+                        break
+                    if finish != "length" and answer.strip():
+                        # The model answered in full but nothing parsed; a larger
+                        # budget will not help, so stop retrying.
+                        break
             except Exception as e:
                 print(f"  batch {bi}: ERROR {str(e)[:100]}", flush=True)
                 for lang in group:
@@ -401,8 +570,23 @@ def main():
                                         "expected": role == "real", "got_real": None,
                                         "conf": None, "answered": False})
                 continue
-            obj = extract_json(answer)
-            verdicts = parse_verdicts(obj, group)
+            # A model can answer only some of the names and stop; ask again for
+            # the ones it left out, on their own, and merge whatever comes back.
+            missing = [(lang, name) for lang in group for _, name in probes(lang)
+                       if name not in verdicts]
+            if missing:
+                sub = [lang for lang in group
+                       if any(name not in verdicts for _, name in probes(lang))]
+                mp = name_prompt([(lang["name"], name) for lang, name in missing])
+                try:
+                    extra, ans2, _ = call(headers, model, mp,
+                                          max(args.max_tokens // 2, 2048))
+                    elapsed += extra
+                    v2 = verdicts_from(ans2, sub)
+                    for k, val in v2.items():
+                        verdicts.setdefault(k, val)
+                except Exception:
+                    pass
             for lang in group:
                 for role, name in probes(lang):
                     if name in verdicts:
@@ -489,7 +673,15 @@ def render(date, data):
         for lang, n, tot in rows:
             lines.append(f"| `{lang}` | {n}/{tot} |")
         lines.append("")
-    return "\n".join(lines) + "\n"
+    # A run with no hallucinations skips the section above, which would leave two
+    # blank lines in a row and trip the Markdown linter. Collapse any run of
+    # blanks to one so the report is lint-clean whatever the result.
+    out = []
+    for line in lines:
+        if line == "" and out and out[-1] == "":
+            continue
+        out.append(line)
+    return "\n".join(out) + "\n"
 
 
 if __name__ == "__main__":
