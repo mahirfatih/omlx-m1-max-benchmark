@@ -102,6 +102,14 @@ puts every model against every task — coding, chat, long context, uncensored
 work, images, video — on one page, with each number traced to the run file it
 came from.
 
+## Model map
+
+![Model map (dark)](docs/diagrams/model-map/model-map-dark.png)
+
+[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — the interactive version (theme toggle). [`model-map-light.png`](docs/diagrams/model-map/model-map-light.png) for the light theme.
+
+Which model for which job, at the speed it actually ran, in one picture.
+
 ## Benchmark results
 
 **Method:** each model is unloaded, then loaded on demand (warm-up), then asked the same English and Turkish prompts twice. Speed = `completion_tokens / wall_time`. Settings: `ctx 32768`, `temp 0.2`, `max_tokens 220`, thinking off.

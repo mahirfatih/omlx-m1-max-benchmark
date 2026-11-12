@@ -83,6 +83,14 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 
 **Disk toplamı:** ~102 GB · **Çalışma zamanı:** model başına ~17–20 GB.
 
+## Model haritası
+
+![Model haritası (koyu)](docs/diagrams/model-map/model-map-dark.png)
+
+[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — interaktif sürüm (tema değiştirilebilir). [`model-map-light.png`](docs/diagrams/model-map/model-map-light.png) açık tema için.
+
+Hangi işi hangi modelin taşıdığı ve ölçülen hız, tek sayfada.
+
 ## Benchmark sonuçları
 
 **Yöntem:** her model boşaltılır, istek üzerine yüklenir (ısınma), sonra aynı
