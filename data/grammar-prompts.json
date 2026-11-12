@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "note": "Format-adherence tasks for scripts/measure/grammar-test.py. Each task pairs a small JSON schema (a subset of JSON Schema) with the instruction the model is given, plus hand-written good/bad answers that --selftest uses to prove the validator accepts the good and rejects the bad without a model. The idea of a grammar benchmark follows egavrin/deal-llm-grammar-benchmark; the schemas, the validator and the tasks here are original to this repository.",
+  "source": "https://github.com/egavrin/deal-llm-grammar-benchmark",
+  "tasks": [
+    {
+      "id": "person",
+      "schema": {
+        "type": "object",
+        "required": ["name", "age", "skills"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "age": {"type": "integer", "minimum": 0, "maximum": 150},
+          "skills": {"type": "array", "items": {"type": "string"}, "minItems": 2}
+        }
+      },
+      "instruction": "Return ONE JSON object describing a made-up software engineer: keys `name` (string), `age` (integer 0-150), `skills` (array of at least 2 strings). No other keys. Output only the JSON, no prose.",
+      "good": {
+        "name": "Ada Lovelace",
+        "age": 36,
+        "skills": ["analytical engines", "mathematics"]
+      },
+      "bad": {
+        "name": "Ada Lovelace",
+        "age": "thirty-six",
+        "skills": ["mathematics"]
+      }
+    },
+    {
+      "id": "verdict",
+      "schema": {
+        "type": "object",
+        "required": ["verdict", "confidence"],
+        "additionalProperties": false,
+        "properties": {
+          "verdict": {"type": "string", "enum": ["pass", "fail", "skip"]},
+          "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+        }
+      },
+      "instruction": "Given the sentence 'the build passed on CI', return ONE JSON object with `verdict` (exactly one of \"pass\", \"fail\", \"skip\") and `confidence` (number 0.0-1.0). No other keys. Output only the JSON.",
+      "good": {"verdict": "pass", "confidence": 0.92},
+      "bad": {"verdict": "probably", "confidence": 1.5}
+    },
+    {
+      "id": "matrix",
+      "schema": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"type": "integer"}
+        }
+      },
+      "instruction": "Return ONE JSON array of exactly 2 arrays, each holding exactly 2 integers (a 2x2 matrix). No prose, JSON only.",
+      "good": [[1, 2], [3, 4]],
+      "bad": [[1, 2, 3]]
+    }
+  ]
+}

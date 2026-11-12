@@ -50,61 +50,24 @@ DEFAULT_TARGETS = [
     ("Qwen3.8-27B-Uncensored-MLX", "qwen36-heretic"),
 ]
 
-# Each task: a schema (subset of JSON Schema) and the instruction. The model must
-# return a single JSON value and nothing else.
-TASKS = [
-    {
-        "id": "person",
-        "schema": {
-            "type": "object",
-            "required": ["name", "age", "skills"],
-            "additionalProperties": False,
-            "properties": {
-                "name": {"type": "string"},
-                "age": {"type": "integer", "minimum": 0, "maximum": 150},
-                "skills": {"type": "array", "items": {"type": "string"}, "minItems": 2},
-            },
-        },
-        "instruction": (
-            "Return ONE JSON object describing a made-up software engineer: keys "
-            "`name` (string), `age` (integer 0-150), `skills` (array of at least 2 "
-            "strings). No other keys. Output only the JSON, no prose."
-        ),
-    },
-    {
-        "id": "verdict",
-        "schema": {
-            "type": "object",
-            "required": ["verdict", "confidence"],
-            "additionalProperties": False,
-            "properties": {
-                "verdict": {"type": "string", "enum": ["pass", "fail", "skip"]},
-                "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
-            },
-        },
-        "instruction": (
-            "Given the sentence 'the build passed on CI', return ONE JSON object "
-            "with `verdict` (exactly one of \"pass\", \"fail\", \"skip\") and "
-            "`confidence` (number 0.0-1.0). No other keys. Output only the JSON."
-        ),
-    },
-    {
-        "id": "matrix",
-        "schema": {
-            "type": "array",
-            "minItems": 2,
-            "items": {
-                "type": "array",
-                "minItems": 2,
-                "items": {"type": "integer"},
-            },
-        },
-        "instruction": (
-            "Return ONE JSON array of exactly 2 arrays, each holding exactly 2 "
-            "integers (a 2x2 matrix). No prose, JSON only."
-        ),
-    },
-]
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
+TASKS_FILE = os.path.join(ROOT, "data", "grammar-prompts.json")
+
+
+def load_tasks(path=TASKS_FILE):
+    """Load the format-adherence tasks: a schema, an instruction, and one
+    hand-written good and bad answer each. Kept in data/ so the prompts are
+    readable and editable in one place, the way the image and video prompts are.
+
+    Each task: a schema (subset of JSON Schema) and the instruction. The model
+    must return a single JSON value and nothing else.
+    """
+    with open(path) as f:
+        return json.load(f)["tasks"]
+
+
+TASKS = load_tasks()
 
 
 def type_ok(value, name):
@@ -236,21 +199,13 @@ def grade(answer, schema):
 
 
 def selftest():
-    good = {
-        "person": '{"name":"Ada","age":36,"skills":["python","sql"]}',
-        "verdict": '{"verdict":"pass","confidence":0.9}',
-        "matrix": "[[1,2],[3,4]]",
-    }
-    bad = {
-        "person": '{"name":"Ada","age":200,"skills":["python"],"extra":1}',
-        "verdict": '{"verdict":"maybe","confidence":1.5}',
-        "matrix": "[[1,2],[3]]",
-    }
     ok = True
     for task in TASKS:
         tid = task["id"]
-        good_ok, why = grade(good[tid], task["schema"])
-        bad_ok, bad_why = grade(bad[tid], task["schema"])
+        # The good/bad answers live beside the schema in data/grammar-prompts.json,
+        # so the file that defines a task also proves the validator against it.
+        good_ok, why = grade(json.dumps(task["good"]), task["schema"])
+        bad_ok, bad_why = grade(json.dumps(task["bad"]), task["schema"])
         if not good_ok or bad_ok:
             ok = False
             print(f"FAIL {tid}: good->{good_ok} ({why}); bad->{bad_ok} ({bad_why})")
