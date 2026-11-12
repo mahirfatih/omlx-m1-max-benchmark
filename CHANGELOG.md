@@ -6,6 +6,32 @@ date-based snapshots rather than semver releases.
 
 ## [Unreleased]
 
+### Changed — image and video generation moved to their own repository
+
+- The image (mflux) and video (VideoX-Fun-mlx) layers are no longer measured or
+  shipped here. **oMLX serves text and only text** — it cannot run a diffusion
+  model, so an image or video profile in this repository described a server that
+  cannot use it. Both layers now live in
+  [mahirfatih/local-generation-benchmark-m1-max](https://github.com/mahirfatih/local-generation-benchmark-m1-max),
+  with their harnesses, prompts, profiles, machine-readable results and the
+  **committed outputs** (16 images, 4 clips).
+- Removed from here: `scripts/measure/image-benchmark.py`,
+  `scripts/measure/video-benchmark.py`, `scripts/release/export-video-evidence.py`,
+  `data/image-prompts.json`, `data/video-prompts.json`,
+  `profiles/mflux-profiles.json`, `profiles/video-profiles.json`, the three
+  `evidence/*-benchmark-*.md` pages, `evidence/images/`, `evidence/videos/`, and
+  the three `reference/*benchmark*.json` files. The full history of how they were
+  built is preserved in the entries below.
+- `README.md`, `docs/reference/{COMPARISON,PROFILES,MODELS,LICENSES}.md`,
+  `docs/reference/README.md` and `scripts/measure/README.md` now point at the new
+  repository instead of describing the layers; the image/video columns and test
+  rows were dropped. `test/test.sh` no longer runs the two moved selftests, so the
+  gate is now 15 steps.
+- The **grammar** and **red-team** prompts were also moved out of their harnesses
+  into [`data/grammar-prompts.json`](data/grammar-prompts.json) and
+  [`data/redteam-prompts.json`](data/redteam-prompts.json), so every prompt set is
+  now a readable file rather than code — matching the image and video prompts.
+
 ### Added — the model comparison page
 
 - `docs/reference/COMPARISON.md` — the single page to start from: one row per

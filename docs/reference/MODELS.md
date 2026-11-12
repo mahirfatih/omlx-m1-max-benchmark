@@ -27,19 +27,19 @@ usable": one model here declares no licence, and another is tagged Apache-2.0 bu
 links to the Gemma terms. The full reading is in
 [`LICENSES.md`](LICENSES.md).
 
-## Image model (separate tool)
+## Image and video models (separate tools)
 
-The image model is **not** served by oMLX. It runs under
-[`mflux`](https://github.com/filipstrand/mflux), and its settings live in
-[`../../profiles/mflux-profiles.json`](../../profiles/mflux-profiles.json) rather
-than the oMLX profiles. Its licence differs too: FLUX.2 klein is Apache-2.0,
-FLUX 3 Image Klein is the conditional FLUX Kommunity License — see
-[`LICENSES.md`](LICENSES.md) and [`PROFILES.md`](PROFILES.md).
+The image and video models are **not** served by oMLX. Images run under
+[`mflux`](https://github.com/filipstrand/mflux), video under
+[`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx), and their settings
+live in separate profile files rather than in the oMLX profiles. Their licences
+differ too: FLUX.2 klein is Apache-2.0, FLUX 3 Image Klein is the conditional
+FLUX Kommunity License, and the CogVideoX-Fun quant is tagged `apache-2.0` while
+its base is under the registration-gated CogVideoX License — see
+[`LICENSES.md`](LICENSES.md).
 
-Two **video** models are queued (Wan2.2 TI2V-5B, CogVideoX-Fun-V1.5-5B-InP) but
-are not measured yet, so they have no profile. Their licences are recorded in
-[`LICENSES.md`](LICENSES.md); note that the CogVideoX-Fun quant is tagged
-`apache-2.0` but its base is under the registration-gated CogVideoX License.
+Those two layers, with their models, profiles, measurements and outputs, are in
+the [generation repository](https://github.com/mahirfatih/local-generation-benchmark-m1-max).
 
 ## Base models
 

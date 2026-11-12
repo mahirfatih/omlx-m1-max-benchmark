@@ -14,6 +14,11 @@
 
 This repository documents a reproducible benchmark of **7 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
 
+**Scope:** this repository is the **text** benchmark — everything oMLX serves. Image
+and video generation are different tools (mflux, VideoX-Fun-mlx) that oMLX cannot
+run, so they live in their own repository:
+[mahirfatih/local-generation-benchmark-m1-max](https://github.com/mahirfatih/local-generation-benchmark-m1-max).
+
 It covers:
 
 - **Decode throughput** (tok/s) for English and Turkish, measured twice per language.
@@ -45,8 +50,7 @@ though the problems and cases here are original.
 - [Repository analysis](#repository-analysis)
 - [Coding benchmark](#coding-benchmark)
 - [Hallucination & error risk](#hallucination--error-risk)
-- [Image generation](#image-generation)
-- [Video generation](#video-generation)
+- [Image and video generation — a separate repository](#image-and-video-generation--a-separate-repository)
 - [Reproducing](#reproducing)
 - [Repository structure](#repository-structure)
 - [Notes & disclaimer](#notes--disclaimer)
@@ -297,45 +301,26 @@ corpus the others complete in 1–2 minutes each.
 
 Full reading: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
 
-## Image generation
+## Image and video generation — a separate repository
 
-The text benchmark measures oMLX; images are a **separate layer** run by
-[`mflux`](https://github.com/filipstrand/mflux). One `mflux-generate-*` process per
-prompt, timed end to end, the written PNG verified.
+**oMLX is a text server; it cannot generate an image or a clip.** Those two layers
+run on different tools — [mflux](https://github.com/filipstrand/mflux) for images,
+[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) for video — on the same
+M1 Max, and they are measured, documented and shipped with their outputs in their
+own repository:
 
-| Model (profile) | Licence | s/img | s/step | Size |
-| :--- | :--- | ---: | ---: | :--- |
-| `mflux-community/flux2-klein-4b-mflux-q8` (`klein-q8`) | Apache-2.0 | **22.5** | 5.6 | 1024×1024 |
-| `mflux-community/flux-3-image-klein-base-mflux-q8` (`flux3-klein-q8`) | FLUX Kommunity License | 180.4 | 11.3 | 1024×1024 |
+### → [**mahirfatih/local-generation-benchmark-m1-max**](https://github.com/mahirfatih/local-generation-benchmark-m1-max)
 
-A 4-step distilled 4B model runs ~22.5 s per 1024×1024 image (the first is slower,
-~28 s, because the model loads); FLUX 3 at 16 steps and a 5.6B transformer takes
-~180 s. Legible text and correct hands — the classic failure surfaces — come out
-clean on both.
+| Layer | Model | Time | Output |
+| :--- | :--- | ---: | :--- |
+| Image | FLUX.2 klein 4B (q8) | **22.5 s** | 1024×1024 PNG |
+| Image | FLUX 3 Image Klein | 180.4 s | 1024×1024 PNG |
+| Video | CogVideoX-Fun V1.5 5B (int8) | **265.9 s** | 672×384, 5-frame GIF |
 
-Full reading and the second model: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md)
-and [`evidence/image-benchmark-2026-11-12.md`](evidence/image-benchmark-2026-11-12.md).
-
-## Video generation
-
-Video is a **third layer**, run by an MLX video tool rather than by oMLX or mflux.
-Here it is [VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) driving
-CogVideoX-Fun V1.5 5B (int8). One runner process per prompt, timed end to end, and
-every clip verified with `ffprobe` — the file, not the runner's log line.
-
-| Model (profile) | Licence | s/clip | Output | Frames | OK |
-| :--- | :--- | ---: | :--- | ---: | :---: |
-| `dgrauet/CogVideoX-Fun-V1.5-5b-InP-mlx-q8` (`cogvideox-fun-1.5-5b-inp-q8`) | **The CogVideoX License** | **265.9** | 672×384, 1.6 s, GIF | 5 | ✅ 4/4 |
-
-~266 s for a 5-frame 672×384 clip — four prompts, 265.2–267.2 s — so a clip that
-plays for 1.6 s costs about 4.4 minutes of GPU. Five frames is the model's ceiling,
-not a setting: `--frames` is not linear (4 → 1 frame, 8 → the same 5 as 5, an odd
-count raises a reshape error), so asking for more does not get you more.
-
-The clips themselves, each with the prompt that produced it:
-[`evidence/video-benchmark-2026-11-12.md`](evidence/video-benchmark-2026-11-12.md).
-The licence is the trap on this one — the quant is tagged `apache-2.0`, the base
-model is not. See [`docs/reference/LICENSES.md`](docs/reference/LICENSES.md).
+That repository holds the two harnesses, their prompt sets and profiles, the
+machine-readable results, and **the outputs themselves** — 16 images and 4 clips,
+each with the prompt that produced it. This repository stays the **text**
+benchmark: throughput, coding, format, long context, hallucination and red-team.
 
 ## Reproducing
 

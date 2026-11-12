@@ -3,17 +3,17 @@
 Every number on this page was measured on one machine we own — Apple M1 Max,
 64 GB — and traces to a machine-generated JSON file committed in this
 repository. Nothing here is a vendor claim or an estimate. Pick the row by what
-you are doing: coding, chat, long context, uncensored work, images, or video.
+you are doing: coding, chat, long context, uncensored work, or the red-team tasks.
 
 - **Fastest, chat** `Qwen3.6-35B-A3B-4bit` — **73.4 tok/s**
 - **Best coding** `Qwen3.6-35B-A3B-4bit` — 56/56 cases, 2.9 s/answer
 - **Best long context** `Qwen3.6-35B-A3B-4bit` — 2/3 needles in 6.3 k tokens
 - **Cleanest at unsafe requests** `Qwen3.6-35B-A3B-Uncensored-Heretic` — 4/5 red-team
-- **Fastest image** `flux2-klein-4b` — 22.5 s per 1024×1024
 - **Avoid** `Qwen3.8-27B-Uncensored` — 4× slower, and it fails tasks the others pass
 
 All figures below were measured on **Apple M1 Max, 64 GB, macOS 26.7.2**, through
-**oMLX 0.7.3** (text) and **mflux** / **mlx-gen** (images and video).
+**oMLX 0.7.3**. Images and video are different tools; see
+[Image and video — a separate repository](#image-and-video--a-separate-repository).
 
 ## Which model for what
 
@@ -172,57 +172,26 @@ disassembly — and every model returned only the visible half. **The uncensored
 tier buys you nothing here**: the abliterated models score exactly what the
 aligned ones do, because finding a bug is not what a refusal blocks.
 
-## Image generation — a separate layer
+## Image and video — a separate repository
 
-Text runs through oMLX; images run through [mflux](https://github.com/filipstrand/mflux),
-a different tool. One `mflux-generate-*` process per prompt, wall clock, the
-written PNG checked.
+**oMLX is text-only.** Images and video are not served by it; they run on
+different tools — [mflux](https://github.com/filipstrand/mflux) for images,
+[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) for video — and their
+measurements, prompts, profiles and outputs live in their own repository:
 
-| Model | Licence | s/img | s/step | Steps | Size |
-| :--- | :--- | ---: | ---: | ---: | :--- |
-| `flux2-klein-4b-mflux-q8` | Apache-2.0 | **22.5** | 5.6 | 4 | 1024×1024 |
-| `flux-3-image-klein-base-mflux-q8` | FLUX Kommunity | 180.4 | 11.3 | 16 | 1024×1024 |
+### → [**mahirfatih/local-generation-benchmark-m1-max**](https://github.com/mahirfatih/local-generation-benchmark-m1-max)
 
-Both were run on eight prompts covering the surfaces that separate image
-models: photorealism, hands, legible text, composition, style. **klein-q8 wins
-by 8×** and is the one to use unless you need FLUX 3 specifically. The PNGs are
-committed in [`evidence/images/`](../../evidence/images/); legible text and
-correct hands came out clean on both.
+| Layer | Model | Time | Output |
+| :--- | :--- | ---: | :--- |
+| Image | FLUX.2 klein 4B (q8) | **22.5 s** | 1024×1024 PNG |
+| Image | FLUX 3 Image Klein | 180.4 s | 1024×1024 PNG |
+| Video | CogVideoX-Fun V1.5 5B (int8) | **265.9 s** | 672×384, 5-frame GIF |
 
-The same prompt — a poster whose whole point is whether the two words render as
-words — on both models. The cheap one did not need the expensive one's help here:
-
-| `flux2-klein-4b` (22.5 s) | `flux-3-klein-base` (180.4 s) |
-| :---: | :---: |
-| ![LOCAL FIRST poster, klein-q8](../../evidence/images/klein-q8--text-poster.png) | ![LOCAL FIRST poster, flux-3-klein q8](../../evidence/images/flux3-klein-q8--text-poster.png) |
-
-Every one of the sixteen images, with the prompt that produced it, is in
-[`evidence/image-benchmark-2026-11-12.md`](../../evidence/image-benchmark-2026-11-12.md)
-and
-[`evidence/image-benchmark-flux3-2026-11-12.md`](../../evidence/image-benchmark-flux3-2026-11-12.md).
-
-## Video generation — a separate layer
-
-Run through [mlx-gen](https://github.com/lpalbou/mlx-gen) and
-[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx), measured with
-`ffprobe`. Seconds per clip, model load included, on the same M1 Max.
-
-| Model | Licence | Runner | s/clip | Output | Status |
-| :--- | :--- | :--- | ---: | :--- | :--- |
-| `CogVideoX-Fun-V1.5-5b-InP` (int8) | **The CogVideoX License** | VideoX-Fun-mlx | **265.9** | 672×384, 5 frames, GIF | ✅ 4/4 |
-| `Wan2.2-TI2V-5B` | Apache-2.0 | mlx-gen | pending | — | — |
-
-CogVideoX-Fun renders a 5-frame 672×384 clip in ~266 s (four prompts, 265.2–267.2 s),
-which is ~4.4 minutes of waiting for a clip that plays for 1.6 s. The frame count
-is this model's ceiling, not a choice: `--frames` is not linear and 5 is as far as
-it decodes, so more steps or a larger request buys nothing. All four clips — with
-the prompt under each — are in
-[`evidence/video-benchmark-2026-11-12.md`](../../evidence/video-benchmark-2026-11-12.md).
-
-The licence column matters more here than anywhere else on this page: the
-quantised repository tags itself `apache-2.0` while the base model it derives
-from is under **The CogVideoX License**. See
-[`LICENSES.md`](LICENSES.md).
+That repository holds the two harnesses, the sixteen images and four clips with
+their verbatim prompts, the profiles, and the licence readings. The licence trap
+is worth repeating here: the CogVideoX quant is tagged `apache-2.0`, but its base
+model is under **The CogVideoX License** — see
+[`LICENSES.md`](LICENSES.md) for that and the FLUX 3 case.
 
 ## Where the tests come from
 
@@ -240,27 +209,25 @@ read it yourself.
 | Long-context memory | ours | Needle / conflict / aggregate at 6.3 k tokens |
 | Hallucination | ours, 102 languages | Real API vs fabricated twin, fake-positive rate |
 | Red-team | ours, local lab | SQLi, command injection, LFI, XSS, RE |
-| Image | ours, over **mflux** | Seconds per image, PNG verified |
-| Video | ours, over **mlx-gen** / **VideoX-Fun-mlx** | Seconds per clip, `ffprobe` verified |
 | Security rails | ours | The lab refuses a non-loopback bind |
 | Model licences | ours, from the HF cards | "Downloadable" vs "commercially usable" |
 
 Every harness is runnable offline against itself before it touches a model:
-`python3 scripts/measure/<suite>.py --selftest`. `test/test.sh` runs all 17 gate
+`python3 scripts/measure/<suite>.py --selftest`. `test/test.sh` runs all 15 gate
 steps and proves the harnesses agree with each other.
 
 ### The repositories we read, and what each one shaped
 
-**The tools we measured through**, without which there would be no image or video
-column at all:
+**The tool we measured through**, without which there would be no text column:
 
 | Project | What we took from it |
 | :--- | :--- |
 | [@jundot/omlx](https://github.com/jundot/omlx) | The server itself. All text numbers are HTTP requests to it; its profile and memory-guard settings are what the tuning sections are about. |
-| [@filipstrand/mflux](https://github.com/filipstrand/mflux) | Image generation. `image-benchmark.py` drives its CLI and times it; mflux 0.24.0. |
-| [@lpalbou/mlx-gen](https://github.com/lpalbou/mlx-gen) | Text/image-to-video, the Wan2.2 layer. `video-benchmark.py` drives its CLI; mlx-gen 0.38.0. |
-| [@dgrauet/VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) | The CogVideoX-Fun layer — a second video runtime, so the video column is not a single-tool result. |
 | [@ml-explore/mlx](https://github.com/ml-explore/mlx) | The framework under everything here. |
+
+The image and video tools — mflux, mlx-gen, VideoX-Fun-mlx — are documented in
+[the generation repository](https://github.com/mahirfatih/local-generation-benchmark-m1-max),
+where those layers are measured.
 
 **Benchmarks that shaped how we test**, and what we changed:
 
@@ -276,9 +243,9 @@ column at all:
 
 **What is ours and only ours:** throughput measurement, the oMLX profile tuning,
 the hallucination probe (the 102-language real/fabricated-twin design), the
-red-team harness, the image and video harnesses, the licence readings, and the
-loopback-only security rails. Those have no upstream to cite because, as far as
-we could tell, no equivalent existed for this machine.
+red-team harness, the licence readings, and the loopback-only security rails.
+Those have no upstream to cite because, as far as we could tell, no equivalent
+existed for this machine.
 
 ## Baseline from outside
 
@@ -311,8 +278,6 @@ context tasks, two probes per language. Gaps of a point or two are noise; the
 | Runtime | oMLX 0.7.3, MLX 4-bit weights, 4-bit KV cache (turboquant) |
 | Residency | lazy, one model at a time, 180 s idle unload |
 | Memory guard | aggressive, soft 0.85, hard 0.95 |
-| Image tool | mflux 0.24.0 |
-| Video tools | mlx-gen 0.38.0, VideoX-Fun-mlx |
 | API | `http://127.0.0.1:8000/v1`, loopback only |
 
 The exact hardware, so the numbers can be reproduced or refuted:
