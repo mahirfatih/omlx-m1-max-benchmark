@@ -184,7 +184,7 @@ measurements, prompts, profiles and outputs live in their own repository:
 | Layer | Model | Time | Output |
 | :--- | :--- | ---: | :--- |
 | Image | FLUX.2 klein 4B (q8) | **22.5 s** | 1024×1024 PNG |
-| Image | FLUX 3 Image Klein | 180.4 s | 1024×1024 PNG |
+| Image | FLUX 3 Image Klein | 180.6 s | 1024×1024 PNG |
 | Video | CogVideoX-Fun V1.5 5B (int8) | **266.1 s** | 672×384, 5-frame GIF |
 
 That repository holds the two harnesses, the sixteen images and four clips with
