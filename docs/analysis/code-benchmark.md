@@ -16,6 +16,7 @@ The run: `2026-11-12`, all six models, five problems, 56 cases.
 | `Ornith-1.5-35B-A3B` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
 | `gemma-4-26B-A4B-it-heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
 | `Qwen3-Coder-30B-A3B-Instruct` | 12/12 | 10/10 | ❌ | 12/12 | 11/12 | **45/46** |
+| `Devstral-Small-2-24B-Instruct` | 12/12 | 10/10 | 10/10 | 12/12 | 11/12 | **55/56** |
 | `Qwen3.8-27B-Uncensored-MLX` | 12/12 | 10/10 | ❌ | 12/12 | ❌ | **34/34** |
 
 ## What the numbers mean
@@ -35,6 +36,12 @@ The run: `2026-11-12`, all six models, five problems, 56 cases.
 - **The bigger model was the slowest.** Qwen3.8 needed 18–50 s per answer;
   the 35B Qwen3.6 models needed 1.6–6.4 s. Qwen3.8 also failed to define the
   function twice. Slow did not mean thorough.
+- **The model labelled "Coder" is not the best coder here.** Qwen3-Coder scored
+  45/46 while four general models scored 56/56, and it was the only one to
+  produce a plain syntax error. Devstral — a code model that is honest about
+  being one — defined every function and passed 55/56, losing only the same
+  `empty_string` edge case. Paying for a code specialisation bought completeness
+  from Devstral and nothing from Qwen3-Coder.
 
 ## Why the failures are credible
 

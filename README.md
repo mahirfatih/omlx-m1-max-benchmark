@@ -37,6 +37,8 @@ though the problems and cases here are original.
 
 - [Hardware & Software](#hardware--software)
 - [Models](#models)
+- [**Model comparison — which one for what**](docs/reference/COMPARISON.md)
+- [**Choosing a model — which model, for what job, and why**](docs/guides/CHOOSING-A-MODEL.md)
 - [Benchmark results](#benchmark-results)
 - [Uncensored / Heretic classification](#uncensored--heretic-classification)
 - [Profiles](#profiles)
@@ -55,13 +57,26 @@ though the problems and cases here are original.
 
 | Item | Value |
 |---|---|
-| Machine | **Apple M1 Max** (10-core CPU: 8P + 2E, 32-core GPU) |
+| Machine | **Apple MacBook Pro (16-inch, 2021)**, model `MacBookPro18,2` |
+| Chip | **Apple M1 Max** (10-core CPU: 8P + 2E, 32-core GPU, 16-core Neural Engine) |
 | Memory | **64 GB** unified |
 | OS | **macOS 26.7.2** (build 25G332), arm64 |
 | Server | **oMLX 0.7.3** — OpenAI-compatible at `http://127.0.0.1:8000/v1` |
 | Inference | MLX, **4-bit** weights, **4-bit KV cache** (turboquant) |
 | Loading | Lazy, one model at a time, auto-unload after **180 s** idle |
 | Memory guard | tier `aggressive`, soft `0.85`, hard `0.95` |
+
+The exact model matters, so it is named rather than described — the 32-core GPU
+and 400 GB/s of memory bandwidth are what the throughput below is against:
+
+- Apple's own specification: [support.apple.com/en-us/111901](https://support.apple.com/en-us/111901)
+- EveryMac's breakdown of this exact configuration:
+  [MacBook Pro M1 Max 10-core CPU, 32-core GPU (16-inch, 2021)](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-max-10-core-cpu-32-core-gpu-16-2021-specs.html)
+
+The server is **oMLX**, a separate project this repository only measures:
+
+- Source: [github.com/jundot/omlx](https://github.com/jundot/omlx)
+- Project site: [omlx.ai](https://omlx.ai/)
 
 ## Models
 
@@ -73,8 +88,14 @@ though the problems and cases here are original.
 | `Ornith-1.5-35B-A3B-MLX-4bit` | 35B MoE (~3B active) | 18 GB | 4-bit | [HF](https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit) |
 | `gemma-4-26B-A4B-it-heretic-4bit` | 26B MoE (~4B active) | 15 GB | 4-bit | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
 | `Qwen3.8-27B-Uncensored-MLX` | 27B dense | 15 GB | 4-bit | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | 24B dense (mistral3) | 25 GB | 8-bit | [HF](https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit) |
 
-**Total on disk:** ~102 GB · **Runtime memory:** ~17–20 GB per loaded model.
+**Total on disk:** ~127 GB · **Runtime memory:** ~17–25 GB per loaded model.
+
+**Pick by what you are doing:** [`docs/reference/COMPARISON.md`](docs/reference/COMPARISON.md)
+puts every model against every task — coding, chat, long context, uncensored
+work, images, video — on one page, with each number traced to the run file it
+came from.
 
 ## Benchmark results
 
@@ -88,6 +109,11 @@ though the problems and cases here are original.
 | 4 | `gemma-4-26B-A4B-it-heretic` | `gemma4-heretic` | 59.5 | 60.7 | **60.1** | 9.0 |
 | 5 | `Qwen3-Coder-30B-A3B-Instruct` | `qwen3` | 43.4 | 41.8 | **42.6** | 4.7 |
 | 6 | `Qwen3.8-27B-Uncensored` | `qwen36-heretic` | 18.3 | 18.1 | **18.2** | 6.6 |
+| 7 | `Devstral-Small-2-24B-Instruct` | `devstral` | 11.4 | 10.6 | **11.0** | 9.1 |
+
+Rows 1–6 come from the same throughput sweep in
+[`reference/results.json`](reference/results.json); Devstral was measured on its
+own pass, on the same machine and prompts, after the coding run.
 
 ### Average throughput (tok/s)
 

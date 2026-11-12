@@ -13,8 +13,14 @@ mixture-of-experts (MoE); one is dense.
 | `Ornith-1.5-35B-A3B-MLX-4bit` | 35B (~3B active) | MoE | 18 GB | **not declared** | [HF](https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit) |
 | `gemma-4-26B-A4B-it-heretic-4bit` | 26B (~4B active) | MoE, abliterated | 15 GB | **Gemma (tagged Apache-2.0)** | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
 | `Qwen3.8-27B-Uncensored-MLX` | 27B (all active) | dense, abliterated | 15 GB | Apache-2.0 | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | 24B (all active) | dense, code (mistral3) | 25 GB | Apache-2.0 | [HF](https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit) |
 
-**Total on disk:** ~102 GB. **Runtime:** ~17–20 GB per loaded model.
+**Total on disk:** ~127 GB. **Runtime:** ~17–25 GB per loaded model.
+
+`Devstral-Small-2` is the second code model, and like `Qwen3-Coder` it is scored on
+the coding suite rather than only on throughput. It is a **mistral3** architecture;
+oMLX ships `mlx_lm/models/mistral3.py`, so it loads there — the model card documents
+it as multimodal (`image-text-to-text`), but the benchmark drives it text-only.
 
 The **Licence** column is a summary only. "Downloadable" is not "commercially
 usable": one model here declares no licence, and another is tagged Apache-2.0 but

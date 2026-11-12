@@ -6,6 +6,34 @@ date-based snapshots rather than semver releases.
 
 ## [Unreleased]
 
+### Added — the model comparison page
+
+- `docs/reference/COMPARISON.md` — the single page to start from: one row per
+  model, one column per task (coding, chat, long context, uncensored work,
+  hallucination, red-team, images, video), with every number traced to the run
+  file it came from and the sample sizes stated.
+- Wired into `README.md` (table of contents, the model table, and from
+  `docs/reference/README.md`).
+- It records what the individual pages only imply: that the model labelled
+  "Coder" is not the best coder here (45/46 against four models at 56/56), that
+  the uncensored tier buys nothing in the red-team suite (all five working
+  models score 4/5), and that the densest model is the one to avoid on this
+  machine (18.2 tok/s, and 0/3 on long context where everyone else gets 2/3).
+
+### Added — Devstral-Small-2, the second code model
+
+- Profiled `Devstral-Small-2-24B-Instruct-2512-8bit` (Mistral Devstral Small 2,
+  24B dense, 8-bit MLX, Apache-2.0) in `profiles/omlx-profiles.json`. It is a
+  **mistral3** architecture and oMLX ships `mlx_lm/models/mistral3.py`, so it
+  loads; the model card documents it as multimodal, but the benchmark drives it
+  text-only.
+- Coding run: **55/56 cases**, all five functions defined, 13.8 s per answer. It
+  loses only the empty-string edge case on `word-break` that Qwen3-Coder also
+  loses, and it is the only code-labelled model here that defined every function
+  it was asked for.
+- `evidence/code-benchmark-devstral-2026-11-12.md`,
+  `reference/code-benchmark-devstral.json`.
+
 ### Added — coding benchmark
 
 - `problems/` — algorithmic problems with executable hidden cases and reference

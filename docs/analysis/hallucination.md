@@ -99,3 +99,22 @@ model and no network.
 
 Raw run: [`../../evidence/hallucination-2026-11-12.md`](../../evidence/hallucination-2026-11-12.md)
 and [`../../reference/hallucination.json`](../../reference/hallucination.json).
+
+## The questions and the answers themselves
+
+The summary above says "0% hallucination"; it does not let you check. Every probe
+for every model is written out — the language, the API name, whether it was real,
+what the model said, and the confidence it stated — in
+[`../../reference/hallucination-records.md`](../../reference/hallucination-records.md)
+(1,068 lines, regenerated from the JSON by
+[`../../scripts/release/export-hallucination-records.py`](../../scripts/release/export-hallucination-records.py)).
+
+Two things in that record are worth reading before trusting the headline:
+
+- **Every miss in the run is a false alarm, not a hallucination.** No model called
+  a fabricated name real on any of the 102 languages. The two models below 0% on
+  the false-alarm column called a _real_ API fake instead — the safe direction.
+- **The same two names account for every miss.** `Ornith-1.5-35B` and
+  `Qwen3-Coder-30B` each missed exactly `qsharp Qubit` and `mint component`, and
+  nothing else. Two unrelated models failing on precisely the same pair is a
+  statement about those two probes, not about either model.

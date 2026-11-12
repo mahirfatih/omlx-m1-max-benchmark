@@ -26,11 +26,13 @@
         "--low-ram",
         "--output", "{output}"
       ],
-      "model": "AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit",
+      "model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
       "base_model": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
       "license": "apache-2.0",
       "license_note": "Apache-2.0, inherited from the base model. No output restrictions beyond the licence's own terms.",
-      "local_path": "~/models/AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit",
+      "model_note": "mlx-gen resolves a model by its own name against the Hugging Face cache; it does NOT pick up the quantised `AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit` folder that oMLX downloaded, and it says so plainly if you point it there. Run `mlxgen download --model Wan-AI/Wan2.2-TI2V-5B-Diffusers` once, or `mlxgen prepare ... -q 8` to build a reusable local folder, before the first generation.",
+      "local_path": "~/.cache/huggingface/hub/models--Wan-AI--Wan2.2-TI2V-5B-Diffusers",
+      "also_on_disk": "~/models/AbstractFramework/wan2.2-ti2v-5b-diffusers-8bit (16.9 GB, oMLX-style folder that mlx-gen does not read)",
       "on_disk_gb": 16.9,
       "output_format": "mp4",
       "settings": {

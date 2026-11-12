@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-12",
+  "context_chars": 25344,
+  "context_tokens_est": 6336,
+  "tasks": [
+    "retrieval",
+    "conflict",
+    "aggregate"
+  ],
+  "models": [
+    {
+      "model": "Devstral-Small-2-24B-Instruct-2512-8bit",
+      "profile": "devstral",
+      "tasks": {
+        "retrieval": {
+          "ok": true,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 1.8,
+          "raw": "AX-dc500c81-7391"
+        },
+        "conflict": {
+          "ok": true,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 2.0,
+          "raw": "V2-dc500c81-8850"
+        },
+        "aggregate": {
+          "ok": true,
+          "reason": "3/3 facts",
+          "answer_s": 3.0,
+          "raw": "Edge router: RT-dc50-014; migration deadline: 11th March; service owner: platform team."
+        }
+      }
+    }
+  ]
+}

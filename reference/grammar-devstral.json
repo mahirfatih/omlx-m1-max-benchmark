@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-12",
+  "tasks": [
+    "person",
+    "verdict",
+    "matrix"
+  ],
+  "models": [
+    {
+      "model": "Devstral-Small-2-24B-Instruct-2512-8bit",
+      "profile": "devstral",
+      "tasks": {
+        "person": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 3.5,
+          "raw": "```json\n{\n  \"name\": \"Alex Chen\",\n  \"age\": 32,\n  \"skills\": [\"Python\", \"JavaScript\", \"Cloud Architecture\"]\n}\n```"
+        },
+        "verdict": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 2.3,
+          "raw": "```json\n{\"verdict\": \"pass\", \"confidence\": 1.0}\n```"
+        },
+        "matrix": {
+          "valid": true,
+          "reason": "valid",
+          "answer_s": 1.8,
+          "raw": "```json\n[[1, 2], [3, 4]]\n```"
+        }
+      }
+    }
+  ]
+}

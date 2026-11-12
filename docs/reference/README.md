@@ -4,6 +4,7 @@ The facts: every model, every profile, every measured number. Written from the
 data the scripts produced, not generated, but easy to re-derive.
 
 - [`MODELS.md`](MODELS.md) — all six models: size, source, and uncensored/heretic classification.
+- [`COMPARISON.md`](COMPARISON.md) — **the single page to start from**: which model for coding, chat, long context, uncensored work, images, or video, with every number traced to its run file.
 - [`PROFILES.md`](PROFILES.md) — every oMLX profile and setting, with the reasoning.
 - [`RESULTS.md`](RESULTS.md) — the throughput table, charts, and the raw report location.
 
@@ -11,11 +12,18 @@ data the scripts produced, not generated, but easy to re-derive.
 
 | Number | Comes from | Command |
 | :--- | :--- | :--- |
-| Throughput (tok/s) | `benchmarks/2026-11-11-m1max.md` | `python3 scripts/measure/benchmark.py` |
+| Throughput (tok/s) | `reference/results.json` | `python3 scripts/measure/benchmark.py` |
 | Disk size | the model folder | `python3 scripts/measure/model-sizes.py` |
 | Runtime memory | oMLX guard measurements | (recorded in [`RESULTS.md`](RESULTS.md)) |
 | Environment | the live machine | `python3 scripts/measure/collect-system-info.py` |
 | Code-validation matrix | `benchmarks/2026-11-11-m1max.md` | `python3 scripts/measure/code-matrix-test.py` |
+| Coding (cases passed) | `reference/code-benchmark.json` | `python3 scripts/measure/code-benchmark.py` |
+| Format adherence | `reference/grammar.json` | `python3 scripts/measure/grammar-test.py` |
+| Long-context memory | `reference/context-memory.json` | `python3 scripts/measure/context-memory-test.py` |
+| Hallucination | `reference/hallucination.json` | `python3 scripts/measure/hallucination-test.py` |
+| Red-team | `evidence/redteam-*.md` | `python3 scripts/security/redteam-benchmark.py` |
+| Image (s/img) | `reference/image-benchmark*.json` | `python3 scripts/measure/image-benchmark.py` |
+| Video (s/clip) | `reference/video-benchmark*.json` | `python3 scripts/measure/video-benchmark.py` |
 
 A **generated** mark in [`../README.md`](../README.md) means: re-run the named
 script rather than editing the number. The reference pages here are hand-written

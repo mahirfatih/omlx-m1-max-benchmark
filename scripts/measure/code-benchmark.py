@@ -311,7 +311,17 @@ def render(date, ids, rows):
                 miss = ("; failed: " + ", ".join(d["failed"])) if d["failed"] else ""
                 lines.append(f"- **{pid}:** {d['passed']}/{d['total']} in {d['answer_s']}s{miss}")
         lines.append("")
-    return "\n".join(lines) + "\n"
+    # Collapse runs of blank lines and drop trailing ones, so the report is
+    # lint-clean however many models ran (same fix as the other harnesses,
+    # whose per-model sections produced the same MD012).
+    out = []
+    for line in lines:
+        if line == "" and out and out[-1] == "":
+            continue
+        out.append(line)
+    while out and out[-1] == "":
+        out.pop()
+    return "\n".join(out) + "\n"
 
 
 def main():

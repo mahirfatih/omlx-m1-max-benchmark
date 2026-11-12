@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-12",
+  "problems": [
+    "p01-two-sum",
+    "p02-longest-increasing-subsequence",
+    "p03-median-two-sorted",
+    "p04-merge-intervals",
+    "p05-word-break"
+  ],
+  "models": [
+    {
+      "model": "Devstral-Small-2-24B-Instruct-2512-8bit",
+      "profile": "devstral",
+      "problems": {
+        "p01-two-sum": {
+          "passed": 12,
+          "total": 12,
+          "score": 1.0,
+          "failed": [],
+          "answer_s": 8.6,
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    num_map = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in num_map:\n            return [num_map[complement], i]\n        num_map[num] = i\n    return []\n"
+        },
+        "p02-longest-increasing-subsequence": {
+          "passed": 10,
+          "total": 10,
+          "score": 1.0,
+          "failed": [],
+          "answer_s": 9.3,
+          "code": "def length_of_lis(nums: list[int]) -> int:\n    if not nums:\n        return 0\n    dp = [1] * len(nums)\n    for i in range(1, len(nums)):\n        for j in range(i):\n            if nums[i] > nums[j]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp)\n"
+        },
+        "p03-median-two-sorted": {
+          "passed": 10,
+          "total": 10,
+          "score": 1.0,
+          "failed": [],
+          "answer_s": 28.3,
+          "code": "def find_median(nums1: list[int], nums2: list[int]) -> float:\n    if not nums1 and not nums2:\n        return 0.0\n\n    # Ensure nums1 is the smaller array\n    if len(nums1) > len(nums2):\n        nums1, nums2 = nums2, nums1\n\n    m, n = len(nums1), len(nums2)\n    total = m + n\n    half = (total + 1) // 2\n\n    left, right = 0, m\n    while left <= right:\n        i = (left + right) // 2\n        j = half - i\n\n        nums1_left = float('-inf') if i == 0 else nums1[i - 1]\n        nums1_right = float('inf') if i == m else nums1[i]\n\n        nums2_left = float('-inf') if j == 0 else nums2[j - 1]\n        nums2_right = float('inf') if j == n else nums2[j]\n\n        if nums1_left <= nums2_right and nums2_left <= nums1_right:\n            if total % 2 == 0:\n                return (max(nums1_left, nums2_lef"
+        },
+        "p04-merge-intervals": {
+          "passed": 12,
+          "total": 12,
+          "score": 1.0,
+          "failed": [],
+          "answer_s": 12.1,
+          "code": "def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:\n    if not intervals:\n        return []\n\n    # Sort intervals based on the start value\n    intervals.sort(key=lambda x: x[0])\n\n    merged = [intervals[0]]\n    for current in intervals[1:]:\n        last = merged[-1]\n        if current[0] <= last[1]:  # Overlapping intervals\n            last[1] = max(last[1], current[1])\n        else:\n            merged.append(current)\n\n    return merged\n"
+        },
+        "p05-word-break": {
+          "passed": 11,
+          "total": 12,
+          "score": 0.917,
+          "failed": [
+            "empty_string"
+          ],
+          "answer_s": 10.8,
+          "code": "def word_break(s: str, word_dict: list[str]) -> bool:\n    word_set = set(word_dict)\n    n = len(s)\n    dp = [False] * (n + 1)\n    dp[0] = True\n\n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    return dp[n]\n"
+        }
+      }
+    }
+  ]
+}
