@@ -253,13 +253,19 @@ Raising `max_context_window` pushes that wall further out but does not remove it
 and every extra token of context is paid for in memory and prefill time. Keeping
 32K and sending a smaller prompt is the cheaper answer, so this repository
 recommends **[`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink)** —
-an MCP server that measures the context before the request and drops the oldest
-messages instead of letting the server reject the call.
+an MCP server that measures the context before the request, then drops the oldest
+messages or compacts them into a summary instead of letting the server reject the
+call.
 
 | Tool | What it returns |
 | :--- | :--- |
 | `estimate_context` | Estimated tokens, remaining budget, `should_trim` |
 | `trim_context` | The message list with the oldest messages dropped |
+| `compact_context` | The oldest messages replaced by a summary (`keep_last` kept) |
+
+`trim_context` throws the old turns away; `compact_context` keeps their gist by
+having the local model summarise them (or by taking a summary you pass in, with
+no model call at all).
 
 It is a single Python file, runs on the same Mac with the system `python3`
 (`pip install mcp`), and defaults to this repository's profile

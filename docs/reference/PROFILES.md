@@ -89,13 +89,19 @@ Prompt is too long: 39514 tokens > 32768 maximum context length
 Raising `max_context_window` moves that wall but does not remove it, and it costs
 prefill time and KV cache. If you would rather keep 32K, use
 [`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink),
-an MCP server that measures the context before the request and drops the oldest
-messages when the estimate crosses the limit:
+an MCP server that measures the context before the request and either drops the
+oldest messages or compacts them into a summary when the estimate crosses the
+limit:
 
 | Tool | What it does |
 | :--- | :--- |
 | `estimate_context` | Approximate token count, remaining budget and `should_trim` |
 | `trim_context` | Returns the message list with the oldest messages dropped |
+| `compact_context` | Returns the list with the oldest messages replaced by a summary |
+
+`compact_context` summarises with the local model through the OpenAI-compatible
+endpoint, accepts a summary the caller wrote (no model call), or returns the
+`summary_prompt` for the caller to run it in two steps.
 
 It is plain Python and runs with the system `python3`
 (`pip install mcp`), so it works beside `omlx-server` on the same Mac. Defaults

@@ -156,12 +156,16 @@ token bellekte ve prefill süresinde ödenir. 32K'da kalıp **daha küçük prom
 göndermek daha ucuz bir çözüm, bu yüzden bu depo
 **[`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink)**
 MCP sunucusunu öneriyor: istekten önce context'i ölçer, sunucunun isteği
-reddetmesini beklemek yerine en eski mesajları düşürür.
+reddetmesini beklemek yerine en eski mesajları düşürür ya da özete indirir.
 
 | Araç | Ne döner |
 | :--- | :--- |
 | `estimate_context` | Tahmini token, kalan bütçe, `should_trim` |
 | `trim_context` | En eski mesajlar düşürülmüş mesaj listesi |
+| `compact_context` | En eski mesajlar özetle değiştirilmiş liste (`keep_last` korunur) |
+
+`trim_context` eski turları atar; `compact_context` özlerini korur — yerel modelle
+özetletir ya da verdiğin hazır özeti kullanır (o durumda hiç model çağrısı yapmaz).
 
 Tek dosyalık Python; aynı Mac'te sistem `python3`'ü ile çalışır (`pip install mcp`)
 ve bu depodaki profille aynı varsayılanları kullanır
