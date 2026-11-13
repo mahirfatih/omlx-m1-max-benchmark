@@ -107,7 +107,6 @@ It is plain Python and runs with the system `python3`
 (`pip install mcp`), so it works beside `omlx-server` on the same Mac. Defaults
 match this repository's profile: `max_context_tokens 32768`, `keep_last 8`.
 
-
 ## Changing a profile
 
 Either edit it in the oMLX dashboard, or change

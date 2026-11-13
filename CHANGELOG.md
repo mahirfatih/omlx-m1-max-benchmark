@@ -6,6 +6,19 @@ date-based snapshots rather than semver releases.
 
 ## [Unreleased]
 
+### Added — the long-prompt answer, `omlx-prompt-shrink`
+
+- `README.md`, `README.tr.md` and `docs/reference/PROFILES.md` now recommend
+  [`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink)
+  for the case where a long session ends in
+  `Prompt is too long: 39514 tokens > 32768 maximum context length`. Keeping the
+  32K window is a deliberate speed/memory choice, so the cheaper fix is a smaller
+  prompt, not a wider window: the MCP measures the context before the request and
+  either **drops** the oldest messages or **compacts** them into a summary.
+- Its three tools are named and described: `estimate_context`, `trim_context`
+  and `compact_context`, with defaults that match this repository's `qwen3`
+  profile (`max_context_tokens 32768`, `keep_last 8`).
+
 ### Changed — image and video generation moved to their own repository
 
 - The image (mflux) and video (VideoX-Fun-mlx) layers are no longer measured or
