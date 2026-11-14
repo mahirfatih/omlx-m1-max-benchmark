@@ -105,9 +105,9 @@ came from.
 
 ## Model map
 
-![Model map (dark)](docs/diagrams/model-map/model-map-light.png)
+![Model map (light)](docs/diagrams/model-map/model-map-light.png)
 
-[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — the interactive version (theme toggle). [`model-map-dark.png`](docs/diagrams/model-map/model-map-dark.png) for the light theme.
+[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — the interactive version (theme toggle). [`model-map-dark.png`](docs/diagrams/model-map/model-map-dark.png) for the dark theme.
 
 Which model for which job, at the speed it actually ran, in one picture.
 
@@ -239,7 +239,7 @@ The full, machine-readable configuration is in [`profiles/omlx-profiles.json`](p
 - **`is_pinned = false` for all models** → no startup RAM spike; models load on demand and unload after 180 s idle.
 - **temperature 0.2 + presence 0.3 + repetition 1.1** → stable code, fewer loops.
 
-## Long prompts — `omlx-prompt-shrink`
+## Long prompts — oMLX Prompt Shrink
 
 32K is a deliberate trade-off, not a limit imposed by the models: it keeps the KV
 cache at ~17–20 GB and keeps prefill short. The cost shows up in a long session,
