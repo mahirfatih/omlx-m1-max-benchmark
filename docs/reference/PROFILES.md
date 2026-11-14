@@ -77,7 +77,7 @@ are never included**; the example uses the placeholder `REPLACE_WITH_YOUR_KEY`.
 - **`max_tokens 4096` on `qwen3`.** Coding tasks emit whole files; chat does not,
   so the heretic profiles stay at 2048.
 
-## Long prompts — `omlx-prompt-shrink`
+## Long prompts — oMLX Prompt Shrink
 
 32K context is a deliberate speed/memory trade-off, so a long session can still
 end with the server refusing the request:

@@ -86,9 +86,9 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 
 ## Model haritası
 
-![Model haritası (koyu)](docs/diagrams/model-map/model-map-dark.png)
+![Model haritası (açık)](docs/diagrams/model-map/model-map-light.png)
 
-[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — interaktif sürüm (tema değiştirilebilir). [`model-map-light.png`](docs/diagrams/model-map/model-map-light.png) açık tema için.
+[`docs/diagrams/model-map/model-map.html`](docs/diagrams/model-map/model-map.html) — interaktif sürüm (tema değiştirilebilir). [`model-map-dark.png`](docs/diagrams/model-map/model-map-dark.png) koyu tema için.
 
 Hangi işi hangi modelin taşıdığı ve ölçülen hız, tek sayfada.
 
@@ -142,7 +142,7 @@ Kanıtlar, HF alıntıları ve yerel davranış testleri:
 
 Tam ayarlar: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
 
-## Uzun prompt'lar — `omlx-prompt-shrink`
+## Uzun prompt'lar — oMLX Prompt Shrink
 
 32K bilinçli bir tercih: KV cache'i ~17–20 GB'ta ve prefill'i kısa tutuyor. Bedeli
 uzun oturumlarda görünür — biriken prompt tavanı aşınca oMLX isteği reddeder:
