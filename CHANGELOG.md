@@ -6,10 +6,10 @@ date-based snapshots rather than semver releases.
 
 ## [Unreleased]
 
-### Added — the long-prompt answer, `omlx-prompt-shrink`
+### Added — the long-prompt answer, Context Shrink
 
 - `README.md`, `README.tr.md` and `docs/reference/PROFILES.md` now recommend
-  [`mahirfatih/omlx-prompt-shrink`](https://github.com/mahirfatih/omlx-prompt-shrink)
+  [Context Shrink](https://github.com/mahirfatih/context-shrink-mcp)
   for the case where a long session ends in
   `Prompt is too long: 39514 tokens > 32768 maximum context length`. Keeping the
   32K window is a deliberate speed/memory choice, so the cheaper fix is a smaller
