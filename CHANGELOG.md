@@ -6,6 +6,24 @@ date-based snapshots rather than semver releases.
 
 ## [Unreleased]
 
+### Changed — the oMLX context window is now 64K
+
+- oMLX's `max_context_window` is **65536** (was 32768) in the live server
+  configuration — `sampling.max_context_window` plus the per-model, named-profile
+  and alias-profile entries — and this repository now documents the same value in
+  `profiles/omlx-profiles.json`, `config/settings.example.json` and
+  `docs/reference/PROFILES.md`.
+- Why: long local coding sessions kept ending in
+  `Prompt is too long: 39514 tokens > 32768 maximum context length`, and the agent
+  compacted its history almost every turn. The models measured here are
+  hybrid-attention (`Qwen3.6-35B-A3B` runs 30 of its 40 layers as linear
+  attention), so the KV cache grows slowly — roughly 1.3 GB at 64K versus 0.7 GB at
+  32K for the full-attention layers — while the native ceiling is 262144 tokens.
+  Widening the window costs little memory and removes both symptoms.
+- This supersedes the "keep the window narrow" advice in the entry below: the
+  Context Shrink MCP is still the right tool when memory or speed must stay tight,
+  it simply has headroom now.
+
 ### Added — the long-prompt answer, Context Shrink
 
 - `README.md`, `README.tr.md` and `docs/reference/PROFILES.md` now recommend
