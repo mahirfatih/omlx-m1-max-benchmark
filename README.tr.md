@@ -96,7 +96,7 @@ Hangi işi hangi modelin taşıdığı ve ölçülen hız, tek sayfada.
 
 **Yöntem:** her model boşaltılır, istek üzerine yüklenir (ısınma), sonra aynı
 İngilizce ve Türkçe prompt iki kez sorulur. Hız = `completion_tokens / geçen süre`.
-Ayarlar: `ctx 32768`, `temp 0.2`, `max_tokens 220`, thinking kapalı.
+Ayarlar: `ctx 65536`, `temp 0.2`, `max_tokens 220`, thinking kapalı.
 
 | # | Model | Profil | EN tok/s | TR tok/s | **Ortalama** | Yükleme (s) |
 |---|---|---|---:|---:|---:|---:|
@@ -131,7 +131,7 @@ Kanıtlar, HF alıntıları ve yerel davranış testleri:
 
 | Ayar | `qwen3` | `qwen36-heretic` | `gemma4-heretic` |
 |---|---:|---:|---:|
-| Context | 32768 | 32768 | 32768 |
+| Context | 65536 | 65536 | 65536 |
 | Max tokens | **4096** | 2048 | 2048 |
 | Temperature | 0.2 | 0.2 | 0.2 |
 | Top-p / Top-k | 0.95 / 20 | 0.95 / 20 | 0.95 / 20 |
@@ -144,7 +144,7 @@ Tam ayarlar: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
 
 ## Uzun prompt'lar — Context Shrink
 
-32K bilinçli bir tercih: KV cache'i ~17–20 GB'ta ve prefill'i kısa tutuyor. Bedeli
+64K bilinçli bir tercih: KV cache'i ~17–20 GB'ta ve prefill'i kısa tutuyor. Bedeli
 uzun oturumlarda görünür — biriken prompt tavanı aşınca oMLX isteği reddeder:
 
 ```text
@@ -152,7 +152,7 @@ Prompt is too long: 39514 tokens > 32768 maximum context length
 ```
 
 `max_context_window`'u yükseltmek duvarı ileri taşır ama kaldırmaz; fazladan her
-token bellekte ve prefill süresinde ödenir. 32K'da kalıp **daha küçük prompt**
+token bellekte ve prefill süresinde ödenir. **Daha küçük prompt**
 göndermek daha ucuz bir çözüm, bu yüzden bu depo
 **[Context Shrink](https://github.com/mahirfatih/context-shrink-mcp)**
 MCP sunucusunu öneriyor: istekten önce context'i ölçer, sunucunun isteği
@@ -169,7 +169,7 @@ reddetmesini beklemek yerine en eski mesajları düşürür ya da özete indirir
 
 Tek dosyalık Python; aynı Mac'te sistem `python3`'ü ile çalışır (`pip install mcp`)
 ve bu depodaki profille aynı varsayılanları kullanır
-(`max_context_tokens 32768`, `keep_last 8`). Kurulum ve OpenCode yapılandırması
+(`max_context_tokens 65536`, `keep_last 8`). Kurulum ve OpenCode yapılandırması
 [README'sinde](https://github.com/mahirfatih/context-shrink-mcp#readme); profil
 düzeyindeki not [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--context-shrink)
 içinde.

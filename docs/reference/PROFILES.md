@@ -14,7 +14,7 @@ live install with it using `python3 scripts/config/apply-profiles.py`.
 
 | Setting | `qwen3` | `qwen36-heretic` | `gemma4-heretic` |
 | :--- | ---: | ---: | ---: |
-| `max_context_window` | 32768 | 32768 | 32768 |
+| `max_context_window` | 65536 | 65536 | 65536 |
 | `max_tokens` | **4096** | 2048 | 2048 |
 | `temperature` | 0.2 | 0.2 | 0.2 |
 | `top_p` | 0.95 | 0.95 | 0.95 |
@@ -62,7 +62,7 @@ are never included**; the example uses the placeholder `REPLACE_WITH_YOUR_KEY`.
 
 ## Why these settings
 
-- **32K context + 4-bit KV cache.** The KV cache is the thing that grows with
+- **64K context + 4-bit KV cache.** The KV cache is the thing that grows with
   context. Quantizing it to 4-bit (turboquant) keeps the runtime footprint at
   ~17–20 GB per model, which is what lets the memory guard accept a load on a
   64 GB machine instead of rejecting it.
@@ -79,7 +79,7 @@ are never included**; the example uses the placeholder `REPLACE_WITH_YOUR_KEY`.
 
 ## Long prompts — Context Shrink
 
-32K context is a deliberate speed/memory trade-off, so a long session can still
+64K context is a deliberate speed/memory trade-off, so a long session can still
 end with the server refusing the request:
 
 ```text
@@ -87,7 +87,7 @@ Prompt is too long: 39514 tokens > 32768 maximum context length
 ```
 
 Raising `max_context_window` moves that wall but does not remove it, and it costs
-prefill time and KV cache. If you would rather keep 32K, use
+prefill time and KV cache. If you would rather keep 64K, use
 [Context Shrink](https://github.com/mahirfatih/context-shrink-mcp),
 an MCP server that measures the context before the request and either drops the
 oldest messages or compacts them into a summary when the estimate crosses the
@@ -105,7 +105,7 @@ endpoint, accepts a summary the caller wrote (no model call), or returns the
 
 It is plain Python and runs with the system `python3`
 (`pip install mcp`), so it works beside `omlx-server` on the same Mac. Defaults
-match this repository's profile: `max_context_tokens 32768`, `keep_last 8`.
+match this repository's profile: `max_context_tokens 65536`, `keep_last 8`.
 
 ## Changing a profile
 

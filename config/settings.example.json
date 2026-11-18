@@ -23,7 +23,7 @@
     "api_key": "REPLACE_WITH_YOUR_KEY"
   },
   "sampling": {
-    "max_context_window": 32768,
+    "max_context_window": 65536,
     "max_context_window_policy": null,
     "max_tokens": 2048,
     "temperature": 0.2,

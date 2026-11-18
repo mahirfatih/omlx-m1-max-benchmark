@@ -5,11 +5,11 @@
     "qwen36-heretic": {
       "name": "qwen36-heretic",
       "display_name": "qwen36-heretic",
-      "description": "global uncensored heretic ayari (98K, temp 0.2, thinking kapali)",
+      "description": "global uncensored heretic ayari (64K, temp 0.2, thinking kapali)",
       "created_at": "2026-11-11T19:46:06.358144+00:00",
       "updated_at": "2026-11-11T19:54:43.801127+00:00",
       "settings": {
-        "max_context_window": 32768,
+        "max_context_window": 65536,
         "max_tokens": 2048,
         "temperature": 0.2,
         "top_p": 0.95,
@@ -38,11 +38,11 @@
     "gemma4-heretic": {
       "name": "gemma4-heretic",
       "display_name": "gemma4-heretic",
-      "description": "global uncensored heretic ayari (98K, temp 0.2, thinking kapali)",
+      "description": "global uncensored heretic ayari (64K, temp 0.2, thinking kapali)",
       "created_at": "2026-11-11T19:46:06.358144+00:00",
       "updated_at": "2026-11-11T19:54:43.801127+00:00",
       "settings": {
-        "max_context_window": 32768,
+        "max_context_window": 65536,
         "max_tokens": 2048,
         "temperature": 0.2,
         "top_p": 0.95,
@@ -71,11 +71,11 @@
     "qwen3": {
       "name": "qwen3",
       "display_name": "qwen3",
-      "description": "Qwen3 ailesi icin global profil (98K, temp 0.2, thinking kapali)",
+      "description": "Qwen3 ailesi icin global profil (64K, temp 0.2, thinking kapali)",
       "created_at": "2026-11-11T19:49:05.924538+00:00",
       "updated_at": "2026-11-11T19:54:43.801127+00:00",
       "settings": {
-        "max_context_window": 32768,
+        "max_context_window": 65536,
         "max_tokens": 4096,
         "temperature": 0.2,
         "top_p": 0.95,
@@ -123,7 +123,7 @@
         "created_at": "2026-11-12T00:00:00+00:00",
         "updated_at": "2026-11-12T00:00:00+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 2048,
           "temperature": 0.2,
           "top_p": 0.95,
@@ -161,7 +161,7 @@
         "created_at": "2026-11-11T20:04:54.840116+00:00",
         "updated_at": "2026-11-11T20:04:54.840116+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 2048,
           "temperature": 0.2,
           "top_p": 0.95,
@@ -199,7 +199,7 @@
         "created_at": "2026-11-11T19:49:05.924538+00:00",
         "updated_at": "2026-11-11T19:54:43.801127+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 4096,
           "temperature": 0.2,
           "top_p": 0.95,
@@ -237,7 +237,7 @@
         "created_at": "2026-11-11T19:49:05.924538+00:00",
         "updated_at": "2026-11-11T19:54:43.801127+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 4096,
           "temperature": 0.2,
           "top_p": 0.95,
@@ -275,7 +275,7 @@
         "created_at": "2026-11-11T19:49:05.924538+00:00",
         "updated_at": "2026-11-11T19:54:43.801127+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 4096,
           "temperature": 0.2,
           "top_p": 0.95,
@@ -313,7 +313,7 @@
         "created_at": "2026-11-11T19:46:06.358144+00:00",
         "updated_at": "2026-11-11T19:54:43.801127+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 2048,
           "temperature": 0.2,
           "top_p": 0.95,
@@ -351,7 +351,7 @@
         "created_at": "2026-11-11T19:46:06.358144+00:00",
         "updated_at": "2026-11-11T19:54:43.801127+00:00",
         "settings": {
-          "max_context_window": 32768,
+          "max_context_window": 65536,
           "max_tokens": 2048,
           "temperature": 0.2,
           "top_p": 0.95,
