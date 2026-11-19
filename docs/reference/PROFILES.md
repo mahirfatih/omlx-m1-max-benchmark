@@ -104,8 +104,20 @@ endpoint, accepts a summary the caller wrote (no model call), or returns the
 `summary_prompt` for the caller to run it in two steps.
 
 It is plain Python and runs with the system `python3`
-(`pip install mcp`), so it works beside `omlx-server` on the same Mac. Defaults
-match this repository's profile: `max_context_tokens 65536`, `keep_last 8`.
+(`pip install mcp`), so it works beside `omlx-server` on the same Mac. Two
+numbers must line up with this repository's profile, or the guard and the server
+disagree:
+
+- **Context Shrink's own window.** Its built-in default is `32768`; pin it to
+  this profile with `--max-context 65536` (or
+  `CONTEXT_SHRINK_MAX_CONTEXT_TOKENS=65536`). `keep_last` defaults to `8`.
+- **OpenCode's window.** OpenCode plans its auto-compaction from the provider's
+  `limit.context`, so the oMLX provider entry must also carry
+  `"limit": { "context": 65536, "output": 4096 }` — equal to
+  `max_context_window`, with `output` no larger than the profile's `max_tokens`.
+
+The full OpenCode configuration (provider and MCP entries side by side) is in
+[Context Shrink's README](https://github.com/mahirfatih/context-shrink-mcp#a-real-setup-this-projects-development-machine).
 
 ## Changing a profile
 

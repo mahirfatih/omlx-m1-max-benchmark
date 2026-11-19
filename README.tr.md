@@ -167,11 +167,12 @@ reddetmesini beklemek yerine en eski mesajları düşürür ya da özete indirir
 `trim_context` eski turları atar; `compact_context` özlerini korur — yerel modelle
 özetletir ya da verdiğin hazır özeti kullanır (o durumda hiç model çağrısı yapmaz).
 
-Tek dosyalık Python; aynı Mac'te sistem `python3`'ü ile çalışır (`pip install mcp`)
-ve bu depodaki profille aynı varsayılanları kullanır
-(`max_context_tokens 65536`, `keep_last 8`). Kurulum ve OpenCode yapılandırması
-[README'sinde](https://github.com/mahirfatih/context-shrink-mcp#readme); profil
-düzeyindeki not [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--context-shrink)
+Tek dosyalık Python; aynı Mac'te sistem `python3`'ü ile çalışır (`pip install mcp`).
+Yerleşik penceresi `32768`'dir, bu yüzden bu profile `--max-context 65536` ile
+sabitleyin; OpenCode tarafında da oMLX sağlayıcısı eşleşen
+`"limit": { "context": 65536, "output": 4096 }` taşımalıdır. Kurulum ve OpenCode
+yapılandırması [README'sinde](https://github.com/mahirfatih/context-shrink-mcp#readme);
+profil düzeyindeki not [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--context-shrink)
 içinde.
 
 ## Güvenlik

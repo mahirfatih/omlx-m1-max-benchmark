@@ -266,10 +266,11 @@ call.
 having the local model summarise them (or by taking a summary you pass in, with
 no model call at all).
 
-It is a single Python file, runs on the same Mac with the system `python3`
-(`pip install mcp`), and defaults to this repository's profile
-(`max_context_tokens 65536`, `keep_last 8`). Details and the OpenCode
-configuration are in [its README](https://github.com/mahirfatih/context-shrink-mcp#readme);
+It is a single Python file and runs on the same Mac with the system `python3`
+(`pip install mcp`). Its built-in window is `32768`, so pin it to this profile
+with `--max-context 65536`; on the OpenCode side the oMLX provider must carry the
+matching `"limit": { "context": 65536, "output": 4096 }`. Details and the
+OpenCode configuration are in [its README](https://github.com/mahirfatih/context-shrink-mcp#readme);
 the profile-level note is in [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--context-shrink).
 
 ## Repository analysis
