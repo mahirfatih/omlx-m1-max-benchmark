@@ -68,6 +68,22 @@ date-based snapshots rather than semver releases.
   kept **byte-stable** as dated history; the campaign did not re-run the red team,
   so the three new models are shown as `pending` there rather than scored.
 
+### Fixed — documentation drift after the 2026-11-22 campaign
+
+- `docs/guides/METHODOLOGY.md` still described the 2026-11-11 settings: the
+  context window is now **65536** (was 32768), the "does not vary" list no longer
+  claims a single oMLX version across the whole record, and the "last on speed"
+  note now names **Devstral-Small-2** (12.4 tok/s), not Qwen3.8-27B.
+- `docs/guides/REPRODUCING.md` said to edit the `TARGETS` list to pick models;
+  the scripts now take **`--models` / `--out`** and the source list is
+  `DEFAULT_TARGETS`.
+- `benchmarks/README.md` listed only the 2026-11-11 report; it now lists both and
+  says which one the manifest hashes as `report` and which as `archive_report`.
+- `evidence/README.md` described the folder as security-only; it now documents the
+  capability transcripts too, and notes the campaign did not re-run the red team.
+- `.markdownlint-cli2.jsonc`'s comment said five rules were disabled when the
+  config disables seven; `MD028` and `MD036` are now listed with their reasons.
+
 ### Changed — version references are now oMLX 0.8.2
 
 - The live server is on **oMLX 0.8.2**; the repository's prose, the `environment`

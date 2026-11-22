@@ -1,7 +1,7 @@
 {
   // markdownlint-cli2 configuration for this repository.
   //
-  // Five rules are off on purpose, and each is a deliberate writing choice
+  // Seven rules are off on purpose, and each is a deliberate writing choice
   // rather than an accident:
   //
   //   MD013 (line-length)         the documents wrap by paragraph; breaking a
@@ -10,6 +10,11 @@
   //                               with <br>.
   //   MD060 (table-column-style)  the tables are aligned for the source, not for
   //                               one fixed pipe style.
+  //   MD028 (no-blanks-blockquote) the source-quote pairs in README.md and
+  //                               MODELS.md separate the quote from its
+  //                               attribution with a blank quote line on purpose.
+  //   MD036 (no-emphasis-as-heading) README.md uses a bold "Summary" / "Model →
+  //                               profile" line as a label, not as a heading.
   //   MD009 (trailing spaces)     generated `evidence/` pages quote raw model
   //   MD032 (blanks-around-lists) answers verbatim, including their own trailing
   //                               spaces and list spacing; the raw bytes matter.

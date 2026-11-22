@@ -72,10 +72,24 @@ python3 scripts/measure/benchmark.py
 The script reads the API key from `~/.omlx/settings.json` (it never prints it),
 unloads every known model, then measures each in turn. The full Markdown report
 is written to `~/Desktop/omlx-benchmark-<timestamp>.md` and printed to the
-terminal.
+terminal; `--out <file>` writes it somewhere else instead.
 
-To benchmark a different set of models, edit the `TARGETS` list at the top of the
-script — each entry is `"<model-id>:<profile>"`.
+To benchmark a different set of models, pass `--models` with a comma-separated
+`<model-id>:<profile>` list. Omit it to use the built-in `DEFAULT_TARGETS` list at
+the top of the script:
+
+```bash
+python3 scripts/measure/benchmark.py \
+    --models Kimi-Linear-48B-A3B-Instruct-4bit:kimi-linear,Inkling-2-Mini-oQ4e-mtp:inkling-mtp \
+    --out /tmp/throughput.md
+```
+
+> **Note — what changed in 2026-11-22.** Until that campaign, the only way to pick
+> models was to edit the list in the script itself, so this page used to say "edit
+> the `TARGETS` list". The campaign added `--models` and `--out` to every
+> measurement script — the source list is now `DEFAULT_TARGETS`, and the examples
+> in [`../../scripts/measure/README.md`](../../scripts/measure/README.md) use the
+> flags.
 
 ## 5. Validate multi-language code generation (optional)
 
@@ -83,9 +97,10 @@ script — each entry is `"<model-id>:<profile>"`.
 python3 scripts/measure/code-matrix-test.py
 ```
 
-This asks four models to write a small program in Python, Node.js, Bash and
-Swift, then checks each output with `py_compile` / `node --check` / `bash -n` /
-`swiftc -parse`. It needs `node`, `bash` and `swiftc` on the machine.
+This asks four models by default — pass `--models` for another set — to write a
+small program in Python, Node.js, Bash and Swift, then checks each output with
+`py_compile` / `node --check` / `bash -n` / `swiftc -parse`. It needs `node`,
+`bash` and `swiftc` on the machine.
 
 ## 6. Analyse a real repository (optional)
 
@@ -106,8 +121,10 @@ of the repository's own facts they cite. The reading is in
 ## 7. Record the result
 
 Copy the generated report into `benchmarks/` with a dated name, e.g.
-`benchmarks/2026-11-11-m1max.md`, and open a pull request — see
-[`../../CONTRIBUTING.md`](../../CONTRIBUTING.md).
+`benchmarks/2026-11-11-m1max.md` or `benchmarks/2026-11-22-m1max.md`, and open a
+pull request — see [`../../CONTRIBUTING.md`](../../CONTRIBUTING.md). The manifest
+hashes **both** the current report and the one it supersedes, so an earlier run
+is kept verbatim rather than overwritten.
 
 ## Troubleshooting
 

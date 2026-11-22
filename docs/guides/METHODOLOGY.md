@@ -46,7 +46,7 @@ amortise differently.
 
 | Setting | Value |
 | :--- | :--- |
-| Context window | 32768 |
+| Context window | 65536 |
 | Max tokens | 220 (benchmark cap) |
 | Temperature | 0.2 |
 | Top-p / Top-k | 0.95 / 20 |
@@ -60,12 +60,21 @@ amortise differently.
 These match the shipped profiles except for `max_tokens`, which the benchmark
 overrides to 220 so that every model stops at the same length.
 
+> **Note — the table describes today's machine, not every run in the record.**
+> These are the settings as the server stands now (**oMLX 0.8.2**,
+> `max_context_window 65536`). The 2026-11-11 campaign was measured on **oMLX
+> 0.7.3** with a **32768** window; [`../../benchmarks/2026-11-11-m1max.md`](../../benchmarks/2026-11-11-m1max.md)
+> keeps those values verbatim as that run's record and is not edited retroactively.
+
 ## What varies and what does not
 
 - **Varies:** model architecture (MoE vs dense), active parameter count, weight
   quantization details, tokenizer.
-- **Does not vary:** machine, OS, oMLX version, sampling settings, prompt,
-  output cap, concurrency (always one request at a time).
+- **Does not vary *within a campaign*:** machine, OS, sampling settings, prompt,
+  output cap, concurrency (always one request at a time). The oMLX version is
+  constant inside a run but differs *between* the two campaigns in this record —
+  0.7.3 for 2026-11-11, 0.8.2 for 2026-11-22 — so cross-campaign numbers are a
+  throughput comparison, not an apples-to-apples re-run.
 
 ## Sources of noise
 
@@ -81,7 +90,11 @@ overrides to 220 so that every model stops at the same length.
 ## How to read the ranking
 
 The ranking orders models by **decode speed only**. It is not a quality
-ranking. Qwen3.8-27B-Uncensored is last on speed and would be a poor choice for a
-latency-sensitive loop; it may still be the right model for tasks where its size
-or its uncensored behaviour matters more than speed. See
+ranking. The slowest model here — **Devstral-Small-2-24B-Instruct, at 12.4
+tok/s** — would be a poor choice for a latency-sensitive loop; it may still be
+the right model for tasks where its correctness (it is the one model that
+defines every function it is asked for) matters more than speed.
+**Qwen3.8-27B-Uncensored** is second-slowest at 18.2 tok/s and is likewise
+unsuited to a latency-sensitive loop, though it may be right where its
+uncensored behaviour matters more than speed. See
 [`CHOOSING-A-MODEL.md`](CHOOSING-A-MODEL.md).

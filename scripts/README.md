@@ -28,7 +28,7 @@ not in it — their outputs are committed under `benchmarks/` and
 | Script | What it does |
 | :--- | :--- |
 | [`benchmark.py`](measure/benchmark.py) | Decode throughput for every model: unloads all, warms up, asks an EN and a TR prompt twice each, writes a Markdown report. |
-| [`code-matrix-test.py`](measure/code-matrix-test.py) | Asks four models for a small program in Python / Node / Bash / Swift and validates each with `py_compile` / `node --check` / `bash -n` / `swiftc -parse`. |
+| [`code-matrix-test.py`](measure/code-matrix-test.py) | Asks four models by default (`--models` picks another set) for a small program in Python / Node / Bash / Swift and validates each with `py_compile` / `node --check` / `bash -n` / `swiftc -parse`. |
 | [`code-benchmark.py`](measure/code-benchmark.py) | Runs a model's solution to the problems in [`../problems/`](../problems/README.md) against hidden cases and scores correctness. `--selftest` runs the reference solutions with no model. |
 | [`grammar-test.py`](measure/grammar-test.py) | Format/grammar adherence: does the answer parse as a schema-valid JSON value? `--selftest` needs no model. |
 | [`context-memory-test.py`](measure/context-memory-test.py) | Long-context memory: retrieval, conflict resolution and aggregation over a generated ~6k-token document. `--selftest` builds it offline. |
