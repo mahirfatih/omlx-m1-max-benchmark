@@ -39,10 +39,11 @@ def render(d):
 
     names = [short(r["model"]) for r in rows]
     avgs = [r["avg"] for r in rows]
-    lines += ["", "```mermaid", "xychart-beta", '    title "Average decode throughput (tok/s)"',
+    rot = '%%{init: {"xyChart": {"xAxis": {"labelRotation": -45, "labelFontSize": 12}}}}%%'
+    lines += ["", "```mermaid", "xychart-beta horizontal", '    title "Average decode throughput (tok/s)"',
               "    x-axis [" + ", ".join(f'"{n}"' for n in names) + "]", '    y-axis "tok/s" 0 --> 80',
               "    bar [" + ", ".join(f"{v:.1f}" for v in avgs) + "]", "```"]
-    lines += ["", "```mermaid", "xychart-beta", '    title "EN vs TR throughput (tok/s)"',
+    lines += ["", "```mermaid", rot, "xychart-beta", '    title "EN vs TR throughput (tok/s)"',
               "    x-axis [" + ", ".join(f'"{n}"' for n in names) + "]", '    y-axis "tok/s" 0 --> 80',
               "    bar [" + ", ".join(f"{r['en']:.1f}" for r in rows) + "]",
               "    bar [" + ", ".join(f"{r['tr']:.1f}" for r in rows) + "]", "```",

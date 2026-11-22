@@ -42,7 +42,7 @@ one, warm up, then one EN and one TR prompt **twice each**; speed =
 | 10 | `Devstral-Small-2-24B-Instruct-2512-8bit` | `devstral` | 12.3 | 12.6 | **12.4** | 9.1 |
 
 ```mermaid
-xychart-beta
+xychart-beta horizontal
     title "Average decode throughput (tok/s)"
     x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Kimi-Lin", "Qwen3-Coder", "GLM-4.7", "Inkling", "Qwen3.8", "Devstral"]
     y-axis "tok/s" 0 --> 80
@@ -50,6 +50,7 @@ xychart-beta
 ```
 
 ```mermaid
+%%{init: {"xyChart": {"xAxis": {"labelRotation": -45, "labelFontSize": 12}}}}%%
 xychart-beta
     title "EN vs TR throughput (tok/s)"
     x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Kimi-Lin", "Qwen3-Coder", "GLM-4.7", "Inkling", "Qwen3.8", "Devstral"]

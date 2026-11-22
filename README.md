@@ -144,7 +144,7 @@ settings agree to within noise, so the table shows the `temp 0.2` values.
 ### Average throughput (tok/s)
 
 ```mermaid
-xychart-beta
+xychart-beta horizontal
     title "Average decode throughput (tok/s) — higher is faster"
     x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Kimi-Lin", "Qwen3-Coder", "GLM-4.7", "Inkling", "Qwen3.8", "Devstral"]
     y-axis "tok/s" 0 --> 80
@@ -154,6 +154,7 @@ xychart-beta
 ### English vs Turkish (tok/s)
 
 ```mermaid
+%%{init: {"xyChart": {"xAxis": {"labelRotation": -45, "labelFontSize": 12}}}}%%
 xychart-beta
     title "EN vs TR throughput (tok/s)"
     x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Kimi-Lin", "Qwen3-Coder", "GLM-4.7", "Inkling", "Qwen3.8", "Devstral"]
@@ -167,7 +168,7 @@ xychart-beta
 ### Cold load time (s)
 
 ```mermaid
-xychart-beta
+xychart-beta horizontal
     title "Cold model load time (s) — lower is better"
     x-axis ["Qwen3-Coder", "Inkling", "Ornith", "Qwen3.8", "Kimi-Lin", "Heretic", "Qwen3.6-35B", "gemma-4", "Devstral", "GLM-4.7"]
     y-axis "seconds" 0 --> 12
@@ -177,7 +178,7 @@ xychart-beta
 ### Disk size (GB)
 
 ```mermaid
-xychart-beta
+xychart-beta horizontal
     title "Model size on disk (GB)"
     x-axis ["gemma-4", "Qwen3.8", "Qwen3-Coder", "Inkling", "Ornith", "Qwen3.6-35B", "Heretic", "Devstral", "Kimi-Lin", "GLM-4.7"]
     y-axis "GB" 0 --> 35
