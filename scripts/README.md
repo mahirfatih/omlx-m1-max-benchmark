@@ -72,7 +72,7 @@ refuses a non-loopback target unless `--allow-remote` is passed.
 
 | Script | What it does |
 | :--- | :--- |
-| [`build-manifest.py`](release/build-manifest.py) | Writes `manifest.json` — the size, SHA-256, model and challenge counts. `--check` proves the committed one still describes the report and results. |
+| [`build-manifest.py`](release/build-manifest.py) | Writes `manifest.json` — the size, SHA-256, model and challenge counts, hashing both reports (`report` and `archive_report`). `--check` proves the committed one still describes them and the results. |
 
 ## Linting
 

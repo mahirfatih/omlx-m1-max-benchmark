@@ -2,7 +2,7 @@
 
 | Script | What it does |
 | :--- | :--- |
-| [`build-manifest.py`](build-manifest.py) | Writes `manifest.json` — the size, SHA-256, model count and challenge count of the report and the results data. `--check` proves the committed one still matches. |
+| [`build-manifest.py`](build-manifest.py) | Writes `manifest.json` (`manifest_version` 2) — the size, SHA-256, model count and challenge count of both reports (`report` and the byte-stable `archive_report`) and the results data. `--check` proves the committed one still matches. |
 
 ## Running
 

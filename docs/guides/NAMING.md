@@ -80,9 +80,11 @@ owns and writes in **`snake_case`**, matching the syntax shown in the
 
 ```json
 {
-  "manifest_version": 1,
-  "generated": "2026-11-11",
-  "models": 6
+  "manifest_version": 2,
+  "report": "benchmarks/2026-11-22-m1max.md",
+  "archive_report": "benchmarks/2026-11-11-m1max.md",
+  "generated": "2026-11-22",
+  "models": 10
 }
 ```
 

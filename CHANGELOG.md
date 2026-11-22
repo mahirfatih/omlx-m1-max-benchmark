@@ -83,6 +83,10 @@ date-based snapshots rather than semver releases.
   capability transcripts too, and notes the campaign did not re-run the red team.
 - `.markdownlint-cli2.jsonc`'s comment said five rules were disabled when the
   config disables seven; `MD028` and `MD036` are now listed with their reasons.
+- `docs/guides/NAMING.md`'s JSON example still showed `manifest_version` 1; it
+  now shows the v2 manifest, and the release docs (`docs/release/README.md`,
+  `scripts/release/README.md`, `scripts/README.md`) now say the manifest hashes
+  both the `report` and the byte-stable `archive_report`.
 
 ### Changed — version references are now oMLX 0.8.2
 

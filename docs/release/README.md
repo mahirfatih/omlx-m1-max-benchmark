@@ -18,18 +18,21 @@ python3 scripts/release/build-manifest.py --check
 ./test/test.sh
 
 # 3. tag the snapshot and push
-git tag -a v2026-11-11 -m "Benchmark snapshot 2026-11-11 (M1 Max)"
-git push origin v2026-11-11
+git tag -a v2026-11-22 -m "Benchmark snapshot 2026-11-22 (M1 Max)"
+git push origin v2026-11-22
 ```
 
 The tag is date-based, not semver: a benchmark is a point in time, and
-`v2026-11-11` says more than `v1.0.0` about what a reader gets.
+`v2026-11-22` says more than `v1.0.0` about what a reader gets.
 
 ## What ships
 
-- The Markdown report (the whole point).
+- The Markdown reports (the whole point): the current campaign's report, with the
+  previous campaign kept byte-stable alongside it under `benchmarks/`.
 - `reference/results.json` (the machine-readable numbers).
-- `manifest.json` (the checksum that proves the first two are the bytes cited).
+- `manifest.json` (`manifest_version` 2): the checksums that prove both reports
+  (`report` and `archive_report`) and `reference/results.json` are the bytes
+  cited.
 
 Model weights are **not** shipped; they live on HuggingFace and keep their own
 licences. See [`../../CONTRIBUTING.md`](../../CONTRIBUTING.md).
