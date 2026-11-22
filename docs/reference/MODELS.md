@@ -51,12 +51,15 @@ links to the Gemma terms. The full reading is in
 ## Image and video models (separate tools)
 
 The image and video models are **not** served by oMLX. Images run under
-[`mflux`](https://github.com/filipstrand/mflux), video under
-[`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx), and their settings
-live in separate profile files rather than in the oMLX profiles. Their licences
-differ too: FLUX.2 klein is Apache-2.0, FLUX 3 Image Klein is the conditional
-FLUX Kommunity License, and the CogVideoX-Fun quant is tagged `apache-2.0` while
-its base is under the registration-gated CogVideoX License — see
+[`mflux`](https://github.com/filipstrand/mflux) — except two that run under
+[`mlx-gen`](https://github.com/lpalbou/mlx-gen) — video under
+[`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx) and mlx-gen, and
+their settings live in separate profile files rather than in the oMLX profiles.
+Their licences differ too: FLUX.2 klein, Z-Image Turbo, ERNIE Image Turbo, Qwen
+Image and Wan2.2 are Apache-2.0; FLUX 3 Image Klein is the conditional FLUX
+Kommunity License; Anima Turbo is the **Circlestone non-commercial** licence; and
+the CogVideoX-Fun quant is tagged `apache-2.0` while its base is under the
+registration-gated CogVideoX License — see
 [`LICENSES.md`](LICENSES.md).
 
 Those two layers, with their models, profiles, measurements and outputs, are in

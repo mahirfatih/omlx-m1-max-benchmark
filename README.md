@@ -15,7 +15,7 @@
 This repository documents a reproducible benchmark of **10 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
 
 **Scope:** this repository is the **text** benchmark — everything oMLX serves. Image
-and video generation are different tools (mflux, VideoX-Fun-mlx) that oMLX cannot
+and video generation are different tools (mflux, mlx-gen, VideoX-Fun-mlx) that oMLX cannot
 run, so they live in their own repository:
 [mahirfatih/local-generation-benchmark-m1-max](https://github.com/mahirfatih/local-generation-benchmark-m1-max).
 
@@ -196,6 +196,7 @@ xychart-beta
 | `gemma-4-26B-A4B-it-heretic-4bit` | **Heretic + Uncensored** | ✅ | ✅ | HF tags: `heretic`, `uncensored`, `decensored`, `abliterated`. |
 | `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | **Uncensored + Heretic** | ✅ | ✅ | HF tags include `heretic` + `uncensored`; ~88% fewer refusals, KL 0.0015. |
 | `Qwen3.8-27B-Uncensored-MLX` | **Uncensored + Abliterated** | ✅ | ✅ (method) | HF card: *"abliterated (refusal-removed)"*; 0 refusals on 4/6/8-bit; local probe 3/3 no refusal. |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | Standard instruct | ❌ | ❌ | Official Mistral code model; Apache-2.0, standard alignment. |
 | `GLM-4.7-Flash-8bit` | Standard instruct | ❌ | ❌ | Official Z.ai reasoning MoE; standard alignment. |
 | `Kimi-Linear-48B-A3B-Instruct-4bit` | Standard instruct | ❌ | ❌ | Official Moonshot instruct model; standard alignment. |
 | `Inkling-2-Mini-oQ4e-mtp` | Standard instruct | ❌ | ❌ | Official Thinking Machines multimodal MoE; standard alignment. |
@@ -213,7 +214,7 @@ xychart-beta
 **Summary**
 
 - **Uncensored + Heretic/Abliterated:** Heretic, gemma-4-heretic, Qwen3.8-Uncensored
-- **Standard / censored:** Qwen3-Coder, Qwen3.6-35B, Ornith-1.5, GLM-4.7-Flash, Kimi-Linear-48B, Inkling-2-Mini
+- **Standard / censored:** Qwen3-Coder, Qwen3.6-35B, Ornith-1.5, Devstral-Small-2, GLM-4.7-Flash, Kimi-Linear-48B, Inkling-2-Mini
 - **Fastest uncensored:** Qwen3.6-35B-Heretic (~71 tok/s)
 
 ## Profiles
@@ -252,6 +253,7 @@ Full table: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
 | Qwen3.6-35B-Heretic | `qwen36-heretic` |
 | Qwen3.8-27B-Uncensored | `qwen36-heretic` |
 | gemma-4-26B-heretic | `gemma4-heretic` |
+| Devstral-Small-2-24B | `devstral` |
 | GLM-4.7-Flash-8bit | `glm47` |
 | Kimi-Linear-48B-Instruct | `kimi-linear` |
 | Inkling-2-Mini | `inkling` |
@@ -310,17 +312,20 @@ repository's own facts the answer cites.
 | Model | Answer (s) | tok/s | Facts recovered | Score |
 | :--- | ---: | ---: | ---: | ---: |
 | `Ornith-1.5-35B-A3B` | 6.8 | 53.5 | 10/12 | **83%** |
+| `Kimi-Linear-48B` | 5.7 | 45.9 | 8/12 | **67%** |
 | `Qwen3-Coder-30B-A3B-Instruct` | 6.6 | 35.8 | 7/12 | **58%** |
 | `Qwen3.6-35B-A3B` | 4.8 | 62.6 | 6/12 | **50%** |
+| `GLM-4.7-Flash` | 7.4 | 25.9 | 6/12 | **50%** |
 | `Qwen3.6-35B-A3B-Uncensored-Heretic` | 4.7 | 57.8 | 5/12 | **42%** |
 | `gemma-4-26B-A4B-it-heretic` | 4.3 | 38.6 | 4/12 | **33%** |
 | `Qwen3.8-27B-Uncensored-MLX` | 46.1 | 15.2 | 0/12 | **0%** |
+| `Inkling-2-Mini` | 31.0 | 22.6 | 0/12 | **0%** |
 
 **The fastest answer was not the best.** Ornith-1.5 cited the real numbers
 (host count, finance skew); Qwen3.6-35B answered 30% faster and recovered half
-as many. Two models *invented* a file count ("6,863 files in `scripts/`"; the
-true figure is **136**) — a fluent analysis with a fabricated structure. The
-slowest model returned nothing at all.
+as many. **Four models invented a file count** (`scripts/`, "6,863–6,864 files";
+the true figure is **136**) — a fluent analysis with a fabricated structure. The
+slowest model returned nothing at all. Devstral was not run on this task.
 
 Full reading: [`docs/analysis/net-traffic-control-catalog.md`](docs/analysis/net-traffic-control-catalog.md).
 
@@ -337,14 +342,24 @@ those cases under a 20-second timeout.
 | `Qwen3.6-35B-A3B-Uncensored-Heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
 | `Ornith-1.5-35B-A3B` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
 | `gemma-4-26B-A4B-it-heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Kimi-Linear-48B` (`temp 1.0`) | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Devstral-Small-2-24B-Instruct` | 12/12 | 10/10 | 10/10 | 12/12 | 11/12 | **55/56** |
+| `Kimi-Linear-48B` (`temp 0.2`) | 12/12 | 10/10 | 5/10 | 12/12 | 12/12 | **51/56** |
+| `Inkling-2-Mini` (all four profiles) | 12/12 | 10/10 | ❌ not defined | 12/12 | 12/12 | **46/46** |
 | `Qwen3-Coder-30B-A3B-Instruct` | 12/12 | 10/10 | ❌ syntax | 12/12 | 11/12 | **45/46** |
 | `Qwen3.8-27B-Uncensored-MLX` | 12/12 | 10/10 | ❌ not defined | 12/12 | ❌ not defined | **34/34** |
+| `GLM-4.7-Flash` (`temp 1.0`) | 12/12 | 5/10 | ❌ syntax | 3/12 | 1/12 | **21/46** |
+| `GLM-4.7-Flash` (`temp 0.2`) | 12/12 | 2/10 | 5/10 | ❌ syntax | ❌ syntax | **19/32** |
 
-**Four models solved everything.** The failures are concrete, not stylistic:
-Qwen3-Coder emitted invalid indentation after an `else` (the module import fails);
-Qwen3.8 did not define the requested function name at all on two problems. The
-cases with a total below 56 are problems the model's code failed to *load*, so no
-case could run — a hard zero, reported as ❌.
+**Kimi-Linear is the strongest new coder** — the only 2026-11-22 model to reach
+56/56, and only at `temp 1.0` (51/56 at `temp 0.2`, losing five `p03` edge cases).
+**Devstral**, a code model, defined every function it was asked for and passed
+55/56. **GLM-4.7-Flash is the weakest coder here** (21/46 at best, with outright
+syntax failures) and **Inkling never defines `find_median`**, so `p03` cannot run.
+The failures are concrete, not stylistic: Qwen3-Coder emitted invalid indentation
+after an `else`; Qwen3.8 never defined two of the requested functions. A total
+below 56 is a problem whose code failed to *load*, so no case could run — a hard
+zero, reported as ❌.
 
 Full reading: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
 
@@ -361,33 +376,54 @@ and the model must judge which is which.
 | `Ornith-1.5-35B-A3B` | **0%** (0/102) | 2% (2/102) | 0.009 |
 | `gemma-4-26B-A4B-it-heretic` | **0%** (0/102) | 0% (0/102) | 0.0 |
 | `Qwen3-Coder-30B-A3B-Instruct` | **0%** (0/91) | 2% (2/91) | 0.006 |
+| `Kimi-Linear-48B` | **0%** (0/102) | 1% (1/102) | 0.005 |
+| `GLM-4.7-Flash` | **2%** (2/85) | 2% (2/80) | 0.11 |
+| `Inkling-2-Mini` | **0%** (0/102) | 0% (0/102) | 0.005 |
 
-**No model invented an API.** Where the models miss, they err toward calling a
-real API fake — the safe direction. `Qwen3.8-27B-Uncensored` is absent on purpose:
-across three attempts it used ~5.2 hours of GPU time and still did not finish the
-corpus the others complete in 1–2 minutes each.
+**One model invented an API.** `GLM-4.7-Flash` called two fabricated twins real
+— `matlab zerosx` (at confidence **1.00**) and `NSArrayx` — in both temperature
+runs, and its Brier (0.11) is ~20× worse than anything else here: when it is
+wrong, it is confident. Every other miss, in either run, is the safe direction —
+a real API called fake (Kimi raised one, Pascal `writeln`). `Qwen3.8-27B-Uncensored`
+is absent on purpose: across three attempts it used ~5.2 hours of GPU time and
+still did not finish the corpus the others complete in 1–2 minutes each. Devstral
+has not been probed. GLM's denominators (85/80) are its answered probes, not 102 —
+it drops entries from near-valid JSON, and unanswered probes are excluded, never
+counted as misses.
 
 Full reading: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
 
 ## Image and video generation — a separate repository
 
 **oMLX is a text server; it cannot generate an image or a clip.** Those two layers
-run on different tools — [mflux](https://github.com/filipstrand/mflux) for images,
-[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) for video — on the same
-M1 Max, and they are measured, documented and shipped with their outputs in their
-own repository:
+run on different tools — [mflux](https://github.com/filipstrand/mflux) for images
+(with [mlx-gen](https://github.com/lpalbou/mlx-gen) for two of them),
+[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) and mlx-gen for video —
+on the same M1 Max, and they are measured, documented and shipped with their
+outputs in their own repository:
 
 ### → [**mahirfatih/local-generation-benchmark-m1-max**](https://github.com/mahirfatih/local-generation-benchmark-m1-max)
 
-| Layer | Model | Time | Output |
-| :--- | :--- | ---: | :--- |
-| Image | FLUX.2 klein 4B (q8) | **22.5 s** | 1024×1024 PNG |
-| Image | FLUX 3 Image Klein | 180.6 s | 1024×1024 PNG |
-| Video | CogVideoX-Fun V1.5 5B (int8) | **266.1 s** | 672×384, 5-frame GIF |
+| Layer | Tool | Model | Time | Output |
+| :--- | :--- | :--- | ---: | :--- |
+| **Image** | mflux | FLUX.2 klein 4B (q4) | **23.0 s** | 1024×1024 PNG |
+| Image | mflux | FLUX.2 klein 4B (q8) | 24.0 s | 1024×1024 PNG |
+| Image | mflux | Anima Turbo (q8) | 36.4 s | 1024×1024 PNG |
+| Image | mflux | Z-Image Turbo (q4) | 95.8 s | 1024×1024 PNG |
+| Image | mflux | FLUX.2 klein 4B Base (q8) | 97.1 s | 1024×1024 PNG |
+| Image | mlx-gen | ERNIE Image Turbo (q8) | 123.5 s | 1024×1024 PNG |
+| Image | mlx-gen | Qwen Image (mixed q4/q8) | 124.9 s | 1024×1024 PNG |
+| Image | mflux | FLUX 3 Image Klein | 180.6 s | 1024×1024 PNG |
+| **Video** | VideoX-Fun-mlx | CogVideoX-Fun V1.5 5B (int4) | **247.7 s** | 672×384, 5-frame GIF |
+| Video | mlx-gen | Wan2.2 TI2V 5B (int8) | 255.6 s | 480×832, 25-frame MP4 |
+| Video | VideoX-Fun-mlx | CogVideoX-Fun V1.5 5B (int8) | 262.1 s | 672×384, 5-frame GIF |
 
-That repository holds the two harnesses, their prompt sets and profiles, the
-machine-readable results, and **the outputs themselves** — 16 images and 4 clips,
-each with the prompt that produced it. This repository stays the **text**
+That repository holds the harnesses, their prompt sets and profiles, the
+machine-readable results, and **the outputs themselves** — every timed image and
+all 18 clips, each with the prompt that produced it. It has grown well past the
+first run: eight measured image models and three video models. The rows with the
+harshest licences — Anima Turbo (**Circlestone, non-commercial**) and FLUX 3 (FLUX
+Kommunity) — are decided in its licence reading. This repository stays the **text**
 benchmark: throughput, coding, format, long context, hallucination and red-team.
 
 ## Reproducing

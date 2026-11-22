@@ -20,6 +20,11 @@ Bu depo, **Apple M1 Max + 64 GB** üzerinde tamamen cihaz içinde, **oMLX**
 (MLX tabanlı, OpenAI uyumlu bir sunucu) ile çalışan **10 yerel LLM**'in
 tekrarlanabilir bir benchmark'ını belgeler.
 
+**Kapsam:** bu depo **metin** benchmark'ıdır — oMLX'in sunduğu her şey. Görsel ve
+video üretimi oMLX'in çalıştıramadığı farklı araçlardır (mflux, mlx-gen,
+VideoX-Fun-mlx), bu yüzden kendi depolarında yaşarlar:
+[mahirfatih/local-generation-benchmark-m1-max](https://github.com/mahirfatih/local-generation-benchmark-m1-max).
+
 İçerdikleri:
 
 - İngilizce ve Türkçe için **decode hızı** (tok/s), her dil iki kez.
@@ -50,6 +55,7 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 - [Depo analizi](#depo-analizi)
 - [Kod benchmark'ı](#kod-benchmarkı)
 - [Halüsinasyon ve hata riski](#halüsinasyon-ve-hata-riski)
+- [Görsel ve video üretimi — ayrı bir depo](#görsel-ve-video-üretimi--ayrı-bir-depo)
 - [Çoğaltma](#çoğaltma)
 - [Depo yapısı](#depo-yapısı)
 - [Lisans](#lisans)
@@ -135,6 +141,7 @@ tablo `temp 0.2` değerlerini gösterir. Tam tablo, grafikler ve ham rapor:
 | **gemma-4-26B-Heretic** | heretic + uncensored | ✅ | ✅ |
 | **Qwen3.6-35B-Heretic** | uncensored + heretic | ✅ | ✅ |
 | **Qwen3.8-27B-Uncensored** | uncensored + abliterated | ✅ | ✅ |
+| Devstral-Small-2-24B | standart | ❌ | ❌ |
 | GLM-4.7-Flash | standart | ❌ | ❌ |
 | Kimi-Linear-48B | standart | ❌ | ❌ |
 | Inkling-2-Mini | standart | ❌ | ❌ |
@@ -224,16 +231,20 @@ puan, cevabın deponun kendi gerçeklerinden kaç tanesini andığıdır.
 | Model | Cevap (s) | tok/s | Bulunan gerçek | Puan |
 | :--- | ---: | ---: | ---: | ---: |
 | `Ornith-1.5-35B-A3B` | 6.8 | 53.5 | 10/12 | **83%** |
+| `Kimi-Linear-48B` | 5.7 | 45.9 | 8/12 | **67%** |
 | `Qwen3-Coder-30B-A3B-Instruct` | 6.6 | 35.8 | 7/12 | **58%** |
 | `Qwen3.6-35B-A3B` | 4.8 | 62.6 | 6/12 | **50%** |
+| `GLM-4.7-Flash` | 7.4 | 25.9 | 6/12 | **50%** |
 | `Qwen3.6-35B-A3B-Uncensored-Heretic` | 4.7 | 57.8 | 5/12 | **42%** |
 | `gemma-4-26B-A4B-it-heretic` | 4.3 | 38.6 | 4/12 | **33%** |
 | `Qwen3.8-27B-Uncensored-MLX` | 46.1 | 15.2 | 0/12 | **0%** |
+| `Inkling-2-Mini` | 31.0 | 22.6 | 0/12 | **0%** |
 
 **En hızlı cevap en iyisi değildi.** Ornith-1.5 gerçek sayıları andı; Qwen3.6-35B
-%30 daha hızlı cevaplayıp yarısı kadar gerçek buldu. İki model olmayan bir dosya
-sayısı **uydurdu** (`scripts/` için "6.863 dosya"; gerçek: **136**). En yavaş
-model hiç cevap vermedi.
+%30 daha hızlı cevaplayıp yarısı kadar gerçek buldu. **Dört model olmayan bir dosya
+sayısı uydurdu** (`scripts/` için "6.863–6.864 dosya"; gerçek: **136**) — uydurma
+bir yapıyla akıcı bir analiz. En yavaş model hiç cevap vermedi. Devstral bu görevde
+çalıştırılmadı.
 
 Tam analiz: [`docs/analysis/net-traffic-control-catalog.md`](docs/analysis/net-traffic-control-catalog.md).
 
@@ -250,13 +261,24 @@ aşımı altında bu vakalara karşı çalıştırılır.
 | `Qwen3.6-35B-A3B-Uncensored-Heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
 | `Ornith-1.5-35B-A3B` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
 | `gemma-4-26B-A4B-it-heretic` | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Kimi-Linear-48B` (`temp 1.0`) | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `Devstral-Small-2-24B-Instruct` | 12/12 | 10/10 | 10/10 | 12/12 | 11/12 | **55/56** |
+| `Kimi-Linear-48B` (`temp 0.2`) | 12/12 | 10/10 | 5/10 | 12/12 | 12/12 | **51/56** |
+| `Inkling-2-Mini` (dört profil) | 12/12 | 10/10 | ❌ tanımsız | 12/12 | 12/12 | **46/46** |
 | `Qwen3-Coder-30B-A3B-Instruct` | 12/12 | 10/10 | ❌ sözdizimi | 12/12 | 11/12 | **45/46** |
 | `Qwen3.8-27B-Uncensored-MLX` | 12/12 | 10/10 | ❌ tanımsız | 12/12 | ❌ tanımsız | **34/34** |
+| `GLM-4.7-Flash` (`temp 1.0`) | 12/12 | 5/10 | ❌ sözdizimi | 3/12 | 1/12 | **21/46** |
+| `GLM-4.7-Flash` (`temp 0.2`) | 12/12 | 2/10 | 5/10 | ❌ sözdizimi | ❌ sözdizimi | **19/32** |
 
-**Dört model her şeyi çözdü.** Hatalar somut: Qwen3-Coder bir `else` sonrası
-geçersiz girinti üretti (modül içe aktarılamıyor); Qwen3.8 iki problemde istenen
-fonksiyon adını hiç tanımlamadı. Toplamı 56'nın altında olan satırlar, modelin
-kodunun *yüklenemediği* problemlerdir; hiç vaka çalışmadığı için kesin sıfırdır.
+**Kimi-Linear, yeni modellerin en güçlüsü** — 56/56'ya ulaşan tek 2026-11-22
+modeli ve yalnızca `temp 1.0`'da (`temp 0.2`'de 51/56, beş `p03` kenar vakasını
+kaybederek). Bir kod modeli olan **Devstral** istenen tüm fonksiyonları tanımladı
+ve 55/56 geçti. **GLM-4.7-Flash buradaki en zayıf kodlayıcı** (en iyi 21/46, açık
+sözdizimi hatalarıyla) ve **Inkling `find_median`'ı hiç tanımlamıyor**, bu yüzden
+`p03` çalışamıyor. Hatalar somut: Qwen3-Coder bir `else` sonrası geçersiz girinti
+üretti; Qwen3.8 istenen fonksiyonlardan ikisini hiç tanımlamadı. Toplamı 56'nın
+altındaki bir satır, kodun *yüklenemediği* bir problemdir; hiç vaka çalışmaz —
+❌ olarak raporlanan kesin sıfır.
 
 Tam analiz: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
 
@@ -273,13 +295,64 @@ yoklanır ve modelin hangisinin gerçek olduğunu söylemesi istenir.
 | `Ornith-1.5-35B-A3B` | **0%** (0/102) | 2% (2/102) | 0.009 |
 | `gemma-4-26B-A4B-it-heretic` | **0%** (0/102) | 0% (0/102) | 0.0 |
 | `Qwen3-Coder-30B-A3B-Instruct` | **0%** (0/91) | 2% (2/91) | 0.006 |
+| `Kimi-Linear-48B` | **0%** (0/102) | 1% (1/102) | 0.005 |
+| `GLM-4.7-Flash` | **2%** (2/85) | 2% (2/80) | 0.11 |
+| `Inkling-2-Mini` | **0%** (0/102) | 0% (0/102) | 0.005 |
 
-**Hiçbir model API uydurmadı.** Modellerin kaçırdığı yerlerde hata, gerçek bir
-API'ye "uydurma" demek yönünde — yani güvenli tarafta. `Qwen3.8-27B-Uncensored`
+**Bir model API uydurdu.** `GLM-4.7-Flash`, iki uydurma eşi **gerçek** saydı —
+`matlab zerosx` (1.00 güvenle) ve `NSArrayx` — hem `temp 0.2` hem `temp 1.0`
+koşusunda; Brier puanı (0,11) buradaki her şeyin ~20 katı: yanıldığında emin.
+Her iki koşudaki diğer tüm kaçırmalar güvenli tarafta — gerçek bir API'ye
+"uydurma" denmesi (Kimi bir tane yaptı: Pascal `writeln`). `Qwen3.8-27B-Uncensored`
 tabloda yok, bilerek: üç denemede **~5,2 saat** GPU zamanı harcayıp diğerlerinin
-1–2 dakikada bitirdiği korpüsü yine de tamamlayamadı.
+1–2 dakikada bitirdiği korpüsü yine de tamamlayamadı. Devstral yoklanmadı. GLM'in
+paydaları (85/80) 102 değil, cevapladığı yoklamalardır; cevaplanmayanlar hata
+sayılmaz.
 
 Tam analiz: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
+
+## Görsel ve video üretimi — ayrı bir depo
+
+**oMLX bir metin sunucusudur; ne bir görsel ne de bir klip üretebilir.** Bu iki
+katman aynı M1 Max üzerinde farklı araçlarla çalışır — görsel için
+[mflux](https://github.com/filipstrand/mflux) (ikisi
+[mlx-gen](https://github.com/lpalbou/mlx-gen) ile), video için
+[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) ve mlx-gen — ve
+ölçümleri, dokümantasyonları ile çıktıları kendi depolarında yayımlanır:
+
+### → [**mahirfatih/local-generation-benchmark-m1-max**](https://github.com/mahirfatih/local-generation-benchmark-m1-max)
+
+| Katman | Araç | Model | Süre | Çıktı |
+| :--- | :--- | :--- | ---: | :--- |
+| **Görsel** | mflux | FLUX.2 klein 4B (q4) | **23.0 s** | 1024×1024 PNG |
+| Görsel | mflux | FLUX.2 klein 4B (q8) | 24.0 s | 1024×1024 PNG |
+| Görsel | mflux | Anima Turbo (q8) | 36.4 s | 1024×1024 PNG |
+| Görsel | mflux | Z-Image Turbo (q4) | 95.8 s | 1024×1024 PNG |
+| Görsel | mflux | FLUX.2 klein 4B Base (q8) | 97.1 s | 1024×1024 PNG |
+| Görsel | mlx-gen | ERNIE Image Turbo (q8) | 123.5 s | 1024×1024 PNG |
+| Görsel | mlx-gen | Qwen Image (mixed q4/q8) | 124.9 s | 1024×1024 PNG |
+| Görsel | mflux | FLUX 3 Image Klein | 180.6 s | 1024×1024 PNG |
+| **Video** | VideoX-Fun-mlx | CogVideoX-Fun V1.5 5B (int4) | **247.7 s** | 672×384, 5 kare GIF |
+| Video | mlx-gen | Wan2.2 TI2V 5B (int8) | 255.6 s | 480×832, 25 kare MP4 |
+| Video | VideoX-Fun-mlx | CogVideoX-Fun V1.5 5B (int8) | 262.1 s | 672×384, 5 kare GIF |
+
+Her sayı, model yüklemesi dâhil duvar saati süresidir ve her çıktı yazdığı dosyaya
+karşı doğrulanır (görseller için PNG başlığı, klipler için `ffprobe`). Görsel
+rakamları ilk görselden *sonraki* ortalamadır — ilk görsel tek seferlik model
+yüklemesini öder; her video rakamı ilgili modelin altı klip üzerindeki ortalamasıdır.
+Görsellerin tümü artık 1024×1024'tür, böylece görsel sütunu elmayla elmayı
+karşılaştırır. İki görsel satırı mflux'tan geçmez: `ernie-image-turbo-q8` ve
+`qwen-image-4bit` mlx-gen ile çalışır. Klipler ve görseller
+[`evidence/`](https://github.com/mahirfatih/local-generation-benchmark-m1-max/tree/main/evidence)
+altındadır; iddia "güven" ile değil, bakarak doğrulanabilir.
+
+Bu depo **harness'ları**, prompt setlerini, profilleri ve makine okunur sonuçları
+tutar; **çıktıların kendisini de** — zamanlanan her görsel ve 18 klibin tamamı,
+her biri kendisini üreten prompt ile birlikte. İlk koşunun çok ötesine geçti: **sekiz
+ölçülmüş görsel modeli ve üç video modeli**. En sert lisanslı satırlar — Anima Turbo
+(**Circlestone, ticari kullanıma kapalı**) ve FLUX 3 (FLUX Kommunity) — o deponun
+lisans okumasında karara bağlanır. Bu depo ise **metin** benchmark'ı olarak kalır:
+token hızı, kod, format, uzun bağlam, halüsinasyon ve red-team.
 
 ## Çoğaltma
 

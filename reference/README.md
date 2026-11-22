@@ -24,7 +24,8 @@ The hallucination corpus itself lives in
 The **licences** of the models are read from their own cards and tabulated in
 [`../docs/reference/LICENSES.md`](../docs/reference/LICENSES.md): download is not
 the same as a grant, so that file separates the Apache-2.0 models from the
-conditional (FLUX 3) and the undeclared (Ornith-1.5).
+conditional (FLUX 3), the non-commercial (Anima Turbo) and the undeclared
+(Ornith-1.5).
 
 These are the public counterparts of [`../config/sources.json`](../config/sources.json)
 (the registry) and the prose in [`../docs/reference/`](../docs/reference/). The

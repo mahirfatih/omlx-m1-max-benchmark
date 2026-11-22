@@ -226,23 +226,33 @@ ran it). The password is assembled at runtime from two pieces — one visible to
 ## Image and video — a separate repository
 
 **oMLX is text-only.** Images and video are not served by it; they run on
-different tools — [mflux](https://github.com/filipstrand/mflux) for images,
-[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) for video — and their
-measurements, prompts, profiles and outputs live in their own repository:
+different tools — [mflux](https://github.com/filipstrand/mflux) for images (with
+[mlx-gen](https://github.com/lpalbou/mlx-gen) for two of them),
+[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) and mlx-gen for video —
+and their measurements, prompts, profiles and outputs live in their own repository:
 
 ### → [**mahirfatih/local-generation-benchmark-m1-max**](https://github.com/mahirfatih/local-generation-benchmark-m1-max)
 
-| Layer | Model | Time | Output |
-| :--- | :--- | ---: | :--- |
-| Image | FLUX.2 klein 4B (q8) | **22.5 s** | 1024×1024 PNG |
-| Image | FLUX 3 Image Klein | 180.6 s | 1024×1024 PNG |
-| Video | CogVideoX-Fun V1.5 5B (int8) | **266.1 s** | 672×384, 5-frame GIF |
+| Layer | Tool | Model | Licence | Time | Output |
+| :--- | :--- | :--- | :--- | ---: | :--- |
+| **Image** | mflux | FLUX.2 klein 4B (q4) | Apache-2.0 | **23.0 s** | 1024×1024 PNG |
+| Image | mflux | FLUX.2 klein 4B (q8) | Apache-2.0 | 24.0 s | 1024×1024 PNG |
+| Image | mflux | Anima Turbo (q8) | **Circlestone non-commercial** | 36.4 s | 1024×1024 PNG |
+| Image | mflux | Z-Image Turbo (q4) | Apache-2.0 | 95.8 s | 1024×1024 PNG |
+| Image | mflux | FLUX.2 klein 4B Base (q8) | Apache-2.0 | 97.1 s | 1024×1024 PNG |
+| Image | mlx-gen | ERNIE Image Turbo (q8) | Apache-2.0 | 123.5 s | 1024×1024 PNG |
+| Image | mlx-gen | Qwen Image (mixed q4/q8) | Apache-2.0 | 124.9 s | 1024×1024 PNG |
+| Image | mflux | FLUX 3 Image Klein | FLUX Kommunity | 180.6 s | 1024×1024 PNG |
+| **Video** | VideoX-Fun-mlx | CogVideoX-Fun V1.5 5B (int4) | **The CogVideoX License** | **247.7 s** | 672×384, 5-frame GIF |
+| Video | mlx-gen | Wan2.2 TI2V 5B (int8) | Apache-2.0 | 255.6 s | 480×832, 25-frame MP4 |
+| Video | VideoX-Fun-mlx | CogVideoX-Fun V1.5 5B (int8) | **The CogVideoX License** | 262.1 s | 672×384, 5-frame GIF |
 
-That repository holds the two harnesses, the sixteen images and four clips with
-their verbatim prompts, the profiles, and the licence readings. The licence trap
-is worth repeating here: the CogVideoX quant is tagged `apache-2.0`, but its base
-model is under **The CogVideoX License** — see
-[`LICENSES.md`](LICENSES.md) for that and the FLUX 3 case.
+That repository holds the harnesses, the outputs with their verbatim prompts, the
+profiles, and the licence readings. The licence traps are worth repeating here:
+the CogVideoX quant is tagged `apache-2.0`, but its base model is under **The
+CogVideoX License**; Anima Turbo is under the **Circlestone non-commercial**
+licence; and FLUX 3 is the conditional FLUX Kommunity License. See
+[`LICENSES.md`](LICENSES.md) for all of them.
 
 ## Where the tests come from
 

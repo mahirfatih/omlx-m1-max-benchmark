@@ -33,13 +33,17 @@ It is a summary, not legal advice; the licence text on each page is the authorit
 
 ## Image and video models (separate tools)
 
-Images run under [`mflux`](https://github.com/filipstrand/mflux) and video under
-[`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx) — neither is oMLX.
+Images run under [`mflux`](https://github.com/filipstrand/mflux) (a few under
+[`mlx-gen`](https://github.com/lpalbou/mlx-gen)) and video under
+[`VideoX-Fun-mlx`](https://github.com/dgrauet/VideoX-Fun-mlx) — none is oMLX.
 Their licences are read in full in the
 [generation repository](https://github.com/mahirfatih/local-generation-benchmark-m1-max),
 alongside the models themselves. The one-line version:
 
-- **FLUX.2 klein** — Apache-2.0, clean.
+- **FLUX.2 klein** (both quantisations and the *Base* twin) — Apache-2.0, clean.
+- **Z-Image Turbo**, **ERNIE Image Turbo**, **Qwen Image** — Apache-2.0, clean.
+- **Anima Turbo** — the **Circlestone non-commercial** licence: personal and
+  research use only, *not* for commercial output.
 - **FLUX 3 Image Klein** — the conditional **FLUX Kommunity License v1.0**, not
   Apache-2.0; commercial use of outputs is capped at **US$5M revenue**.
 - **CogVideoX-Fun V1.5 5B** — the quant is tagged `apache-2.0`, but its base model

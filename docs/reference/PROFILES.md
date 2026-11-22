@@ -42,12 +42,16 @@ the rest use 2048.
 
 ### Sampling-variant and MTP profiles (exposed, per model)
 
-Beyond the global templates, each new model has **requestable per-model profiles**
+Beyond the global templates, some models carry **requestable per-model profiles**
 that oMLX exposes as `Model:api_name`, so two sampling regimes can be compared on the
 same machine. They are not global templates — they live only on their own model.
+The three 2026-11-22 models each have a sampling-variant pair, and Inkling adds an
+MTP pair; `Devstral` has a single exposed profile, derived from the `qwen3`
+template but capped at 2048 tokens rather than the template's 4096.
 
 | Model | Profile | Sampling | Notes |
 | :--- | :--- | :--- | :--- |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | `devstral` | temp 0.2 | Exposed code profile (2048-token cap); no sampling or MTP variant |
 | `GLM-4.7-Flash-8bit` | `glm47` / `glm47-hot` | temp 0.2 / **1.0** | 1.0 is the model card's default |
 | `Kimi-Linear-48B-A3B-Instruct-4bit` | `kimi-linear` / `kimi-linear-hot` | temp 0.2 / **1.0** | |
 | `Inkling-2-Mini-oQ4e-mtp` | `inkling` / `inkling-hot` | temp 0.2 / **1.0** | MTP off |
@@ -63,6 +67,7 @@ same machine. They are not global templates — they live only on their own mode
 | `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | `qwen36-heretic` |
 | `Qwen3.8-27B-Uncensored-MLX` | `qwen36-heretic` |
 | `gemma-4-26B-A4B-it-heretic-4bit` | `gemma4-heretic` |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | `devstral` |
 | `GLM-4.7-Flash-8bit` | `glm47` |
 | `Kimi-Linear-48B-A3B-Instruct-4bit` | `kimi-linear` |
 | `Inkling-2-Mini-oQ4e-mtp` | `inkling` |
@@ -159,11 +164,12 @@ configuration has drifted from the snapshot.
 
 **oMLX serves text and nothing else.** It has no profile for an image or a video
 model, because it cannot run one — images go through
-[mflux](https://github.com/filipstrand/mflux) and video through
-[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx). Keeping them out of
-`profiles/omlx-profiles.json` is deliberate: `apply-profiles.py` writes the oMLX
-snapshot to `~/.omlx/`, and an image or video entry there would be applied to a
-server that cannot run it.
+[mflux](https://github.com/filipstrand/mflux) (and
+[mlx-gen](https://github.com/lpalbou/mlx-gen) for two of them) and video through
+[VideoX-Fun-mlx](https://github.com/dgrauet/VideoX-Fun-mlx) and mlx-gen. Keeping
+them out of `profiles/omlx-profiles.json` is deliberate: `apply-profiles.py` writes
+the oMLX snapshot to `~/.omlx/`, and an image or video entry there would be applied
+to a server that cannot run it.
 
 Those layers have their own profile files, their own harnesses and their own
 documentation, all in:
@@ -172,8 +178,8 @@ documentation, all in:
 
 | Layer | Profile file (there) | What it sets |
 | :--- | :--- | :--- |
-| Image (mflux) | `profiles/mflux-profiles.json` | `klein-q8` (4 steps), `flux3-klein-q8` (16 steps) |
-| Video (VideoX-Fun-mlx, mlx-gen) | `profiles/video-profiles.json` | `cogvideox-fun-1.5-5b-inp-q8`, `wan22-ti2v-5b-q8` |
+| Image (mflux / mlx-gen) | `profiles/mflux-profiles.json` | `klein-q4`, `klein-q8` (4 steps), `anima-turbo-q8` (8), `z-image-turbo-q4` (9), `klein-base-q8` (20), `flux3-klein-q8` (16), and the mlx-gen pair `ernie-image-turbo-q8` / `qwen-image-4bit`; `bonsai-image-ternary-2bit` is recorded but does not run on mlx-gen 0.38.0 |
+| Video (VideoX-Fun-mlx / mlx-gen) | `profiles/video-profiles.json` | `cogvideox-fun-1.5-5b-inp-q4`, `cogvideox-fun-1.5-5b-inp-q8`, `wan22-ti2v-5b-q8` |
 
 Both links above are relative to that repository, not to this one — no image or
 video profile file exists here.
@@ -211,6 +217,7 @@ python3 scripts/config/apply-profiles.py --apply    # write, with a .bak first
 
 The commands for the two generation layers are in
 [the generation repository](https://github.com/mahirfatih/local-generation-benchmark-m1-max),
-beside their profiles: `mflux-generate-flux2` and `mflux-generate-flux3` for
-images, `mlxgen generate` and `quick_infer.py` for video, each with the settings
-that produced the committed outputs.
+beside their profiles: `mflux-generate-flux2` and `mflux-generate-flux3` (plus
+`mlxgen` for the ERNIE and Qwen image models) for images, and `mlxgen` /
+`quick_infer.py` for video, each with the settings that produced the committed
+outputs.
