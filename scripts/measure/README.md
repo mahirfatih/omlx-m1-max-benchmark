@@ -37,3 +37,24 @@ python3 scripts/measure/repo-analysis-test.py --repo ~/Sites/net-traffic-control
 known model before each run, so the numbers are not contaminated by a
 previously loaded model. The output is the same table that appears in
 [`../../docs/reference/RESULTS.md`](../../docs/reference/RESULTS.md).
+
+## Selecting models and profiles
+
+Every model-facing script takes `--models` with a comma-separated `id:profile`
+list, where `profile` is an oMLX profile exposed as `Model:api_name` (see
+[`../config/apply-profiles.py`](../config/apply-profiles.py) and
+[`../../profiles/omlx-profiles.json`](../../profiles/omlx-profiles.json)). The
+2026-11-22 campaign used this to run two sampling regimes and Inkling's MTP draft
+against the same models:
+
+```bash
+python3 scripts/measure/benchmark.py \
+  --models Kimi-Linear-48B-A3B-Instruct-4bit:kimi-linear,Kimi-Linear-48B-A3B-Instruct-4bit:kimi-linear-hot \
+  --out /tmp/throughput.md
+python3 scripts/measure/code-benchmark.py \
+  --models Inkling-2-Mini-oQ4e-mtp:inkling-mtp
+```
+
+`benchmark.py` also accepts `--out <file>` so a sweep can be written outside the
+default `~/Desktop` location. Omitting `--models` runs the script's built-in
+model list, unchanged.

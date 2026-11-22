@@ -9,7 +9,7 @@ either protocol can use it as a drop-in backend.
 - Website: <https://omlx.ai>
 - Source: <https://github.com/jundot/omlx>
 - Licence: Apache 2.0 · Apple Silicon · macOS 15+
-- This benchmark used **oMLX 0.7.3**.
+- This benchmark used **oMLX 0.8.2** (the 2026-11-11 campaign ran on 0.7.3).
 
 ## Why oMLX, and not Ollama or LM Studio
 
@@ -34,12 +34,13 @@ a web dashboard.
 
 Three properties of the setup shape the results:
 
-- **4-bit weights.** Every model is an MLX 4-bit quantization. On a
-  memory-bandwidth-bound machine, a smaller weight footprint decodes faster.
+- **4-bit weights.** Almost every model is an MLX 4-bit quantization (the
+  2026-11-22 campaign added two 8-bit builds and one oQ mixed-precision build).
+  On a memory-bandwidth-bound machine, a smaller weight footprint decodes faster.
   This is the single biggest reason the 35B MoE models beat the 27B *dense*
   model: the MoE activates only ~3B parameters per token, while the dense model
   reads all 27B weights per token.
-- **Mixture-of-Experts.** Five of the six models are MoE: the total parameter
+- **Mixture-of-Experts.** Eight of the ten models are MoE: the total parameter
   count is large but the **active** count per token is small (~3–4B). Throughput
   tracks the active count and the bandwidth, not the total count.
 - **Stable sampling.** All runs use `temperature 0.2`, `top_p 0.95`,

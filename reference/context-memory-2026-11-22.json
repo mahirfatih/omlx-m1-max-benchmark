@@ -1,0 +1,204 @@
+{
+  "date": "2026-11-22",
+  "context_chars": 25344,
+  "context_tokens_est": 6336,
+  "tasks": [
+    "retrieval",
+    "conflict",
+    "aggregate"
+  ],
+  "models": [
+    {
+      "model": "GLM-4.7-Flash-8bit",
+      "profile": "glm47",
+      "tasks": {
+        "retrieval": {
+          "ok": true,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 11.4,
+          "raw": "AX-dc500c81-7391"
+        },
+        "conflict": {
+          "ok": true,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 2.2,
+          "raw": "V2-dc500c81-8850"
+        },
+        "aggregate": {
+          "ok": true,
+          "reason": "3/3 facts",
+          "answer_s": 2.1,
+          "raw": "Edge Router: RT-dc50-014, Migration Deadline: 11th March (2024), Service Owner: Platform Team"
+        }
+      }
+    },
+    {
+      "model": "GLM-4.7-Flash-8bit",
+      "profile": "glm47-hot",
+      "tasks": {
+        "retrieval": {
+          "ok": true,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 1.6,
+          "raw": "AX-dc500c81-7391"
+        },
+        "conflict": {
+          "ok": true,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 1.6,
+          "raw": "V2-dc500c81-8850"
+        },
+        "aggregate": {
+          "ok": true,
+          "reason": "3/3 facts",
+          "answer_s": 2.1,
+          "raw": "Edge Router: RT-dc50-014, Migration Deadline: 11th March (2024), Service Owner: Platform Team"
+        }
+      }
+    },
+    {
+      "model": "Kimi-Linear-48B-A3B-Instruct-4bit",
+      "profile": "kimi-linear",
+      "tasks": {
+        "retrieval": {
+          "ok": true,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 7.6,
+          "raw": "AX-dc500c81-7391"
+        },
+        "conflict": {
+          "ok": true,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 1.8,
+          "raw": "V2-dc500c81-8850"
+        },
+        "aggregate": {
+          "ok": true,
+          "reason": "3/3 facts",
+          "answer_s": 2.1,
+          "raw": "Edge router: RT-dc50-014, Migration deadline: 11 March, Service owner: platform team"
+        }
+      }
+    },
+    {
+      "model": "Kimi-Linear-48B-A3B-Instruct-4bit",
+      "profile": "kimi-linear-hot",
+      "tasks": {
+        "retrieval": {
+          "ok": true,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 0.3,
+          "raw": "AX-dc500c81-7391"
+        },
+        "conflict": {
+          "ok": true,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 0.3,
+          "raw": "V2-dc500c81-8850"
+        },
+        "aggregate": {
+          "ok": true,
+          "reason": "3/3 facts",
+          "answer_s": 0.5,
+          "raw": "Edge router: RT-dc50-014, Migration deadline: 11 March, Service owner: platform team"
+        }
+      }
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling",
+      "tasks": {
+        "retrieval": {
+          "ok": false,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 21.7,
+          "raw": ""
+        },
+        "conflict": {
+          "ok": false,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 10.1,
+          "raw": ""
+        },
+        "aggregate": {
+          "ok": false,
+          "reason": "0/3 facts",
+          "answer_s": 10.3,
+          "raw": ""
+        }
+      }
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling-hot",
+      "tasks": {
+        "retrieval": {
+          "ok": false,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 4.9,
+          "raw": ""
+        },
+        "conflict": {
+          "ok": false,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 5.0,
+          "raw": ""
+        },
+        "aggregate": {
+          "ok": false,
+          "reason": "0/3 facts",
+          "answer_s": 5.0,
+          "raw": ""
+        }
+      }
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling-mtp",
+      "tasks": {
+        "retrieval": {
+          "ok": false,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 6.3,
+          "raw": ""
+        },
+        "conflict": {
+          "ok": false,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 5.4,
+          "raw": ""
+        },
+        "aggregate": {
+          "ok": false,
+          "reason": "0/3 facts",
+          "answer_s": 5.3,
+          "raw": ""
+        }
+      }
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling-mtp-hot",
+      "tasks": {
+        "retrieval": {
+          "ok": false,
+          "reason": "AX-dc500c81-7391",
+          "answer_s": 5.8,
+          "raw": ""
+        },
+        "conflict": {
+          "ok": false,
+          "reason": "V2-dc500c81-8850",
+          "answer_s": 5.5,
+          "raw": ""
+        },
+        "aggregate": {
+          "ok": false,
+          "reason": "0/3 facts",
+          "answer_s": 5.5,
+          "raw": ""
+        }
+      }
+    }
+  ]
+}

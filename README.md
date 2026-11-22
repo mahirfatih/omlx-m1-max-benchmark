@@ -1,18 +1,18 @@
 # oMLX · M1 Max · Local LLM Benchmark
 
-> Token throughput, model sizes, profile tuning and an **uncensored / heretic** classification of 7 local LLMs served by [oMLX](https://omlx.ai) on an Apple **M1 Max (64 GB)**.
+> Token throughput, model sizes, profile tuning and an **uncensored / heretic** classification of 10 local LLMs served by [oMLX](https://omlx.ai) on an Apple **M1 Max (64 GB)**.
 
 [![Platform](https://img.shields.io/badge/platform-Apple%20Silicon%20(arm64)-000?logo=apple&logoColor=white)](#hardware--software)
-[![oMLX](https://img.shields.io/badge/oMLX-0.7.3-blue)](#hardware--software)
+[![oMLX](https://img.shields.io/badge/oMLX-0.8.2-blue)](#hardware--software)
 [![macOS](https://img.shields.io/badge/macOS-26.7.2-lightgrey)](#hardware--software)
-[![Models](https://img.shields.io/badge/models-7-purple)](#models)
+[![Models](https://img.shields.io/badge/models-10-purple)](#models)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
 
 ## Overview
 
-This repository documents a reproducible benchmark of **7 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
+This repository documents a reproducible benchmark of **10 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
 
 **Scope:** this repository is the **text** benchmark — everything oMLX serves. Image
 and video generation are different tools (mflux, VideoX-Fun-mlx) that oMLX cannot
@@ -67,7 +67,7 @@ though the problems and cases here are original.
 | Chip | **Apple M1 Max** (10-core CPU: 8P + 2E, 32-core GPU, 16-core Neural Engine) |
 | Memory | **64 GB** unified |
 | OS | **macOS 26.7.2** (build 25G332), arm64 |
-| Server | **oMLX 0.7.3** — OpenAI-compatible at `http://127.0.0.1:8000/v1` |
+| Server | **oMLX 0.8.2** — OpenAI-compatible at `http://127.0.0.1:8000/v1` |
 | Inference | MLX, **4-bit** weights, **4-bit KV cache** (turboquant) |
 | Loading | Lazy, one model at a time, auto-unload after **180 s** idle |
 | Memory guard | tier `aggressive`, soft `0.85`, hard `0.95` |
@@ -95,8 +95,11 @@ The server is **oMLX**, a separate project this repository only measures:
 | `gemma-4-26B-A4B-it-heretic-4bit` | 26B MoE (~4B active) | 15 GB | 4-bit | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
 | `Qwen3.8-27B-Uncensored-MLX` | 27B dense | 15 GB | 4-bit | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
 | `Devstral-Small-2-24B-Instruct-2512-8bit` | 24B dense (mistral3) | 25 GB | 8-bit | [HF](https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit) |
+| `GLM-4.7-Flash-8bit` | 30B MoE (~3B active) | 31 GB | 8-bit | [HF](https://huggingface.co/mlx-community/GLM-4.7-Flash-8bit) |
+| `Kimi-Linear-48B-A3B-Instruct-4bit` | 48B MoE (~3B active, linear-attention) | 27 GB | 4-bit | [HF](https://huggingface.co/mlx-community/Kimi-Linear-48B-A3B-Instruct-4bit) |
+| `Inkling-2-Mini-oQ4e-mtp` | 26.4B MoE (~3.4B active, looped, multimodal) | 16 GB | oQ4e mixed (~4.9-bit) | [HF](https://huggingface.co/mlx-community/Inkling-2-Mini-oQ4e-mtp) |
 
-**Total on disk:** ~127 GB · **Runtime memory:** ~17–25 GB per loaded model.
+**Total on disk:** ~201 GB · **Runtime memory:** ~17–34 GB per loaded model (the 8-bit GLM is the largest single footprint).
 
 **Pick by what you are doing:** [`docs/reference/COMPARISON.md`](docs/reference/COMPARISON.md)
 puts every model against every task — coding, chat, long context, uncensored
@@ -121,24 +124,31 @@ Which model for which job, at the speed it actually ran, in one picture.
 | 🥈 | `Qwen3.6-35B-A3B-Uncensored-Heretic` | `qwen36-heretic` | 69.2 | 73.0 | **71.1** | 8.4 |
 | 🥉 | `Ornith-1.5-35B-A3B` | `qwen3` | 60.0 | 60.4 | **60.2** | 6.5 |
 | 4 | `gemma-4-26B-A4B-it-heretic` | `gemma4-heretic` | 59.5 | 60.7 | **60.1** | 9.0 |
-| 5 | `Qwen3-Coder-30B-A3B-Instruct` | `qwen3` | 43.4 | 41.8 | **42.6** | 4.7 |
-| 6 | `Qwen3.8-27B-Uncensored` | `qwen36-heretic` | 18.3 | 18.1 | **18.2** | 6.6 |
-| 7 | `Devstral-Small-2-24B-Instruct` | `devstral` | 12.3 | 12.6 | **12.4** | 9.1 |
+| 5 | `Kimi-Linear-48B-A3B-Instruct` | `kimi-linear` | 58.5 | 59.4 | **59.0** | 7.7 |
+| 6 | `Qwen3-Coder-30B-A3B-Instruct` | `qwen3` | 43.4 | 41.8 | **42.6** | 4.7 |
+| 7 | `GLM-4.7-Flash-8bit` | `glm47` | 34.9 | 35.0 | **34.9** | 9.7 |
+| 8 | `Inkling-2-Mini-oQ4e-mtp` | `inkling` | 25.1 | 25.7 | **25.4** | 4.9 |
+| 9 | `Qwen3.8-27B-Uncensored` | `qwen36-heretic` | 18.3 | 18.1 | **18.2** | 6.6 |
+| 10 | `Devstral-Small-2-24B-Instruct` | `devstral` | 12.3 | 12.6 | **12.4** | 9.1 |
 
-Rows 1–6 come from the same throughput sweep in
-[`reference/results.json`](reference/results.json); Devstral was measured on its
-own pass, on the same machine and prompts, after the coding run — three direct
-requests (12.3, 12.6, 12.3 tok/s), because the sweep script re-runs every model
-and would have overwritten the earlier results.
+Rows 1–4, 6 and 9 are the original 2026-11-11 sweep
+(see [`benchmarks/2026-11-11-m1max.md`](benchmarks/2026-11-11-m1max.md)); row 10
+is Devstral, measured on its own pass, on the same machine and prompts, after the
+coding run (12.3, 12.6, 12.3 tok/s across three direct requests), because the
+sweep script re-runs every model and would have overwritten the earlier results.
+Rows 5, 7 and 8 are the 2026-11-22 campaign on oMLX 0.8.2 (see
+[`benchmarks/2026-11-22-m1max.md`](benchmarks/2026-11-22-m1max.md)); Kimi-Linear,
+GLM and Inkling were each swept at both `temp 0.2` and `temp 1.0` and the two
+settings agree to within noise, so the table shows the `temp 0.2` values.
 
 ### Average throughput (tok/s)
 
 ```mermaid
 xychart-beta
     title "Average decode throughput (tok/s) — higher is faster"
-    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Qwen3-Coder", "Qwen3.8", "Devstral"]
+    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Kimi-Lin", "Qwen3-Coder", "GLM-4.7", "Inkling", "Qwen3.8", "Devstral"]
     y-axis "tok/s" 0 --> 80
-    bar [73.4, 71.1, 60.2, 60.1, 42.6, 18.2, 12.4]
+    bar [73.4, 71.1, 60.2, 60.1, 59.0, 42.6, 34.9, 25.4, 18.2, 12.4]
 ```
 
 ### English vs Turkish (tok/s)
@@ -146,10 +156,10 @@ xychart-beta
 ```mermaid
 xychart-beta
     title "EN vs TR throughput (tok/s)"
-    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Qwen3-Coder", "Qwen3.8", "Devstral"]
+    x-axis ["Qwen3.6-35B", "Heretic", "Ornith", "gemma-4", "Kimi-Lin", "Qwen3-Coder", "GLM-4.7", "Inkling", "Qwen3.8", "Devstral"]
     y-axis "tok/s" 0 --> 80
-    bar [72.2, 69.2, 60.0, 59.5, 43.4, 18.3, 12.3]
-    bar [74.7, 73.0, 60.4, 60.7, 41.8, 18.1, 12.6]
+    bar [72.2, 69.2, 60.0, 59.5, 58.5, 43.4, 34.9, 25.1, 18.3, 12.3]
+    bar [74.7, 73.0, 60.4, 60.7, 59.4, 41.8, 35.0, 25.7, 18.1, 12.6]
 ```
 
 *Series order: 1st bar = EN, 2nd bar = TR.*
@@ -159,9 +169,9 @@ xychart-beta
 ```mermaid
 xychart-beta
     title "Cold model load time (s) — lower is better"
-    x-axis ["Qwen3-Coder", "Ornith", "Qwen3.8", "Heretic", "Qwen3.6-35B", "gemma-4"]
-    y-axis "seconds" 0 --> 10
-    bar [4.7, 6.5, 6.6, 8.4, 8.9, 9.0]
+    x-axis ["Qwen3-Coder", "Inkling", "Ornith", "Qwen3.8", "Kimi-Lin", "Heretic", "Qwen3.6-35B", "gemma-4", "Devstral", "GLM-4.7"]
+    y-axis "seconds" 0 --> 12
+    bar [4.7, 4.9, 6.5, 6.6, 7.7, 8.4, 8.9, 9.0, 9.1, 9.7]
 ```
 
 ### Disk size (GB)
@@ -169,9 +179,9 @@ xychart-beta
 ```mermaid
 xychart-beta
     title "Model size on disk (GB)"
-    x-axis ["gemma-4", "Qwen3.8", "Qwen3-Coder", "Ornith", "Qwen3.6-35B", "Heretic"]
-    y-axis "GB" 0 --> 20
-    bar [15, 15, 16, 18, 19, 19]
+    x-axis ["gemma-4", "Qwen3.8", "Qwen3-Coder", "Inkling", "Ornith", "Qwen3.6-35B", "Heretic", "Devstral", "Kimi-Lin", "GLM-4.7"]
+    y-axis "GB" 0 --> 35
+    bar [15, 15, 16, 16, 18, 19, 19, 25, 27, 31]
 ```
 
 ## Uncensored / Heretic classification
@@ -186,6 +196,9 @@ xychart-beta
 | `gemma-4-26B-A4B-it-heretic-4bit` | **Heretic + Uncensored** | ✅ | ✅ | HF tags: `heretic`, `uncensored`, `decensored`, `abliterated`. |
 | `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | **Uncensored + Heretic** | ✅ | ✅ | HF tags include `heretic` + `uncensored`; ~88% fewer refusals, KL 0.0015. |
 | `Qwen3.8-27B-Uncensored-MLX` | **Uncensored + Abliterated** | ✅ | ✅ (method) | HF card: *"abliterated (refusal-removed)"*; 0 refusals on 4/6/8-bit; local probe 3/3 no refusal. |
+| `GLM-4.7-Flash-8bit` | Standard instruct | ❌ | ❌ | Official Z.ai reasoning MoE; standard alignment. |
+| `Kimi-Linear-48B-A3B-Instruct-4bit` | Standard instruct | ❌ | ❌ | Official Moonshot instruct model; standard alignment. |
+| `Inkling-2-Mini-oQ4e-mtp` | Standard instruct | ❌ | ❌ | Official Thinking Machines multimodal MoE; standard alignment. |
 
 ### Source quotes — Qwen3.8-27B-Uncensored
 
@@ -200,12 +213,15 @@ xychart-beta
 **Summary**
 
 - **Uncensored + Heretic/Abliterated:** Heretic, gemma-4-heretic, Qwen3.8-Uncensored
-- **Standard / censored:** Qwen3-Coder, Qwen3.6-35B, Ornith-1.5
+- **Standard / censored:** Qwen3-Coder, Qwen3.6-35B, Ornith-1.5, GLM-4.7-Flash, Kimi-Linear-48B, Inkling-2-Mini
 - **Fastest uncensored:** Qwen3.6-35B-Heretic (~71 tok/s)
 
 ## Profiles
 
-Three global oMLX profiles are used. `qwen3` is tuned for coding (larger output); the heretic profiles are tuned for chat.
+The three original global oMLX profiles are still the core set. `qwen3` is tuned
+for coding (larger output); the heretic profiles are tuned for chat. The
+2026-11-22 campaign added one **per-model** profile per new model (`glm47`,
+`kimi-linear`, `inkling`) so they run under the same conditions.
 
 | Setting | `qwen3` | `qwen36-heretic` | `gemma4-heretic` |
 |---|---:|---:|---:|
@@ -220,6 +236,12 @@ Three global oMLX profiles are used. `qwen3` is tuned for coding (larger output)
 | Thinking | off | off | off |
 | KV cache 4-bit | ✅ | ✅ | ✅ |
 
+The three new per-model profiles clone that baseline (`glm47` and `kimi-linear`
+use `max_tokens 4096`, `inkling` uses 2048). Each also has a `*-hot` twin that
+only raises `temperature` to 1.0, and Inkling adds an `inkling-mtp` /
+`inkling-mtp-hot` pair that enables its bundled DSpark **Lightning MTP** draft.
+Full table: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
+
 **Model → profile**
 
 | Model | Profile |
@@ -230,19 +252,22 @@ Three global oMLX profiles are used. `qwen3` is tuned for coding (larger output)
 | Qwen3.6-35B-Heretic | `qwen36-heretic` |
 | Qwen3.8-27B-Uncensored | `qwen36-heretic` |
 | gemma-4-26B-heretic | `gemma4-heretic` |
+| GLM-4.7-Flash-8bit | `glm47` |
+| Kimi-Linear-48B-Instruct | `kimi-linear` |
+| Inkling-2-Mini | `inkling` |
 
 The full, machine-readable configuration is in [`profiles/omlx-profiles.json`](profiles/omlx-profiles.json). API keys are **not** included.
 
 ### Why these settings?
 
-- **64K context + 4-bit KV cache** keeps the runtime footprint at ~17–20 GB per model, preventing the memory guard from rejecting loads.
+- **64K context + 4-bit KV cache** keeps the runtime footprint around ~17–34 GB per model, preventing the memory guard from rejecting loads.
 - **`is_pinned = false` for all models** → no startup RAM spike; models load on demand and unload after 180 s idle.
 - **temperature 0.2 + presence 0.3 + repetition 1.1** → stable code, fewer loops.
 
 ## Long prompts — Context Shrink
 
 64K is a deliberate trade-off, not a limit imposed by the models: it keeps the KV
-cache at ~17–20 GB and keeps prefill short. The cost shows up in a long session,
+cache at ~17–34 GB and keeps prefill short. The cost shows up in a long session,
 when the accumulated prompt crosses the ceiling and oMLX refuses the request:
 
 ```text

@@ -10,6 +10,9 @@ Standard library only. Runs off the committed JSON, no model needed.
 Usage:
     python3 scripts/release/export-hallucination-records.py
     python3 scripts/release/export-hallucination-records.py --json reference/hallucination.json
+    python3 scripts/release/export-hallucination-records.py \
+        --json reference/hallucination-2026-11-22.json \
+        --out reference/hallucination-records-2026-11-22.md
 """
 
 import argparse
@@ -40,12 +43,29 @@ def misses(recs):
 
 
 def render(date, data):
+    from collections import Counter
+
+    name_counts = Counter(m["model"] for m in data["models"])
+
+    def label(m):
+        # A model run under several profiles (the 2026-11-22 campaign) needs the
+        # profile in the label, or four rows collapse to the same name.
+        if name_counts[m["model"]] > 1 and m.get("profile"):
+            return f"`{m['model']}` (`{m['profile']}`)"
+        return f"`{m['model']}`"
+
+    def short_label(m):
+        head = family(m["model"])
+        if name_counts[m["model"]] > 1 and m.get("profile"):
+            head = f"{head} ({m['profile']})"
+        return head
+
     lines = ["# Hallucination — the questions and the answers", ""]
     total = data["language_count"]
     lines.append(
         f"**Date:** {date}. {total} languages × 2 probes. Both tables are the raw "
         "record behind the summary in "
-        "[`../evidence/hallucination-2026-11-12.md`](../evidence/hallucination-2026-11-12.md); "
+        f"[`../evidence/hallucination-{date}.md`](../evidence/hallucination-{date}.md); "
         "nothing is aggregated away."
     )
     lines.append("")
@@ -73,17 +93,28 @@ def render(date, data):
     for m in ranked:
         ms = misses(m["_records"])
         lines.append(
-            f"| `{m['model']}` | {m['answered']}/{m['total']} | "
+            f"| {label(m)} | {m['answered']}/{m['total']} | "
             f"**{m['hallucination_rate']*100:.0f}%** ({m['hallucinations']}/{m['fake_total']}) | "
             f"{m['false_alarm_rate']*100:.0f}% ({m['false_alarms']}/{m['real_total']}) | "
             f"{len(ms)} |"
         )
     lines.append("")
-    lines.append(
-        "**Every miss in this run is a false alarm, not a hallucination.** No model, "
-        "on any of the 102 languages, called a fabricated name real. The two models "
-        "that are not at 0% called two *real* APIs fake instead."
-    )
+    hallucinations = sum(m["hallucinations"] for m in ranked)
+    false_alarms = sum(m["false_alarms"] for m in ranked)
+    if hallucinations == 0:
+        lines.append(
+            "**Every miss in this run is a false alarm, not a hallucination.** No model, "
+            "on any of the 102 languages, called a fabricated name real. The two models "
+            "that are not at 0% called two *real* APIs fake instead."
+        )
+    else:
+        h = "hallucination" if hallucinations == 1 else "hallucinations"
+        f = "false alarm" if false_alarms == 1 else "false alarms"
+        lines.append(
+            f"**{hallucinations} {h} in this run** — a fabricated name called real — "
+            f"against {false_alarms} {f}, a real API called fake. The miss table below "
+            "names every one."
+        )
     lines.append("")
 
     lines.append("## Every miss, with the name and the confidence")
@@ -103,7 +134,7 @@ def render(date, data):
             )
             conf = "—" if r["conf"] is None else f"{r['conf']:.2f}"
             lines.append(
-                f"| `{family(m['model'])}` | {direction} | `{r['lang']}` | "
+                f"| `{short_label(m)}` | {direction} | `{r['lang']}` | "
                 f"`{r['name']}` | {conf} |"
             )
     if not any_miss:
@@ -119,7 +150,7 @@ def render(date, data):
     )
     lines.append("")
     for m in ranked:
-        lines.append(f"### `{family(m['model'])}`")
+        lines.append(f"### `{short_label(m)}`")
         lines.append("")
         lines.append(
             f"{m['answered']}/{m['total']} answered, {len(misses(m['_records']))} missed."

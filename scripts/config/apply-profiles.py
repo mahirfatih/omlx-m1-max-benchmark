@@ -55,6 +55,9 @@ def diff_summary(snapshot, live_templates, live_profiles, live_settings):
             changes.append(f"global profile `{name}`: settings differ")
     for model, mapping in snapshot.get("model_to_profile", {}).items():
         ms = (live_settings.get("models", {}) or {}).get(model, {})
+        if not ms:
+            # Not installed on this machine; nothing to reconcile for it.
+            continue
         if ms.get("active_profile_name") != mapping:
             changes.append(f"model `{model}`: active profile {ms.get('active_profile_name')!r} → {mapping!r}")
     return changes

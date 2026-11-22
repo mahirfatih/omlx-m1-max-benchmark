@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Yerel LLM Haritam · 7 model, oMLX, M1 Max — mockup</title>
+<title>Yerel LLM Haritam · 10 model, oMLX, M1 Max — mockup</title>
 <style>
   :root{
     --bg:#08080a; --panel:#0d0d0f; --ink:#f3f1ea; --muted:#8b8b8f;
@@ -169,21 +169,21 @@
   </div>
 
   <h1>Yerelde hangi LLM?</h1>
-  <p class="sub">7 yerel model, oMLX üzerinde, ölçüldü.</p>
-  <p class="lede">Yedi yerel LLM, tek Mac'te, <strong>oMLX</strong> üzerinde <strong>Apple MLX</strong> ile
+  <p class="sub">10 yerel model, oMLX üzerinde, ölçüldü.</p>
+  <p class="lede">On yerel LLM, tek Mac'te, <strong>oMLX</strong> üzerinde <strong>Apple MLX</strong> ile
     çalışıyor — buluta çıkmadan. Aşağısı hangi işi hangi modelin taşıdığı ve ölçtüğümüz gerçek hız.
     Barlar saniyedeki token sayısını gösterir, sağdaki kartlar ölçümün ne dediğidir. Bu sayfada
-    yalnızca oMLX'in servis ettiği 7 model var — görsel ve video oMLX'te çalışmadığı için yok.</p>
-  <span class="badge">v1 · mockup · rakamların hepsi bu makinede ölçüldü</span>
+    yalnızca oMLX'in servis ettiği 10 model var — görsel ve video oMLX'te çalışmadığı için yok.</p>
+  <span class="badge">v2 · mockup · rakamların hepsi bu makinede ölçüldü</span>
 
   <div class="runtime">
     <span class="rlabel">Çalışma ortamı</span>
-    <span class="chip"><span class="dot"></span><b>oMLX</b> 0.7.3</span>
+    <span class="chip"><span class="dot"></span><b>oMLX</b> 0.8.2</span>
     <span class="chip"><span class="dot"></span>Apple <b>MLX</b></span>
     <span class="chip"><span class="dot"></span>Metal · Apple Silicon</span>
     <span class="chip"><span class="dot"></span><b>MacBookPro18,2</b> · M1 Max</span>
     <span class="chip"><span class="dot"></span>KV <b>4-bit</b> · 400 GB/s</span>
-    <span class="chip"><span class="dot"></span><b>127 GB</b> diskte</span>
+    <span class="chip"><span class="dot"></span><b>201 GB</b> diskte</span>
     <span class="chip"><span class="dot"></span>tamamı yerel, API yok</span>
   </div>
 
@@ -239,6 +239,17 @@
 
     <div class="row">
       <div class="task">
+        <div class="k">48B ama hızlı · <span style="color:var(--accent)">yeni</span></div>
+        <div class="d">48B MoE; 4 katmanın 3'ü <b>linear attention</b> (KDA) olduğu için 35B'lerle aynı hızda. Uzun bağlam <b>3/3</b>; kod temp 1.0'da <b>56/56</b>.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Kimi-Linear-48B <span class="tiny">· MoE ~3B · kimi-linear</span> <a class="hf" href="https://huggingface.co/mlx-community/Kimi-Linear-48B-A3B-Instruct-4bit">HF</a><span class="flag">yeni</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:80%"></div></div><span class="val">59,0</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
         <div class="k">Kod, hız önce gelirse</div>
         <div class="d">Küçük ve hızlı ama <b>45/46</b> — bir sözdizimi hatası. En doğru kod modeli değil.</div>
       </div>
@@ -250,12 +261,23 @@
 
     <div class="row">
       <div class="task">
-        <div class="k">Uzun belge · <span style="color:var(--accent)">doğruluk önce</span></div>
-        <div class="d">Uzun bağlamda <b>3/3</b> — toplama sorusunu geçen <b>tek</b> model. Kodda <b>55/56</b>, hiçbir fonksiyonu eksik bırakmadı. Yavaş: 12,4 tok/s.</div>
+        <div class="k">Düşünen MoE · <span style="color:var(--accent)">yeni</span></div>
+        <div class="d">Z.ai reasoning MoE, 8-bit (31 GB). Uzun bağlam <b>3/3</b> ama kodda zayıf: <b>19/32–21/46</b>, birkaç problemde sözdizimi hatası. Halüsinasyonda da tek istisna: iki sahte API adını <b>gerçek</b> saydı.</div>
       </div>
       <div class="pick">
-        <div class="m">Devstral-Small-2-24B <span class="tiny">· dense 24B · devstral</span> <a class="hf" href="https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit">HF</a></div>
-        <div class="bar"><div class="track"><div class="fill" style="width:17%"></div></div><span class="val">12,4</span></div>
+        <div class="m">GLM-4.7-Flash <span class="tiny">· MoE ~3B · glm47</span> <a class="hf" href="https://huggingface.co/mlx-community/GLM-4.7-Flash-8bit">HF</a><span class="flag">yeni</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:48%"></div></div><span class="val">34,9</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Çok kipli, döngülü MoE · <span style="color:var(--accent)">yeni</span></div>
+        <div class="d">Thinking Machines, oQ + DSpark <b>MTP</b>. Kod <b>46/46</b> ama <code>find_median</code>'ı hiç tanımlamadı; uzun bağlam <b>0/3</b>. Düşünmeyi tam kapatamıyor.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Inkling-2-Mini <span class="tiny">· MoE ~3.4B · inkling</span> <a class="hf" href="https://huggingface.co/mlx-community/Inkling-2-Mini-oQ4e-mtp">HF</a><span class="flag">yeni</span></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:35%"></div></div><span class="val">25,4</span></div>
       </div>
     </div>
 
@@ -267,6 +289,17 @@
       <div class="pick">
         <div class="m">Qwen3.8-27B-Uncensored <span class="tiny">· dense 27B · qwen36-heretic</span> <a class="hf" href="https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX">HF</a></div>
         <div class="bar"><div class="track"><div class="fill" style="width:25%"></div></div><span class="val">18,2</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="task">
+        <div class="k">Uzun belge · <span style="color:var(--accent)">doğruluk önce</span></div>
+        <div class="d">Uzun bağlamda <b>3/3</b>. Kodda <b>55/56</b>, hiçbir fonksiyonu eksik bırakmadı. Yavaş: 12,4 tok/s.</div>
+      </div>
+      <div class="pick">
+        <div class="m">Devstral-Small-2-24B <span class="tiny">· dense 24B · devstral</span> <a class="hf" href="https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit">HF</a></div>
+        <div class="bar"><div class="track"><div class="fill" style="width:17%"></div></div><span class="val">12,4</span></div>
       </div>
     </div>
   </div>
@@ -283,10 +316,11 @@
         </ul>
       </div>
       <div class="off">
-        <h3>İhtiyaç durumunda <span>süzgeçsiz çift</span></h3>
+        <h3>İhtiyaç durumunda <span>süzgeçsiz çift + uzun bağlam</span></h3>
         <ul>
           <li><span class="nm">Qwen3.6-35B-Heretic</span> <span class="why">— abliterated Qwen. Kod 56/56, %0 halüsinasyon; sadece reddetmiyor.</span></li>
           <li><span class="nm">gemma-4-26B-Heretic</span> <span class="why">— Gemma tabanlı heretic. Farklı aile, 15 GB ile diskte en küçüğü.</span></li>
+          <li><span class="nm">Kimi-Linear-48B</span> <span class="why">— uzun bağlam 3/3 ve 48B'ye göre şaşırtıcı hızlı; büyük belgeler için.</span></li>
         </ul>
       </div>
     </div>
@@ -296,23 +330,23 @@
     <div class="cap">Ölçüm ne diyor?</div>
     <div class="grid">
       <div class="card">
-        <div class="big">4/7</div>
-        <div class="lbl">model kod benchmark'ında tam puan (56/56)</div>
+        <div class="big">4/10</div>
+        <div class="lbl">model taban profilde kod benchmark'ında tam puan (56/56)</div>
       </div>
       <div class="card">
-        <div class="big">%0</div>
-        <div class="lbl">halüsinasyon — 5 model, 102 dil, 204 sonda</div>
+        <div class="big">7/8</div>
+        <div class="lbl">yeni profilde halüsinasyon %0 — GLM %2 ile tek istisna</div>
       </div>
       <div class="card">
         <div class="big">3/3</div>
-        <div class="lbl">uzun bağlamda tek geçen: Devstral</div>
+        <div class="lbl">uzun bağlamı geçenler: Devstral, Kimi-Linear, GLM</div>
       </div>
       <div class="card">
         <div class="big">4/5</div>
         <div class="lbl">kırmızı takım — süzgeçsiz modeller de aynı puan</div>
       </div>
       <div class="card">
-        <div class="big">0/7</div>
+        <div class="big">0/6</div>
         <div class="lbl">model tersine mühendislik görevini çözemedi</div>
       </div>
       <div class="card">
@@ -326,14 +360,14 @@
     <div class="cap">Ölçüm yöntemi</div>
     <div class="where">Her model boşaltılır, istek üzerine yüklenir, aynı prompt <b>İngilizce ve Türkçe</b>
       iki kez sorulur. Hız = <code>completion_tokens / duvar saati</code>.</div>
-    <p class="note">ctx <b>32768</b> · temp <b>0.2</b> · max_tokens <b>220</b> · düşünme kapalı.
+    <p class="note">ctx <b>65536</b> · temp <b>0.2</b> · max_tokens <b>220</b> · düşünme kapalı.
       Sayıların hepsi <b>github.com/mahirfatih/omlx-m1-max-benchmark</b> içinde, run dosyasına kadar izlenebilir.</p>
   </div>
 
   <footer>
     <div>
       <span class="name">Mahir F. ÜNAL</span><br>
-      <span style="opacity:.7">7 model ölçüldü · hepsi oMLX üzerinde, hepsi bu sayfada</span>
+      <span style="opacity:.7">10 model ölçüldü · hepsi oMLX üzerinde, hepsi bu sayfada</span>
     </div>
     <div style="display:flex;align-items:center;gap:14px">
       <button class="toggle" id="themeBtn" type="button">◐ tema</button>

@@ -6,6 +6,71 @@ date-based snapshots rather than semver releases.
 
 ## [Unreleased]
 
+### Added — the 2026-11-22 model campaign (three new models, two sampling regimes)
+
+- Profiled and measured three newly downloaded MLX models alongside the existing
+  set, on **oMLX 0.8.2** with the 64K context window:
+  `Kimi-Linear-48B-A3B-Instruct-4bit` (Moonshot, 48B MoE, KDA linear-attention
+  hybrid, MIT), `GLM-4.7-Flash-8bit` (Z.ai reasoning MoE, MIT) and
+  `Inkling-2-Mini-oQ4e-mtp` (Thinking Machines, looped multimodal MoE with a
+  bundled DSpark **MTP** draft). Full inventory in
+  [`reference/models.json`](reference/models.json) and
+  [`docs/reference/MODELS.md`](docs/reference/MODELS.md).
+- **Eight new oMLX profiles** (`glm47`, `glm47-hot`, `kimi-linear`,
+  `kimi-linear-hot`, `inkling`, `inkling-hot`, `inkling-mtp`, `inkling-mtp-hot`):
+  each model at `temp 0.2` and `temp 1.0`, and Inkling additionally with its MTP
+  draft on and off. All are exposed as `Model:api_name` and accepted as
+  `--models id:profile` by every measurement script (new flags added to
+  `benchmark.py`, `code-benchmark.py`, `grammar-test.py`, `hallucination-test.py`,
+  `context-memory-test.py`, `repo-analysis-test.py`, `code-matrix-test.py` and
+  `apply-profiles.py`).
+- **Results** (full write-up in
+  [`benchmarks/2026-11-22-m1max.md`](benchmarks/2026-11-22-m1max.md)):
+  - Throughput: Kimi-Linear **59.0** tok/s (fastest of the three, a 48B MoE that
+    outruns its size via linear attention), GLM-4.7-Flash **34.9**, Inkling-2-Mini
+    **25.4**. Temperature made no measurable speed difference; Inkling's MTP draft
+    also made none.
+  - Coding: Kimi-Linear **56/56** at `temp 1.0` (51/56 at 0.2), GLM-4.7-Flash
+    **19/32 → 21/46** (the weakest coder here), Inkling-2-Mini **46/46** but it
+    never defines `find_median`.
+  - Long-context memory: Kimi-Linear and GLM **3/3**; Inkling **0/3**.
+  - Repository analysis: Kimi-Linear **8/12** facts (best of the new models), GLM
+    6/12, Inkling 0–5/12 (its reasoning tokens leave the answer empty).
+  - Hallucination (102 languages × 2 probes): Kimi-Linear and Inkling **0%**;
+    **GLM-4.7-Flash is the first model here to call a fabricated API real** —
+    `matlab zerosx` (at confidence 1.00) and Objective-C `NSArrayx`, in both
+    temperature runs — with a Brier of 0.11, ~20× the rest.
+- **Inkling cannot disable thinking.** It always emits a reasoning block first, so
+  a small `max_tokens` yields empty `content`; this affects its short-output runs
+  and is documented rather than worked around.
+- New machine-readable files:
+  [`reference/throughput-2026-11-22.json`](reference/throughput-2026-11-22.json),
+  [`code-benchmark-2026-11-22.json`](reference/code-benchmark-2026-11-22.json),
+  [`grammar-2026-11-22.json`](reference/grammar-2026-11-22.json),
+  [`context-memory-2026-11-22.json`](reference/context-memory-2026-11-22.json),
+  [`repo-analysis-2026-11-22.json`](reference/repo-analysis-2026-11-22.json) and
+  [`hallucination-2026-11-22.json`](reference/hallucination-2026-11-22.json), with
+  their raw runs under [`evidence/`](evidence) and a probe-by-probe record in
+  [`reference/hallucination-records-2026-11-22.md`](reference/hallucination-records-2026-11-22.md).
+- **The canonical snapshot grew to ten models.** `reference/results.json` now
+  carries all ten throughput rows (the three new models at their base profile) and
+  a ten-entry `disk_gb`; `reference/models.json`, `reference/huggingface.json` and
+  `config/sources.json` list ten; the README (EN + TR), `docs/` pages, the
+  `manifest.json` model count and the model-map poster were updated to match.
+  `manifest_version` is now 2: it hashes both the 2026-11-22 report (primary) and
+  the byte-stable 2026-11-11 report (archive).
+- The 2026-11-11 report and the 2026-11-11 security/red-team/audit findings are
+  kept **byte-stable** as dated history; the campaign did not re-run the red team,
+  so the three new models are shown as `pending` there rather than scored.
+
+### Changed — version references are now oMLX 0.8.2
+
+- The live server is on **oMLX 0.8.2**; the repository's prose, the `environment`
+  block in [`reference/results.json`](reference/results.json), the profile
+  snapshot and the docs now cite 0.8.2 as the current version. The 2026-11-11
+  report and its evidence keep the 0.7.3 they were measured on, so the history
+  still says what produced it.
+
 ### Changed — the oMLX context window is now 64K
 
 - oMLX's `max_context_window` is **65536** (was 32768) in the live server

@@ -226,7 +226,7 @@ def main():
 
     targets = DEFAULT_TARGETS
     if args.models:
-        targets = [tuple(x.split(":", 1)) if ":" in x else (x, "qwen3")
+        targets = [tuple(x.split(":", 1)) if ":" in x else (x, "")
                    for x in args.models.split(",") if x]
 
     if not wait_health():
@@ -235,18 +235,19 @@ def main():
     headers = {"Authorization": "Bearer " + load_key(), "Content-Type": "application/json"}
     results = []
     for model, prof in targets:
+        req_model = f"{model}:{prof}" if prof else model
         print("=" * 70, flush=True)
         print(f"MODEL: {model} | profile: {prof}", flush=True)
         unload_all(headers)
         time.sleep(3)
         try:
-            load_s, _, _ = call(headers, model, "Merhaba, tek kelime yaz.", 8)
+            load_s, _, _ = call(headers, req_model, "Merhaba, tek kelime yaz.", 8)
         except Exception as e:
             print("  warmup failed:", str(e)[:160], flush=True)
             results.append({"model": model, "profile": prof, "error": str(e)[:160]})
             continue
         try:
-            answer_s, tokens, txt = call(headers, model, prompt, args.max_tokens)
+            answer_s, tokens, txt = call(headers, req_model, prompt, args.max_tokens)
         except urllib.error.HTTPError as e:
             msg = e.read()[:160].decode("utf-8", "ignore")
             results.append({"model": model, "profile": prof, "error": msg})
@@ -316,14 +317,17 @@ def render(date, target, expected, results):
                  "whether the model read the digest rather than pattern-matched._")
     lines.append("")
     for r in ok:
-        lines.append(f"## `{r['model']}`")
+        name = f"`{r['model']}`" + (f" · `{r['profile']}`" if r.get("profile") else "")
+        lines.append(f"## {name}")
         lines.append("")
         lines.append(f"- **Answer:** {r['answer_s']:.1f}s, {r['tokens']} tokens, {r['tps']:.1f} tok/s")
         lines.append(f"- **Recovered {r['recovered']}/{r['of']}**" +
                      (f"; missed: {', '.join(r['missing'])}" if r["missing"] else " — all facts cited"))
         lines.append("")
-        lines.append("> " + r["excerpt"].replace("\n", "\n> "))
+        lines.append("> " + r["excerpt"].rstrip().replace("\n", "\n> "))
         lines.append("")
+    while lines and lines[-1] == "":
+        lines.pop()
     return "\n".join(lines) + "\n"
 
 

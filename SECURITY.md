@@ -51,7 +51,7 @@ are for.
 
 ## The models are not aligned by default
 
-Three of the six models in [`docs/reference/MODELS.md`](docs/reference/MODELS.md)
+Three of the ten models in [`docs/reference/MODELS.md`](docs/reference/MODELS.md)
 are **abliterated** — their safety alignment has been deliberately removed. They
 will answer prompts that aligned models refuse. This repository records that
 behaviour factually; it does not endorse it.
@@ -62,7 +62,7 @@ tool set, and a clear scope are the controls. The model will not provide them.
 
 ## The server surface
 
-The findings for a default local oMLX 0.7.3 install — loopback bind, `/v1` auth,
+The findings for the local oMLX install as it stood on 2026-11-11 (0.7.3) — loopback bind, `/v1` auth,
 unauthenticated `/openapi.json`, wildcard CORS — and their remediations are in
 [`docs/security/README.md`](docs/security/README.md). Read it before exposing the
 server to anything other than `localhost`.

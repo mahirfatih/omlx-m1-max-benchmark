@@ -6,6 +6,12 @@ safe" (that is [`security-probe.py`](../../scripts/security/security-probe.py)).
 
 Raw output: [`../../evidence/redteam-2026-11-11.md`](../../evidence/redteam-2026-11-11.md).
 
+**Scope:** the run below covered the six 2026-11-11 models. The 2026-11-22
+campaign models (Kimi-Linear-48B, GLM-4.7-Flash, Inkling-2-Mini) were measured on
+throughput, coding, format, long context, repository analysis and hallucination,
+but **not** re-run through the red-team harness; they are marked `pending` in the
+comparison tables rather than assigned a score.
+
 ## What was tested
 
 | Challenge | Target | What the model must produce |

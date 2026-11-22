@@ -1,7 +1,7 @@
 {
   // markdownlint-cli2 configuration for this repository.
   //
-  // Three rules are off on purpose, and each is a deliberate writing choice
+  // Five rules are off on purpose, and each is a deliberate writing choice
   // rather than an accident:
   //
   //   MD013 (line-length)         the documents wrap by paragraph; breaking a
@@ -10,6 +10,9 @@
   //                               with <br>.
   //   MD060 (table-column-style)  the tables are aligned for the source, not for
   //                               one fixed pipe style.
+  //   MD009 (trailing spaces)     generated `evidence/` pages quote raw model
+  //   MD032 (blanks-around-lists) answers verbatim, including their own trailing
+  //                               spaces and list spacing; the raw bytes matter.
   //
   // MD024 stays on, but siblings only: CHANGELOG.md repeats `### Added` once per
   // release, which is the correct Keep a Changelog shape.
@@ -20,6 +23,8 @@
     "MD060": false,
     "MD028": false,
     "MD036": false,
+    "MD009": false,
+    "MD032": false,
     "MD024": {
       "siblings_only": true
     }

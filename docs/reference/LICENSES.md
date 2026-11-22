@@ -12,7 +12,8 @@ FLUX and CogVideoX families — are read in the
 [generation repository](https://github.com/mahirfatih/local-generation-benchmark-m1-max),
 and summarised at the end of this file.
 
-This is a reading of the published terms on Hugging Face, retrieved **2026-11-12**.
+This is a reading of the published terms on Hugging Face, retrieved **2026-11-22**
+(the original six models on 2026-11-12; the 2026-11-22 campaign models then).
 It is a summary, not legal advice; the licence text on each page is the authority.
 
 ## Text models (served by oMLX)
@@ -25,6 +26,10 @@ It is a summary, not legal advice; the licence text on each page is the authorit
 | `Ornith-1.5-35B-A3B-MLX-4bit` | `ornith-ai/Ornith-1.5-35B-A3B` | **not declared** | **do not assume** | The model card names **no licence**. With no grant, the default is all rights reserved: downloaded, but not licensed for reuse or commercial use. |
 | `gemma-4-26B-A4B-it-heretic-4bit` | `coder3101/gemma-4-26B-A4B-it-heretic` → `google/gemma-4` | **tagged `apache-2.0`, links to the Gemma licence** | **check before use** | The card is self-contradictory: the tag says Apache-2.0, but its `license_link` points at the **Gemma 4 licence**, which carries a use policy. The Gemma terms are the ones that matter. |
 | `Qwen3.8-27B-Uncensored-MLX` | `Qwen/Qwen3.8-27B` | **Apache-2.0** | yes | Abliterated derivative; licence inherited. |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | `mistralai/Devstral-Small-2-24B-Instruct-2512` | **Apache-2.0** | yes | Straight quantisation of an Apache-2.0 model. |
+| `GLM-4.7-Flash-8bit` | `zai-org/GLM-4.7-Flash` | **MIT** | yes | Official Z.ai reasoning MoE; permissive. |
+| `Kimi-Linear-48B-A3B-Instruct-4bit` | `moonshotai/Kimi-Linear-48B-A3B-Instruct` | **MIT** | yes | Official Moonshot instruct model; permissive. |
+| `Inkling-2-Mini-oQ4e-mtp` | `thinkingmachines/Inkling-2-Mini` | **Apache-2.0** | yes | Official Thinking Machines model; the oQ quant inherits the base licence. |
 
 ## Image and video models (separate tools)
 
@@ -73,6 +78,10 @@ here redistributes model weights.
 - gemma-4 heretic: <https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit>
   and the Gemma licence it links to: <https://ai.google.dev/gemma/docs/gemma_4_license>
 - Qwen3.8: <https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX>
+- Devstral: <https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit>
+- GLM-4.7-Flash: <https://huggingface.co/mlx-community/GLM-4.7-Flash-8bit>
+- Kimi-Linear: <https://huggingface.co/mlx-community/Kimi-Linear-48B-A3B-Instruct-4bit>
+- Inkling-2-Mini: <https://huggingface.co/mlx-community/Inkling-2-Mini-oQ4e-mtp>
 
 Image and video model sources are listed in the
 [generation repository](https://github.com/mahirfatih/local-generation-benchmark-m1-max).

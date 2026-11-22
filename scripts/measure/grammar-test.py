@@ -230,7 +230,7 @@ def main():
 
     targets = DEFAULT_TARGETS
     if args.models:
-        targets = [tuple(x.split(":", 1)) if ":" in x else (x, "qwen3")
+        targets = [tuple(x.split(":", 1)) if ":" in x else (x, "")
                    for x in args.models.split(",") if x]
     if not wait_health():
         raise SystemExit("oMLX server is not healthy")
@@ -238,12 +238,13 @@ def main():
     headers = {"Authorization": "Bearer " + load_key(), "Content-Type": "application/json"}
     rows = []
     for model, prof in targets:
+        req_model = f"{model}:{prof}" if prof else model
         print("=" * 70, flush=True)
         print(f"MODEL: {model} | profile: {prof}", flush=True)
         unload_all(headers)
         time.sleep(3)
         try:
-            call(headers, model, "Merhaba, tek kelime yaz.", 8)
+            call(headers, req_model, "Merhaba, tek kelime yaz.", 8)
         except Exception as e:
             print("  warmup failed:", str(e)[:160], flush=True)
             rows.append({"model": model, "profile": prof, "error": str(e)[:160]})
@@ -251,7 +252,7 @@ def main():
         row = {"model": model, "profile": prof, "tasks": {}}
         for task in TASKS:
             try:
-                elapsed, answer = call(headers, model, task["instruction"], args.max_tokens)
+                elapsed, answer = call(headers, req_model, task["instruction"], args.max_tokens)
             except Exception as e:
                 row["tasks"][task["id"]] = {"valid": False, "reason": str(e)[:120]}
                 print(f"  {task['id']}: ERROR {str(e)[:100]}", flush=True)
@@ -292,7 +293,8 @@ def render(date, rows):
         cells = ["✅" if r["tasks"][t]["valid"] else "❌" for t in ids]
         n = sum(1 for t in ids if r["tasks"][t]["valid"])
         lines.append(f"| `{r['model']}` | " + " | ".join(cells) + f" | **{n}/{len(ids)}** |")
-    lines.append("")
+    while lines and lines[-1] == "":
+        lines.pop()
     return "\n".join(lines) + "\n"
 
 

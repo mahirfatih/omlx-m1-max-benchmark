@@ -1,3 +1,4 @@
+import argparse
 import json
 import urllib.request
 import urllib.error
@@ -17,9 +18,13 @@ ALL_MODELS = [
     "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
     "gemma-4-26B-A4B-it-heretic-4bit",
     "Qwen3.8-27B-Uncensored-MLX",
+    "GLM-4.7-Flash-8bit",
+    "Kimi-Linear-48B-A3B-Instruct-4bit",
+    "Inkling-2-Mini-oQ4e-mtp",
 ]
 
-TARGETS = [
+# model id : profile, in the README order (fastest first).
+DEFAULT_TARGETS = [
     ("Qwen3-Coder-30B-A3B-Instruct-4bit:qwen3", "qwen3"),
     ("Ornith-1.5-35B-A3B-MLX-4bit:qwen3", "qwen3"),
     ("Qwen3.6-35B-A3B-4bit:qwen3", "qwen3"),
@@ -27,6 +32,16 @@ TARGETS = [
     ("gemma-4-26B-A4B-it-heretic-4bit:gemma4-heretic", "gemma4-heretic"),
     ("Qwen3.8-27B-Uncensored-MLX:qwen36-heretic", "qwen36-heretic"),
 ]
+
+ap = argparse.ArgumentParser(description="Decode throughput (tok/s) in EN and TR, two reps each.")
+ap.add_argument("--models", default="", help="comma-separated id:profile list (default: the built-in model list)")
+ap.add_argument("--out", default="", help="write the report to this path (default: ~/Desktop)")
+args = ap.parse_args()
+
+TARGETS = (
+    [tuple(x.split(":", 1)) if ":" in x else (x, "") for x in args.models.split(",") if x]
+    or DEFAULT_TARGETS
+)
 
 PROMPTS = {
     "EN": "Write a short technical explanation of about 120 words on how a hash table works, then give one small example.",
@@ -132,7 +147,7 @@ lines.append(f"- **Tarih:** {now}")
 lines.append(f"- **Donanım:** {chip}, {ram} GB RAM")
 lines.append("- **Sunucu:** oMLX (`127.0.0.1:8000`)")
 lines.append("- **Yöntem:** Her model tek tek yüklendi; İngilizce ve Türkçe prompt, her dil **2 kez** çalıştırıldı. Hız = `completion_tokens / geçen süre` (tok/s). Önce model boşaltıldı, sonra ısındırma + ölçüm.")
-lines.append("- **Ayarlar:** ctx 32768, temp 0.2, max_tokens 220, thinking kapalı, KV 4-bit\n")
+lines.append("- **Ayarlar:** ctx 65536, temp 0.2, max_tokens 220, thinking kapalı, KV 4-bit\n")
 lines.append("## Sıralama (en hızlıdan en yavaşa)\n")
 lines.append("| # | Model | Profil | EN tok/s | TR tok/s | Ortalama tok/s | Yükleme (s) |")
 lines.append("|---|---|---|---|---|---|---|")
@@ -149,9 +164,12 @@ lines.append("- Değerler bu makinede, bu promptlarla alınmıştır; farklı pr
 lines.append("- Profiller: `qwen3` (kod, max_tokens 4096), `qwen36-heretic` (2048), `gemma4-heretic` (2048).")
 md = "\n".join(lines) + "\n"
 
-desktop = os.path.expanduser("~/Desktop")
-outdir = desktop if os.path.isdir(desktop) else os.path.expanduser("~")
-path = os.path.join(outdir, "omlx-benchmark-" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".md")
+if args.out:
+    path = args.out
+else:
+    desktop = os.path.expanduser("~/Desktop")
+    outdir = desktop if os.path.isdir(desktop) else os.path.expanduser("~")
+    path = os.path.join(outdir, "omlx-benchmark-" + datetime.datetime.now().strftime("%Y%m%d-%H%M") + ".md")
 with open(path, "w") as f:
     f.write(md)
 print("\n\n" + md)

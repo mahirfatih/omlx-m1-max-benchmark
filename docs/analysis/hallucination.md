@@ -12,7 +12,10 @@ The corpus and the twins are in [`../../data/languages.json`](../../data/languag
 and described in [`../reference/LANGUAGES.md`](../reference/LANGUAGES.md). The probe
 is [`../../scripts/measure/hallucination-test.py`](../../scripts/measure/hallucination-test.py).
 
-The run: `2026-11-12`, five models, 102 languages, 204 probes each.
+The run: `2026-11-12`, five models, 102 languages, 204 probes each. A second run
+on `2026-11-22` added the three newer models (GLM-4.7-Flash, Kimi-Linear-48B,
+Inkling-2-Mini), each under both `temp 0.2` and `temp 1.0` — eight profiles in
+all, reported below the first table.
 
 | Model | Answered | Accuracy | Hallucination (fake → "real") | False alarm (real → "fake") | Brier ↓ | Overconfident + wrong |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -45,6 +48,43 @@ answers that stated a confidence._
   answered 182/204: it emits nearly-valid JSON and occasionally drops or mangles
   an entry. Those 22 probes are excluded rather than counted as wrong, so its
   accuracy is over the 182 it truly answered. See the Harness section below.
+
+## The 2026-11-22 campaign
+
+Three more models, each under `temp 0.2` and `temp 1.0` (eight profiles). Same
+102-language corpus and the same probe.
+
+| Model (profile) | Answered | Accuracy | Hallucination | False alarm | Brier ↓ |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| `Kimi-Linear-48B` (`kimi-linear`) | 204/204 | 100% (203/204) | **0%** (0/102) | 1% (1/102) | 0.005 |
+| `Kimi-Linear-48B` (`kimi-linear-hot`) | 204/204 | 100% (203/204) | **0%** (0/102) | 1% (1/102) | 0.005 |
+| `Inkling-2-Mini` (`inkling`) | 188/204 | 100% (188/188) | **0%** (0/94) | 0% (0/94) | 0.004 |
+| `Inkling-2-Mini` (`inkling-hot`) | 188/204 | 100% (188/188) | **0%** (0/94) | 0% (0/94) | 0.004 |
+| `Inkling-2-Mini` (`inkling-mtp`) | 204/204 | 100% (204/204) | **0%** (0/102) | 0% (0/102) | 0.005 |
+| `Inkling-2-Mini` (`inkling-mtp-hot`) | 204/204 | 100% (204/204) | **0%** (0/102) | 0% (0/102) | 0.007 |
+| `GLM-4.7-Flash` (`glm47`) | 165/204 | 98% (161/165) | **2%** (2/85) | 2% (2/80) | 0.11 |
+| `GLM-4.7-Flash` (`glm47-hot`) | 165/204 | 98% (161/165) | **2%** (2/85) | 2% (2/80) | 0.11 |
+
+- **GLM-4.7-Flash is the first model here to invent an API.** It called the
+  fabricated twins `matlab zerosx` (at confidence **1.00**) and Objective-C
+  `NSArrayx` real — the same two names, in both temperature runs. That is a
+  reproducible weak spot, not sampling noise: `zeros` and `NSArray` are so
+  familiar that the one-letter perturbation still reads as real to it. It also
+  has the worst Brier here (0.11, ~20× the others) and three "overconfident and
+  wrong" probes.
+- **Kimi-Linear and Inkling-2-Mini kept the older models' record: zero
+  hallucinations.** Kimi raised one false alarm (Pascal `writeln`, called fake)
+  and Inkling none. Both are the safe direction.
+- **Temperature changes nothing.** Every model's two runs score identically
+  (GLM 2%/2% twice, Kimi 0%/1% twice); the only difference is Inkling's Brier
+  (0.004 vs 0.007) and answer coverage.
+- **Coverage is a harness fact, not a score.** GLM answered 165/204 — it drops
+  entries from otherwise-valid JSON. Two of Inkling's profiles answered 188/204
+  (the thinking block runs past the output budget); its two MTP profiles answered
+  all 204. Unanswered probes are excluded, never counted as misses.
+
+Full per-probe record:
+[`../../reference/hallucination-records-2026-11-22.md`](../../reference/hallucination-records-2026-11-22.md).
 
 ## The slow model we dropped
 
@@ -97,8 +137,10 @@ python3 scripts/measure/hallucination-test.py \
 `--selftest` is step 13 of [`../../test/test.sh`](../../test/test.sh) and needs no
 model and no network.
 
-Raw run: [`../../evidence/hallucination-2026-11-12.md`](../../evidence/hallucination-2026-11-12.md)
-and [`../../reference/hallucination.json`](../../reference/hallucination.json).
+Raw runs: [`../../evidence/hallucination-2026-11-12.md`](../../evidence/hallucination-2026-11-12.md)
+with [`../../reference/hallucination.json`](../../reference/hallucination.json), and
+[`../../evidence/hallucination-2026-11-22.md`](../../evidence/hallucination-2026-11-22.md)
+with [`../../reference/hallucination-2026-11-22.json`](../../reference/hallucination-2026-11-22.json).
 
 ## The questions and the answers themselves
 
@@ -106,15 +148,22 @@ The summary above says "0% hallucination"; it does not let you check. Every prob
 for every model is written out — the language, the API name, whether it was real,
 what the model said, and the confidence it stated — in
 [`../../reference/hallucination-records.md`](../../reference/hallucination-records.md)
-(1,068 lines, regenerated from the JSON by
-[`../../scripts/release/export-hallucination-records.py`](../../scripts/release/export-hallucination-records.py)).
+(the 2026-11-12 run, 1,067 lines) and
+[`../../reference/hallucination-records-2026-11-22.md`](../../reference/hallucination-records-2026-11-22.md)
+(the three new models), both regenerated from the JSON by
+[`../../scripts/release/export-hallucination-records.py`](../../scripts/release/export-hallucination-records.py).
 
-Two things in that record are worth reading before trusting the headline:
+Two things in the first record are worth reading before trusting its headline:
 
-- **Every miss in the run is a false alarm, not a hallucination.** No model called
-  a fabricated name real on any of the 102 languages. The two models below 0% on
-  the false-alarm column called a _real_ API fake instead — the safe direction.
+- **Every miss in the 2026-11-12 run is a false alarm, not a hallucination.** No
+  model of the original five called a fabricated name real on any of the 102
+  languages. The two models below 0% on the false-alarm column called a _real_ API
+  fake instead — the safe direction.
 - **The same two names account for every miss.** `Ornith-1.5-35B` and
   `Qwen3-Coder-30B` each missed exactly `qsharp Qubit` and `mint component`, and
   nothing else. Two unrelated models failing on precisely the same pair is a
   statement about those two probes, not about either model.
+
+The campaign record is where that changed: it shows the two fabricated names
+GLM-4.7-Flash accepted (`matlab zerosx` at 1.00, `NSArrayx`) and the single false
+alarm Kimi-Linear raised (`pascal writeln`).

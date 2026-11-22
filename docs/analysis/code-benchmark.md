@@ -7,7 +7,7 @@ block is extracted, written to a file, **executed** against hidden cases under a
 [`../../scripts/measure/code-matrix-test.py`](../../scripts/measure/code-matrix-test.py),
 which only checks that the code *parses*.
 
-The run: `2026-11-12`, all six models, five problems, 56 cases.
+The first run: `2026-11-12`, six models, five problems, 56 cases.
 
 | Model | p01 two-sum | p02 LIS | p03 median | p04 intervals | p05 word-break | Total |
 | :--- | :---: | :---: | :---: | :---: | :---: | ---: |
@@ -18,6 +18,18 @@ The run: `2026-11-12`, all six models, five problems, 56 cases.
 | `Qwen3-Coder-30B-A3B-Instruct` | 12/12 | 10/10 | ❌ | 12/12 | 11/12 | **45/46** |
 | `Devstral-Small-2-24B-Instruct` | 12/12 | 10/10 | 10/10 | 12/12 | 11/12 | **55/56** |
 | `Qwen3.8-27B-Uncensored-MLX` | 12/12 | 10/10 | ❌ | 12/12 | ❌ | **34/34** |
+
+The second run: `2026-11-22`, the three campaign models, each at both sampling
+settings (and Inkling with its MTP draft on and off — identical results, so one
+row per base/hot pair).
+
+| Model (profile) | p01 two-sum | p02 LIS | p03 median | p04 intervals | p05 word-break | Total |
+| :--- | :---: | :---: | :---: | :---: | :---: | ---: |
+| `Kimi-Linear-48B` (`kimi-linear`) | 12/12 | 10/10 | 5/10 | 12/12 | 12/12 | **51/56** |
+| `Kimi-Linear-48B` (`kimi-linear-hot`) | 12/12 | 10/10 | 10/10 | 12/12 | 12/12 | **56/56** |
+| `GLM-4.7-Flash` (`glm47`) | 12/12 | 2/10 | 5/10 | ❌ | ❌ | **19/32** |
+| `GLM-4.7-Flash` (`glm47-hot`) | 12/12 | 5/10 | ❌ | 3/12 | 1/12 | **21/46** |
+| `Inkling-2-Mini` (`inkling`, all variants) | 12/12 | 10/10 | ❌ | 12/12 | 12/12 | **46/46** |
 
 ## What the numbers mean
 
@@ -42,6 +54,23 @@ The run: `2026-11-12`, all six models, five problems, 56 cases.
   being one — defined every function and passed 55/56, losing only the same
   `empty_string` edge case. Paying for a code specialisation bought completeness
   from Devstral and nothing from Qwen3-Coder.
+
+## The 2026-11-22 campaign
+
+- **Kimi-Linear-48B is the strongest of the three**, and the only new model that
+  reached a perfect score — but only at `temp 1.0` (56/56); at `temp 0.2` it loses
+  five `p03` cases (the empty-array/odd-length edges) for 51/56. On this suite the
+  higher temperature bought correctness, not creativity.
+- **GLM-4.7-Flash is the weakest coder here.** It failed `p04` and `p05` outright
+  at `temp 0.2` (invalid syntax) and recovered only partially at `temp 1.0`
+  (21/46). A reasoning model served with thinking off is not automatically a good
+  code model.
+- **Inkling-2-Mini is consistent but incomplete.** Every one of its four profiles
+  (base, hot, MTP, MTP-hot) scored the same 46/46: it never defined `find_median`,
+  so `p03` could not run. MTP on/off and temperature on/off changed nothing.
+- **Unchanged: "Coder" is still not the best coder.** With the campaign added, the
+  56/56 club is four models at `temp 0.2` plus Kimi-Linear at `temp 1.0`, and
+  Qwen3-Coder is not in it.
 
 ## Why the failures are credible
 
@@ -70,7 +99,8 @@ case passes; it is step 9 of [`../../test/test.sh`](../../test/test.sh) and need
 no model and no network.
 
 Raw run: [`../../evidence/code-benchmark-2026-11-11.md`](../../evidence/code-benchmark-2026-11-11.md)
-and [`../../reference/code-benchmark.json`](../../reference/code-benchmark.json).
+and [`../../reference/code-benchmark.json`](../../reference/code-benchmark.json); the
+2026-11-22 campaign is [`../../reference/code-benchmark-2026-11-22.json`](../../reference/code-benchmark-2026-11-22.json).
 
 ## Attribution
 

@@ -522,7 +522,7 @@ def main():
 
     targets = DEFAULT_TARGETS
     if args.models:
-        targets = [tuple(x.split(":", 1)) if ":" in x else (x, "qwen3")
+        targets = [tuple(x.split(":", 1)) if ":" in x else (x, "")
                    for x in args.models.split(",") if x]
     if not wait_health():
         raise SystemExit("oMLX server is not healthy")
@@ -530,12 +530,13 @@ def main():
     headers = {"Authorization": "Bearer " + load_key(), "Content-Type": "application/json"}
     rows = []
     for model, prof in targets:
+        req_model = f"{model}:{prof}" if prof else model
         print("=" * 70, flush=True)
         print(f"MODEL: {model} | profile: {prof} | {len(langs)} languages in {len(batches)} batches", flush=True)
         unload_all(headers)
         time.sleep(3)
         try:
-            call(headers, model, "Merhaba, tek kelime yaz.", 8)
+            call(headers, req_model, "Merhaba, tek kelime yaz.", 8)
         except Exception as e:
             print("  warmup failed:", str(e)[:160], flush=True)
             rows.append({"model": model, "profile": prof, "error": str(e)[:160]})
@@ -553,7 +554,7 @@ def main():
             elapsed, answer, finish, verdicts = 0.0, "", "", {}
             try:
                 for budget in budgets:
-                    extra, answer, finish = call(headers, model, prompt, budget)
+                    extra, answer, finish = call(headers, req_model, prompt, budget)
                     elapsed += extra
                     verdicts = verdicts_from(answer, group)
                     if verdicts:
@@ -579,7 +580,7 @@ def main():
                        if any(name not in verdicts for _, name in probes(lang))]
                 mp = name_prompt([(lang["name"], name) for lang, name in missing])
                 try:
-                    extra, ans2, _ = call(headers, model, mp,
+                    extra, ans2, _ = call(headers, req_model, mp,
                                           max(args.max_tokens // 2, 2048))
                     elapsed += extra
                     v2 = verdicts_from(ans2, sub)
@@ -635,18 +636,21 @@ def render(date, data):
              "(one genuine API/feature, one fabricated twin).", ""]
     lines.append("| Model | Answered | Accuracy | Hallucination (fake → “real”) | False alarm (real → “fake”) | Brier ↓ | Overconfident + wrong |")
     lines.append("|---|---:|---:|---:|---:|---:|---:|")
+    def label(r):
+        return f"`{r['model']}`" + (f" (`{r['profile']}`)" if r.get("profile") else "")
+
     for r in ok:
         if not r["answered"]:
-            lines.append(f"| `{r['model']}` | 0/{r['total']} | — | — | — | — | — |")
+            lines.append(f"| {label(r)} | 0/{r['total']} | — | — | — | — | — |")
             continue
         brier = "—" if r["brier"] is None else r["brier"]
-        lines.append(f"| `{r['model']}` | {r['answered']}/{r['total']} | {r['accuracy']*100:.0f}% "
+        lines.append(f"| {label(r)} | {r['answered']}/{r['total']} | {r['accuracy']*100:.0f}% "
                      f"({r['correct']}/{r['answered']}) | **{r['hallucination_rate']*100:.0f}%** "
                      f"({r['hallucinations']}/{r['fake_total']}) | {r['false_alarm_rate']*100:.0f}% "
                      f"({r['false_alarms']}/{r['real_total']}) | {brier} | {r['overconfident_wrong']} |")
     for r in data["models"]:
         if "error" in r:
-            lines.append(f"| `{r['model']}` | — | — | — | — | — | failed |")
+            lines.append(f"| {label(r)} | — | — | — | — | — | failed |")
     lines.append("")
     lines.append("_Hallucination = a fabricated API or feature the model called real. "
                  "False alarm = a genuine one it called fake. Brier = mean squared error of the "

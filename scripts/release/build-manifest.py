@@ -19,7 +19,10 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-REPORT = os.path.join(ROOT, "benchmarks", "2026-11-11-m1max.md")
+# The report of the most recent campaign is the primary one; the earlier campaign
+# is kept verbatim and hashed as well, so neither can drift unnoticed.
+REPORT = os.path.join(ROOT, "benchmarks", "2026-11-22-m1max.md")
+ARCHIVE_REPORT = os.path.join(ROOT, "benchmarks", "2026-11-11-m1max.md")
 RESULTS = os.path.join(ROOT, "reference", "results.json")
 MANIFEST = os.path.join(ROOT, "manifest.json")
 
@@ -35,10 +38,12 @@ def sha256(path):
 def build():
     d = json.load(open(RESULTS))
     return {
-        "manifest_version": 1,
-        "report": "benchmarks/2026-11-11-m1max.md",
+        "manifest_version": 2,
+        "report": "benchmarks/2026-11-22-m1max.md",
         "report_bytes": os.path.getsize(REPORT),
         "report_sha256": sha256(REPORT),
+        "archive_report": "benchmarks/2026-11-11-m1max.md",
+        "archive_report_sha256": sha256(ARCHIVE_REPORT),
         "results": "reference/results.json",
         "results_sha256": sha256(RESULTS),
         "generated": d["date"],
@@ -52,8 +57,8 @@ def main():
     ap.add_argument("--check", action="store_true", help="verify the committed manifest is current")
     args = ap.parse_args()
 
-    if not (os.path.exists(REPORT) and os.path.exists(RESULTS)):
-        print("ERROR: report or results file missing", file=sys.stderr)
+    if not (os.path.exists(REPORT) and os.path.exists(ARCHIVE_REPORT) and os.path.exists(RESULTS)):
+        print("ERROR: report, archive report or results file missing", file=sys.stderr)
         return 2
 
     current = build()

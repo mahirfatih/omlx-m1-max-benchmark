@@ -10,10 +10,10 @@ it actually ran on this machine.
 
 ## What it shows
 
-The seven LLMs this repository benchmarks, ordered by the job they win: default, second
+The ten LLMs this repository benchmarks, ordered by the job they win: default, second
 opinion, uncensored, fast coding, long context, and the one that is not worth loading.
 Bars are decode throughput in tokens per second, linear from 0 to the fastest model
-(73.4 tok/s). The six cards underneath are what the measurement says — coding passes,
+(73.4 tok/s). The cards underneath are what the measurement says — coding passes,
 hallucination rate, long-context results, red team, repository analysis, and the spread
 between fastest and slowest.
 

@@ -1,0 +1,207 @@
+{
+  "date": "2026-11-22",
+  "target": {
+    "name": "net-traffic-control-catalog",
+    "url": "https://github.com/mahirfatih/net-traffic-control-catalog",
+    "version": 1,
+    "generated": "2026-10-20",
+    "hosts": 6731,
+    "categories": 27,
+    "services": 22,
+    "bytes": 232151
+  },
+  "expected_facts": [
+    "6731",
+    "27",
+    "22",
+    "catalog.json",
+    "seeds",
+    "manifest",
+    "CC0",
+    "scripts",
+    "docs",
+    "test",
+    "finance",
+    "domain"
+  ],
+  "models": [
+    {
+      "model": "GLM-4.7-Flash-8bit",
+      "profile": "glm47",
+      "load_s": 24.3,
+      "answer_s": 7.37,
+      "tokens": 191,
+      "tps": 25.9,
+      "recovered": 6,
+      "of": 12,
+      "coverage": 0.5,
+      "missing": [
+        "27",
+        "22",
+        "seeds",
+        "manifest",
+        "CC0",
+        "finance"
+      ],
+      "excerpt": "1. **What:** A curated catalog of 6,731 domains mapping hosts to categories and services for a Net Traffic Control application.\n2. **Structure:** Data lives in `catalog.json` (hosts/services). Logic resides primarily under the massive 6,864-file `/scripts/`. Documentation is in `docs`, and tests are minimal (2 files).\n3. **Risk:** The project relies on a single data source (`catalog.json`) which is 232KB. With **6731 hosts** and only a single `generated` date of Oct 2026, the data appears static or stale. If this file isn't updated frequently by a specific script in `/scripts/`, the catalog wi"
+    },
+    {
+      "model": "GLM-4.7-Flash-8bit",
+      "profile": "glm47-hot",
+      "load_s": 0.4,
+      "answer_s": 4.89,
+      "tokens": 145,
+      "tps": 29.6,
+      "recovered": 4,
+      "of": 12,
+      "coverage": 0.333,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "seeds",
+        "manifest",
+        "CC0",
+        "docs",
+        "domain"
+      ],
+      "excerpt": "1. **What:** A curated catalog mapping 6,731 hostnames to categories and services for a network traffic control application.\n2. **Structure:** A data-centric repository with 6,864 scripts (likely automation), a `catalog.json` source file (`hosts`, categories/services metadata, 232KB JSON generated Oct '26), and a comprehensive documentation tree.\n3. **Risk:** A massive data skew risk exists where the \"finance\" category (3570 hosts) vastly outnumbers others, potentially overwhelming downstream processing or UI rendering if not handled with pagination.\n4. **Verdict:** Yes, it is well-maintained;"
+    },
+    {
+      "model": "Kimi-Linear-48B-A3B-Instruct-4bit",
+      "profile": "kimi-linear",
+      "load_s": 8.8,
+      "answer_s": 5.71,
+      "tokens": 262,
+      "tps": 45.9,
+      "recovered": 8,
+      "of": 12,
+      "coverage": 0.667,
+      "missing": [
+        "6731",
+        "CC0",
+        "finance",
+        "domain"
+      ],
+      "excerpt": "1. **What is this project?**  \nA community-maintained JSON catalog that maps 6,731 hostnames to 27 categories and 22 services for use by the “Net Traffic Control” app.\n\n2. **How is it structured?**  \n- **scripts/** (6,864 files) – automation: `catalog/`, `checks/`, `release/`, `sources/`  \n- **docs/** (39) – guides, architecture, security, testing docs  \n- **evidence/** (29) – analysis reports and coverage metrics  \n- **seeds/** (5) – static JSON seeds: `categories.json`, `services.json`, public-suffix exceptions  \n- **config/** (4) – CI/CD workflows in `.github/workflows/`; test.sh is the off"
+    },
+    {
+      "model": "Kimi-Linear-48B-A3B-Instruct-4bit",
+      "profile": "kimi-linear-hot",
+      "load_s": 0.2,
+      "answer_s": 4.44,
+      "tokens": 269,
+      "tps": 60.5,
+      "recovered": 7,
+      "of": 12,
+      "coverage": 0.583,
+      "missing": [
+        "6731",
+        "manifest",
+        "CC0",
+        "finance",
+        "domain"
+      ],
+      "excerpt": "1. **What is this project?**  \nA community-maintained JSON catalog that maps 6,731 hostnames to 27 categories and 22 services for use by the “Net Traffic Control” app.\n\n2. **How is it structured?**  \n- **`scripts/`** (6,864 files) – automation: `catalog/`, `checks/`, `release/` sub-folders handle generation, validation and publishing.  \n- **`docs/`** (39) – guides, reference, architecture, security docs.  \n- **`evidence/`** (29) – test data and validation reports.  \n- **`seeds/`** (5) – static JSON seeds (`categories.json`, `services.json`).  \n- **`config/`** (4) – build configuration.  \n- **R"
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling",
+      "load_s": 17.3,
+      "answer_s": 31.03,
+      "tokens": 700,
+      "tps": 22.6,
+      "recovered": 0,
+      "of": 12,
+      "coverage": 0.0,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "catalog.json",
+        "seeds",
+        "manifest",
+        "CC0",
+        "scripts",
+        "docs",
+        "test",
+        "finance",
+        "domain"
+      ],
+      "excerpt": ""
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling-hot",
+      "load_s": 0.4,
+      "answer_s": 27.76,
+      "tokens": 700,
+      "tps": 25.2,
+      "recovered": 0,
+      "of": 12,
+      "coverage": 0.0,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "catalog.json",
+        "seeds",
+        "manifest",
+        "CC0",
+        "scripts",
+        "docs",
+        "test",
+        "finance",
+        "domain"
+      ],
+      "excerpt": ""
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling-mtp",
+      "load_s": 16.6,
+      "answer_s": 34.86,
+      "tokens": 700,
+      "tps": 20.1,
+      "recovered": 5,
+      "of": 12,
+      "coverage": 0.417,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "CC0",
+        "test",
+        "finance",
+        "domain"
+      ],
+      "excerpt": "**1. What it is:** A JSON data catalog mapping host names to categories (\"what a name is\") and services/products (\"whose it is\") for the Net Traffic Control app, which loads `catalog.json` as a Category Data source.\n\n**2. Structure:** The real data lives in `catalog.json` (232 KB, v1, generated 2026-10-20) plus `manifest.json`; seeds (`categories.json`, `services.json`, `public-suffix-exceptions.json`) drive generation; `scripts/` (analysis/, catalog/, checks/, release/, sources/) holds 6,864 files; `docs/` (39) covers overview/guides/reference/architecture/security"
+    },
+    {
+      "model": "Inkling-2-Mini-oQ4e-mtp",
+      "profile": "inkling-mtp-hot",
+      "load_s": 0.5,
+      "answer_s": 29.56,
+      "tokens": 700,
+      "tps": 23.7,
+      "recovered": 0,
+      "of": 12,
+      "coverage": 0.0,
+      "missing": [
+        "6731",
+        "27",
+        "22",
+        "catalog.json",
+        "seeds",
+        "manifest",
+        "CC0",
+        "scripts",
+        "docs",
+        "test",
+        "finance",
+        "domain"
+      ],
+      "excerpt": ""
+    }
+  ]
+}

@@ -33,7 +33,7 @@ documents explain what they measured.
 
 - [`guides/METHODOLOGY.md`](guides/METHODOLOGY.md) — exactly what was measured, how, and what the numbers mean.
 - [`guides/REPRODUCING.md`](guides/REPRODUCING.md) — from a clean Mac to a fresh report, step by step.
-- [`guides/CHOOSING-A-MODEL.md`](guides/CHOOSING-A-MODEL.md) — which of the six models fits which job.
+- [`guides/CHOOSING-A-MODEL.md`](guides/CHOOSING-A-MODEL.md) — which of the ten models fits which job.
 - [`guides/NAMING.md`](guides/NAMING.md) — the file-name rule and the conventions inside a file.
 
 ## Analysis — what the numbers mean
@@ -47,7 +47,7 @@ documents explain what they measured.
 
 ## Reference — what is in it right now
 
-- [`reference/MODELS.md`](reference/MODELS.md) — all six models, sizes, sources, and the uncensored/heretic classification.
+- [`reference/MODELS.md`](reference/MODELS.md) — all ten models, sizes, sources, and the uncensored/heretic classification.
 - [`reference/PROFILES.md`](reference/PROFILES.md) — every oMLX profile and setting, with the reasoning, plus the separate `mflux` image profiles and the `mlx-gen` / `VideoX-Fun-mlx` video profiles.
 - [`reference/RESULTS.md`](reference/RESULTS.md) — the measured throughput table, charts, and the raw report location.
 - [`reference/LANGUAGES.md`](reference/LANGUAGES.md) — the 102-language corpus probed by the hallucination test.

@@ -12,6 +12,10 @@ can read these without parsing Markdown.
 | [`code-benchmark.json`](code-benchmark.json) | The coding-correctness run: per-model, per-problem pass counts and the code that produced them. |
 | [`grammar.json`](grammar.json) | The format/grammar run: per-model, per-schema validity. |
 | [`context-memory.json`](context-memory.json) | The long-context memory run: retrieval, conflict and aggregate answers. |
+| [`throughput-2026-11-22.json`](throughput-2026-11-22.json) | The 2026-11-22 throughput sweep (8 profiles, both temperatures, Inkling MTP on/off). |
+| [`code-benchmark-2026-11-22.json`](code-benchmark-2026-11-22.json) | The 2026-11-22 coding run for the three new models (both temperatures, MTP). |
+| [`grammar-2026-11-22.json`](grammar-2026-11-22.json) · [`context-memory-2026-11-22.json`](context-memory-2026-11-22.json) · [`repo-analysis-2026-11-22.json`](repo-analysis-2026-11-22.json) · [`hallucination-2026-11-22.json`](hallucination-2026-11-22.json) | The rest of the 2026-11-22 campaign. |
+| [`hallucination-records.md`](hallucination-records.md) · [`hallucination-records-2026-11-22.md`](hallucination-records-2026-11-22.md) | Every hallucination probe, per name and per model — the raw record behind the two summary tables. |
 
 The hallucination corpus itself lives in
 [`../data/languages.json`](../data/languages.json) and is tabulated in

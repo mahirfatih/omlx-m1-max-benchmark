@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11",
+  "generated_at": "2026-11-22",
   "note": "Sanitized oMLX profile configuration. No API keys or secrets included.",
   "global_profiles": {
     "qwen36-heretic": {
@@ -100,6 +100,66 @@
         "mtp_enabled": false,
         "vlm_mtp_enabled": false
       }
+    },
+    "glm47": {
+      "name": "glm47",
+      "display_name": "glm47",
+      "description": "glm47 for GLM-4.7-Flash-8bit (64K, temp 0.2, thinking off)",
+      "created_at": "2026-11-22T08:44:22.874956+00:00",
+      "updated_at": "2026-11-22T08:44:22.874956+00:00",
+      "settings": {
+        "max_context_window": 65536,
+        "max_tokens": 4096,
+        "temperature": 0.2,
+        "top_p": 0.95,
+        "top_k": 20,
+        "repetition_penalty": 1.1,
+        "min_p": 0.05,
+        "presence_penalty": 0.3,
+        "force_sampling": false,
+        "enable_thinking": false,
+        "guided_grammar_enabled": false
+      }
+    },
+    "kimi-linear": {
+      "name": "kimi-linear",
+      "display_name": "kimi-linear",
+      "description": "kimi-linear for Kimi-Linear-48B-A3B-Instruct-4bit (64K, temp 0.2, thinking off)",
+      "created_at": "2026-11-22T08:44:22.887593+00:00",
+      "updated_at": "2026-11-22T08:44:22.887593+00:00",
+      "settings": {
+        "max_context_window": 65536,
+        "max_tokens": 4096,
+        "temperature": 0.2,
+        "top_p": 0.95,
+        "top_k": 20,
+        "repetition_penalty": 1.1,
+        "min_p": 0.05,
+        "presence_penalty": 0.3,
+        "force_sampling": false,
+        "enable_thinking": false,
+        "guided_grammar_enabled": false
+      }
+    },
+    "inkling": {
+      "name": "inkling",
+      "display_name": "inkling",
+      "description": "inkling for Inkling-2-Mini-oQ4e-mtp (64K, temp 0.2, thinking off)",
+      "created_at": "2026-11-22T08:44:22.892827+00:00",
+      "updated_at": "2026-11-22T08:44:22.892827+00:00",
+      "settings": {
+        "max_context_window": 65536,
+        "max_tokens": 2048,
+        "temperature": 0.2,
+        "top_p": 0.95,
+        "top_k": 20,
+        "repetition_penalty": 1.1,
+        "min_p": 0.05,
+        "presence_penalty": 0.3,
+        "force_sampling": false,
+        "enable_thinking": false,
+        "guided_grammar_enabled": false
+      }
     }
   },
   "model_to_profile": {
@@ -109,7 +169,10 @@
     "Qwen3.6-35B-A3B-4bit": "qwen3",
     "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit": "qwen36-heretic",
     "gemma-4-26B-A4B-it-heretic-4bit": "gemma4-heretic",
-    "Devstral-Small-2-24B-Instruct-2512-8bit": "devstral"
+    "Devstral-Small-2-24B-Instruct-2512-8bit": "devstral",
+    "Inkling-2-Mini-oQ4e-mtp": "inkling",
+    "GLM-4.7-Flash-8bit": "glm47",
+    "Kimi-Linear-48B-A3B-Instruct-4bit": "kimi-linear"
   },
   "model_profiles": {
     "Devstral-Small-2-24B-Instruct-2512-8bit": {
@@ -197,7 +260,7 @@
         "source_template": "qwen3",
         "expose_as_model": true,
         "created_at": "2026-11-11T19:49:05.924538+00:00",
-        "updated_at": "2026-11-11T19:54:43.801127+00:00",
+        "updated_at": "2026-11-14T19:17:27.778569+00:00",
         "settings": {
           "max_context_window": 65536,
           "max_tokens": 4096,
@@ -222,7 +285,29 @@
           "specprefill_enabled": false,
           "dflash_enabled": false,
           "mtp_enabled": false,
-          "vlm_mtp_enabled": false
+          "vlm_mtp_enabled": false,
+          "qwen35_ane_prefill_sequence_length": 2048,
+          "qwen35_ane_prefill_tail_padding_min_tokens": 0,
+          "qwen35_ane_prefill_shared_fraction": 1.0,
+          "qwen35_ane_prefill_fused_down": false,
+          "qwen35_ane_prefill_max_layers": 64,
+          "qwen35_ane_prefill_dual_ane": true,
+          "qwen35_ane_prefill_gdn": true,
+          "qwen35_ane_prefill_gdn_fraction": 0.5,
+          "qwen35_ane_prefill_gdn_max_layers": 48,
+          "qwen35_ane_prefill_cpu_enabled": false,
+          "qwen35_ane_prefill_cpu_fraction": 0.135,
+          "qwen35_ane_prefill_cpu_down_fraction": 0.0,
+          "qwen35_ane_prefill_cpu_gdn_fraction": 0.0,
+          "qwen35_ane_prefill_cpu_threads": 8,
+          "qwen35_ane_prefill_cpu_shared_resource": true,
+          "a8_prefill_min_tokens": 128,
+          "moe_expert_offload_enabled": false,
+          "moe_expert_offload_resident_fraction": 0.25,
+          "specprefill_draft_model": "/Users/MahirFatih/models/mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit",
+          "specprefill_keep_pct": 0.2,
+          "specprefill_threshold": 8192,
+          "dflash_draft_quant_enabled": false
         }
       }
     },
@@ -376,6 +461,260 @@
           "mtp_enabled": false,
           "vlm_mtp_enabled": false
         }
+      }
+    },
+    "GLM-4.7-Flash-8bit": {
+      "glm47": {
+        "name": "glm47",
+        "display_name": "glm47",
+        "api_name": "glm47",
+        "description": "glm47 for GLM-4.7-Flash-8bit (64K, temp 0.2, thinking off)",
+        "created_at": "2026-11-22T08:44:22.871858+00:00",
+        "updated_at": "2026-11-22T08:44:22.871858+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 4096,
+          "temperature": 0.2,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      },
+      "glm47-hot": {
+        "name": "glm47-hot",
+        "display_name": "glm47-hot",
+        "api_name": "glm47-hot",
+        "description": "glm47-hot for GLM-4.7-Flash-8bit (64K, temp 1.0, thinking off)",
+        "created_at": "2026-11-22T08:44:22.880880+00:00",
+        "updated_at": "2026-11-22T08:44:22.880880+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 4096,
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      }
+    },
+    "Kimi-Linear-48B-A3B-Instruct-4bit": {
+      "kimi-linear": {
+        "name": "kimi-linear",
+        "display_name": "kimi-linear",
+        "api_name": "kimi-linear",
+        "description": "kimi-linear for Kimi-Linear-48B-A3B-Instruct-4bit (64K, temp 0.2, thinking off)",
+        "created_at": "2026-11-22T08:44:22.885946+00:00",
+        "updated_at": "2026-11-22T08:44:22.885946+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 4096,
+          "temperature": 0.2,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      },
+      "kimi-linear-hot": {
+        "name": "kimi-linear-hot",
+        "display_name": "kimi-linear-hot",
+        "api_name": "kimi-linear-hot",
+        "description": "kimi-linear-hot for Kimi-Linear-48B-A3B-Instruct-4bit (64K, temp 1.0, thinking off)",
+        "created_at": "2026-11-22T08:44:22.889918+00:00",
+        "updated_at": "2026-11-22T08:44:22.889918+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 4096,
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      }
+    },
+    "Inkling-2-Mini-oQ4e-mtp": {
+      "inkling": {
+        "name": "inkling",
+        "display_name": "inkling",
+        "api_name": "inkling",
+        "description": "inkling for Inkling-2-Mini-oQ4e-mtp (64K, temp 0.2, thinking off)",
+        "created_at": "2026-11-22T08:44:22.892155+00:00",
+        "updated_at": "2026-11-22T08:44:22.892155+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 2048,
+          "temperature": 0.2,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      },
+      "inkling-hot": {
+        "name": "inkling-hot",
+        "display_name": "inkling-hot",
+        "api_name": "inkling-hot",
+        "description": "inkling-hot for Inkling-2-Mini-oQ4e-mtp (64K, temp 1.0, thinking off)",
+        "created_at": "2026-11-22T08:44:22.894721+00:00",
+        "updated_at": "2026-11-22T08:44:22.894721+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 2048,
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": false,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      },
+      "inkling-mtp": {
+        "name": "inkling-mtp",
+        "display_name": "inkling-mtp",
+        "api_name": "inkling-mtp",
+        "description": "inkling-mtp for Inkling-2-Mini-oQ4e-mtp (64K, temp 0.2, thinking off, MTP on)",
+        "created_at": "2026-11-22T08:44:22.897133+00:00",
+        "updated_at": "2026-11-22T08:44:22.897133+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 2048,
+          "temperature": 0.2,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": true,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
+      },
+      "inkling-mtp-hot": {
+        "name": "inkling-mtp-hot",
+        "display_name": "inkling-mtp-hot",
+        "api_name": "inkling-mtp-hot",
+        "description": "inkling-mtp-hot for Inkling-2-Mini-oQ4e-mtp (64K, temp 1.0, thinking off, MTP on)",
+        "created_at": "2026-11-22T08:44:22.899661+00:00",
+        "updated_at": "2026-11-22T08:44:22.899661+00:00",
+        "settings": {
+          "max_context_window": 65536,
+          "max_tokens": 2048,
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "repetition_penalty": 1.1,
+          "min_p": 0.05,
+          "presence_penalty": 0.3,
+          "force_sampling": false,
+          "enable_thinking": false,
+          "turboquant_kv_enabled": true,
+          "turboquant_kv_scheme": "turboquant",
+          "turboquant_kv_bits": 4.0,
+          "turboquant_skip_last": true,
+          "specprefill_enabled": false,
+          "dflash_enabled": false,
+          "mtp_enabled": true,
+          "vlm_mtp_enabled": false,
+          "guided_grammar_enabled": false
+        },
+        "source_template": null,
+        "expose_as_model": true
       }
     }
   }

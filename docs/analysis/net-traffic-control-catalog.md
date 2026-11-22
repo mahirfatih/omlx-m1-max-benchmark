@@ -42,6 +42,32 @@ names the numbers; one that pattern-matched does not.
 | `gemma-4-26B-A4B-it-heretic` | 4.3 | 167 | 38.6 | 4/12 | **33%** |
 | `Qwen3.8-27B-Uncensored-MLX` | 46.1 | 700 | 15.2 | 0/12 | **0%** |
 
+## Results — 2026-11-22
+
+The three campaign models, at both sampling settings (Inkling with its MTP draft
+as well). Raw run: [`../../evidence/repo-analysis-2026-11-22.md`](../../evidence/repo-analysis-2026-11-22.md).
+
+| Model (profile) | Answer (s) | Tokens | tok/s | Facts recovered | Score |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| `Kimi-Linear-48B` (`kimi-linear`) | 5.7 | 262 | 45.9 | 8/12 | **67%** |
+| `Kimi-Linear-48B` (`kimi-linear-hot`) | 4.4 | 269 | 60.5 | 7/12 | **58%** |
+| `GLM-4.7-Flash` (`glm47`) | 7.4 | 191 | 25.9 | 6/12 | **50%** |
+| `Inkling-2-Mini` (`inkling-mtp`) | 34.9 | 700 | 20.1 | 5/12 | **42%** |
+| `GLM-4.7-Flash` (`glm47-hot`) | 4.9 | 145 | 29.6 | 4/12 | **33%** |
+| `Inkling-2-Mini` (`inkling`, `-hot`, `-mtp-hot`) | 28–31 | 700 | 22.6–25.2 | 0/12 | **0%** |
+
+**Kimi-Linear is the strongest new analyst** — 8/12 at `temp 0.2`, ahead of
+Qwen3.6 (6/12), and the only new model that named the host count. **GLM is
+mid-table and faster when hot.** **Inkling returned nothing in three of four
+profiles:** its 700-token budget went to reasoning, leaving an empty answer, the
+same limitation that empties its short-output runs elsewhere. MTP-on at `temp 0.2`
+was the one variant that emitted text, and it recovered 5/12.
+
+**The file-count hallucination reproduced.** Kimi-Linear and GLM both repeated
+Qwen3.6's invented "6,864 files" for `scripts/` (the digest says **136 tracked
+files**) — now four of the models measured have made this same error, which makes
+it a property of the probe rather than a single model's slip.
+
 ## Reading the result
 
 **The fastest answer was not the best one.** Ornith-1.5 wrote 366 tokens in
@@ -75,7 +101,8 @@ evidence of that in the repository.
 | :--- | :--- | :--- |
 | Analyse a repo and cite the numbers | `Ornith-1.5-35B-A3B` | gemma-4, Qwen3.8 |
 | A fast first-pass summary | `Qwen3.6-35B-A3B` | Qwen3.8 |
-| Anything where you will read the answer | any of the five | `Qwen3.8-27B-Uncensored` |
+| A second family on the same digest | `Kimi-Linear-48B` (8/12) | Inkling (empty answer) |
+| Anything where you will read the answer | any model that returns text | `Qwen3.8-27B-Uncensored`, `Inkling-2-Mini` |
 
 ## Caveats
 

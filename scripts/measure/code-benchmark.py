@@ -225,7 +225,7 @@ def benchmark(args):
     for pid in ids:
         if pid not in problem_ids():
             raise SystemExit(f"unknown problem: {pid}")
-    targets = [tuple(x.split(":", 1)) if ":" in x else (x, "qwen3")
+    targets = [tuple(x.split(":", 1)) if ":" in x else (x, "")
                for x in args.models.split(",") if x]
     if not wait_health():
         raise SystemExit("oMLX server is not healthy")
@@ -233,12 +233,13 @@ def benchmark(args):
     headers = {"Authorization": "Bearer " + load_key(), "Content-Type": "application/json"}
     rows = []
     for model, profile in targets:
+        req_model = f"{model}:{profile}" if profile else model
         print("=" * 70, flush=True)
         print(f"MODEL: {model} | profile: {profile}", flush=True)
         unload_all(headers)
         time.sleep(3)
         try:
-            call(headers, model, "Merhaba, tek kelime yaz.", 8)
+            call(headers, req_model, "Merhaba, tek kelime yaz.", 8)
         except Exception as e:
             print("  warmup failed:", str(e)[:160], flush=True)
             continue
@@ -247,7 +248,7 @@ def benchmark(args):
             prompt = ("Solve this coding problem in Python. Return ONLY a fenced "
                       "```python code block, no explanation.\n\n" + load_statement(pid))
             try:
-                elapsed, text = call(headers, model, prompt, args.max_tokens)
+                elapsed, text = call(headers, req_model, prompt, args.max_tokens)
             except Exception as e:
                 row["problems"][pid] = {"error": str(e)[:160]}
                 print(f"  {pid}: ERROR {str(e)[:120]}", flush=True)
@@ -298,10 +299,12 @@ def render(date, ids, rows):
                 cells.append(f"{d['passed']}/{d['total']}")
         passed = sum(d.get("passed", 0) for d in r["problems"].values())
         total = sum(d.get("total", 0) for d in r["problems"].values())
-        lines.append(f"| `{r['model']}` | " + " | ".join(cells) + f" | **{passed}/{total}** |")
+        name = f"`{r['model']}`" + (f" (`{r['profile']}`)" if r.get("profile") else "")
+        lines.append(f"| {name} | " + " | ".join(cells) + f" | **{passed}/{total}** |")
     lines.append("")
     for r in rows:
-        lines.append(f"## `{r['model']}`")
+        name = f"`{r['model']}`" + (f" · `{r['profile']}`" if r.get("profile") else "")
+        lines.append(f"## {name}")
         lines.append("")
         for pid in ids:
             d = r["problems"].get(pid, {})

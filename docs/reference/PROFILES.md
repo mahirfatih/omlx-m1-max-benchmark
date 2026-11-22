@@ -10,30 +10,48 @@ The machine-readable snapshot is
 [`profiles/omlx-profiles.json`](../../profiles/omlx-profiles.json). Reconcile a
 live install with it using `python3 scripts/config/apply-profiles.py`.
 
-## The three profiles
+## The global profiles
 
-| Setting | `qwen3` | `qwen36-heretic` | `gemma4-heretic` |
-| :--- | ---: | ---: | ---: |
-| `max_context_window` | 65536 | 65536 | 65536 |
-| `max_tokens` | **4096** | 2048 | 2048 |
-| `temperature` | 0.2 | 0.2 | 0.2 |
-| `top_p` | 0.95 | 0.95 | 0.95 |
-| `top_k` | 20 | 20 | 20 |
-| `repetition_penalty` | 1.1 | 1.1 | 1.1 |
-| `min_p` | 0.05 | 0.05 | 0.05 |
-| `presence_penalty` | 0.3 | 0.3 | 0.3 |
-| `enable_thinking` | false | false | false |
-| `turboquant_kv_enabled` | true | true | true |
-| `turboquant_kv_bits` | 4.0 | 4.0 | 4.0 |
-| `turboquant_skip_last` | true | true | true |
-| `force_sampling` | false | false | false |
-| `guided_grammar_enabled` | false | false | false |
-| `specprefill_enabled` | false | false | false |
-| `mtp_enabled` | false | false | false |
-| `dflash_enabled` | false | false | false |
+Six global templates now exist. The three original ones are identical except for
+`max_tokens`; the 2026-11-22 campaign added one per new model, each a clone of the
+`qwen3`/`qwen36-heretic` baseline (64K, 4-bit KV, thinking off, temp 0.2) so the new
+models run under the same conditions as the originals.
 
-The only difference between `qwen3` and the heretic profiles is `max_tokens`
-(4096 vs 2048). The heretic profiles are identical to each other.
+| Setting | `qwen3` | `qwen36-heretic` | `gemma4-heretic` | `glm47` | `kimi-linear` | `inkling` |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `max_context_window` | 65536 | 65536 | 65536 | 65536 | 65536 | 65536 |
+| `max_tokens` | **4096** | 2048 | 2048 | **4096** | **4096** | 2048 |
+| `temperature` | 0.2 | 0.2 | 0.2 | 0.2 | 0.2 | 0.2 |
+| `top_p` | 0.95 | 0.95 | 0.95 | 0.95 | 0.95 | 0.95 |
+| `top_k` | 20 | 20 | 20 | 20 | 20 | 20 |
+| `repetition_penalty` | 1.1 | 1.1 | 1.1 | 1.1 | 1.1 | 1.1 |
+| `min_p` | 0.05 | 0.05 | 0.05 | 0.05 | 0.05 | 0.05 |
+| `presence_penalty` | 0.3 | 0.3 | 0.3 | 0.3 | 0.3 | 0.3 |
+| `enable_thinking` | false | false | false | false | false | false |
+| `turboquant_kv_enabled` | true | true | true | true | true | true |
+| `turboquant_kv_bits` | 4.0 | 4.0 | 4.0 | 4.0 | 4.0 | 4.0 |
+| `turboquant_skip_last` | true | true | true | true | true | true |
+| `force_sampling` | false | false | false | false | false | false |
+| `guided_grammar_enabled` | false | false | false | false | false | false |
+| `specprefill_enabled` | false | false | false | false | false | false |
+| `mtp_enabled` | false | false | false | false | false | false |
+| `dflash_enabled` | false | false | false | false | false | false |
+
+The code-oriented profiles (`qwen3`, `glm47`, `kimi-linear`) use `max_tokens 4096`;
+the rest use 2048.
+
+### Sampling-variant and MTP profiles (exposed, per model)
+
+Beyond the global templates, each new model has **requestable per-model profiles**
+that oMLX exposes as `Model:api_name`, so two sampling regimes can be compared on the
+same machine. They are not global templates — they live only on their own model.
+
+| Model | Profile | Sampling | Notes |
+| :--- | :--- | :--- | :--- |
+| `GLM-4.7-Flash-8bit` | `glm47` / `glm47-hot` | temp 0.2 / **1.0** | 1.0 is the model card's default |
+| `Kimi-Linear-48B-A3B-Instruct-4bit` | `kimi-linear` / `kimi-linear-hot` | temp 0.2 / **1.0** | |
+| `Inkling-2-Mini-oQ4e-mtp` | `inkling` / `inkling-hot` | temp 0.2 / **1.0** | MTP off |
+| `Inkling-2-Mini-oQ4e-mtp` | `inkling-mtp` / `inkling-mtp-hot` | temp 0.2 / **1.0** | **Lightning MTP on** (bundled DSpark draft) |
 
 ## Model → profile
 
@@ -45,6 +63,9 @@ The only difference between `qwen3` and the heretic profiles is `max_tokens`
 | `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | `qwen36-heretic` |
 | `Qwen3.8-27B-Uncensored-MLX` | `qwen36-heretic` |
 | `gemma-4-26B-A4B-it-heretic-4bit` | `gemma4-heretic` |
+| `GLM-4.7-Flash-8bit` | `glm47` |
+| `Kimi-Linear-48B-A3B-Instruct-4bit` | `kimi-linear` |
+| `Inkling-2-Mini-oQ4e-mtp` | `inkling` |
 
 ## Global settings (not per-profile)
 
@@ -63,8 +84,9 @@ are never included**; the example uses the placeholder `REPLACE_WITH_YOUR_KEY`.
 ## Why these settings
 
 - **64K context + 4-bit KV cache.** The KV cache is the thing that grows with
-  context. Quantizing it to 4-bit (turboquant) keeps the runtime footprint at
-  ~17–20 GB per model, which is what lets the memory guard accept a load on a
+  context. Quantizing it to 4-bit (turboquant) keeps the runtime footprint around
+  ~17–34 GB per model (the 8-bit GLM is the top of that range), which is what lets
+  the memory guard accept a load on a
   64 GB machine instead of rejecting it.
 - **`is_pinned = false` everywhere.** Pinning would load models at startup and
   spike RAM before any request arrives. Lazy loading plus a 180 s idle unload

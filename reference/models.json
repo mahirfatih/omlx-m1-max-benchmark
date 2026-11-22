@@ -1,5 +1,5 @@
 {
-  "note": "Public model reference. Sizes are on-disk, 4-bit MLX builds.",
+  "note": "Public model reference. Sizes are on-disk (mixes 4-bit, 8-bit and oQ mixed-precision MLX builds).",
   "models": [
     {
       "id": "Qwen3-Coder-30B-A3B-Instruct-4bit",
@@ -60,7 +60,47 @@
       "uncensored": true,
       "heretic": true,
       "hf": "https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX"
+    },
+    {
+      "id": "Devstral-Small-2-24B-Instruct-2512-8bit",
+      "parameters": "24B dense (mistral3)",
+      "disk_gb": 25,
+      "quant": "8-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit"
+    },
+    {
+      "id": "GLM-4.7-Flash-8bit",
+      "parameters": "30B MoE (~3B active)",
+      "disk_gb": 31,
+      "quant": "8-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/mlx-community/GLM-4.7-Flash-8bit"
+    },
+    {
+      "id": "Kimi-Linear-48B-A3B-Instruct-4bit",
+      "parameters": "48B MoE (~3B active, linear-attention hybrid)",
+      "disk_gb": 27,
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/mlx-community/Kimi-Linear-48B-A3B-Instruct-4bit"
+    },
+    {
+      "id": "Inkling-2-Mini-oQ4e-mtp",
+      "parameters": "26.4B MoE (~3.4B active, looped, multimodal)",
+      "disk_gb": 16,
+      "quant": "oQ4e mixed (~4.9-bit)",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false,
+      "hf": "https://huggingface.co/mlx-community/Inkling-2-Mini-oQ4e-mtp"
     }
   ],
-  "total_disk_gb": 102
+  "total_disk_gb": 201
 }

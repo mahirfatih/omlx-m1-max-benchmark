@@ -7,13 +7,16 @@ import tempfile
 import os
 import re
 import sys
+import argparse
 
 API = json.load(open('/Users/MahirFatih/.omlx/settings.json'))['auth']['api_key']
 BASE = "http://127.0.0.1:8000/v1"
 H = {"Authorization": "Bearer " + API, "Content-Type": "application/json"}
 ALL = ["Qwen3-Coder-30B-A3B-Instruct-4bit", "Ornith-1.5-35B-A3B-MLX-4bit",
        "Qwen3.6-35B-A3B-4bit", "Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit",
-       "gemma-4-26B-A4B-it-heretic-4bit", "Qwen3.8-27B-Uncensored-MLX"]
+       "gemma-4-26B-A4B-it-heretic-4bit", "Qwen3.8-27B-Uncensored-MLX",
+       "GLM-4.7-Flash-8bit", "Kimi-Linear-48B-A3B-Instruct-4bit",
+       "Inkling-2-Mini-oQ4e-mtp"]
 
 
 def wait_health(t=240):
@@ -101,6 +104,13 @@ MODELS = [
     ("Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit:qwen36-heretic", "qwen36-heretic"),
     ("gemma-4-26B-A4B-it-heretic-4bit:gemma4-heretic", "gemma4-heretic"),
 ]
+
+ap = argparse.ArgumentParser(description="Code correctness across Python / Node / Bash / Swift.")
+ap.add_argument("--models", default="", help="comma-separated id:profile list (default: the four above)")
+args = ap.parse_args()
+if args.models:
+    MODELS = [tuple(x.split(":", 1)) if ":" in x else (x, "")
+              for x in args.models.split(",") if x]
 
 if not wait_health():
     print("SERVER healthy DEGIL")

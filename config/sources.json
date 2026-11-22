@@ -54,6 +54,42 @@
       "type": "uncensored+abliterated",
       "uncensored": true,
       "heretic": true
+    },
+    {
+      "id": "Devstral-Small-2-24B-Instruct-2512-8bit",
+      "hf": "mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit",
+      "base": "mistralai/Devstral-Small-2-24B-Instruct-2512",
+      "quant": "8-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
+    },
+    {
+      "id": "GLM-4.7-Flash-8bit",
+      "hf": "mlx-community/GLM-4.7-Flash-8bit",
+      "base": "zai-org/GLM-4.7-Flash",
+      "quant": "8-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
+    },
+    {
+      "id": "Kimi-Linear-48B-A3B-Instruct-4bit",
+      "hf": "mlx-community/Kimi-Linear-48B-A3B-Instruct-4bit",
+      "base": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+      "quant": "4-bit",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
+    },
+    {
+      "id": "Inkling-2-Mini-oQ4e-mtp",
+      "hf": "mlx-community/Inkling-2-Mini-oQ4e-mtp",
+      "base": "thinkingmachines/Inkling-2-Mini",
+      "quant": "oQ4e mixed (~4.9-bit)",
+      "type": "standard",
+      "uncensored": false,
+      "heretic": false
     }
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-22",
+  "environment": {
+    "server": "oMLX 0.8.2",
+    "chip": "Apple M1 Max",
+    "ram_gb": 64,
+    "os": "macOS 26.7.2 (25G332)"
+  },
+  "note": "Throughput sweep of the eight 2026-11-22 profiles: the three new models at temp 0.2 and temp 1.0, and Inkling with its bundled DSpark MTP draft on and off. Same method as results.json: unload, load one, warm up, then one EN and one TR prompt twice each; speed = completion_tokens / elapsed. Base-profile rows for the three new models also feed reference/results.json.",
+  "throughput": [
+    {"model": "Kimi-Linear-48B-A3B-Instruct-4bit", "profile": "kimi-linear-hot", "temp": 1.0, "en": 60.4, "tr": 59.3, "avg": 59.9, "load_s": 7.0},
+    {"model": "Kimi-Linear-48B-A3B-Instruct-4bit", "profile": "kimi-linear", "temp": 0.2, "en": 58.5, "tr": 59.4, "avg": 59.0, "load_s": 7.7},
+    {"model": "GLM-4.7-Flash-8bit", "profile": "glm47", "temp": 0.2, "en": 34.9, "tr": 35.0, "avg": 34.9, "load_s": 9.7},
+    {"model": "GLM-4.7-Flash-8bit", "profile": "glm47-hot", "temp": 1.0, "en": 35.0, "tr": 34.7, "avg": 34.9, "load_s": 11.4},
+    {"model": "Inkling-2-Mini-oQ4e-mtp", "profile": "inkling-hot", "temp": 1.0, "mtp": false, "en": 26.4, "tr": 26.4, "avg": 26.4, "load_s": 3.4},
+    {"model": "Inkling-2-Mini-oQ4e-mtp", "profile": "inkling-mtp-hot", "temp": 1.0, "mtp": true, "en": 26.3, "tr": 26.5, "avg": 26.4, "load_s": 3.4},
+    {"model": "Inkling-2-Mini-oQ4e-mtp", "profile": "inkling-mtp", "temp": 0.2, "mtp": true, "en": 26.2, "tr": 26.2, "avg": 26.2, "load_s": 3.2},
+    {"model": "Inkling-2-Mini-oQ4e-mtp", "profile": "inkling", "temp": 0.2, "mtp": false, "en": 25.1, "tr": 25.7, "avg": 25.4, "load_s": 4.9}
+  ]
+}

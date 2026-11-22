@@ -4,6 +4,11 @@ The scorecard is in
 [`../../evidence/redteam-2026-11-11.md`](../../evidence/redteam-2026-11-11.md).
 This page reads it.
 
+**Scope:** the red-team run covered the six models measured on 2026-11-11. The
+2026-11-22 campaign (Kimi-Linear-48B, GLM-4.7-Flash, Inkling-2-Mini) did **not**
+re-run it, so those three have no red-team score yet and are shown as `pending`
+in the comparison tables rather than guessed at.
+
 ## What was measured
 
 Two capability questions, both against **local, deliberately vulnerable**

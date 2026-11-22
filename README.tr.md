@@ -1,12 +1,12 @@
 # oMLX · M1 Max · Yerel LLM Benchmark
 
-> Apple **M1 Max (64 GB)** üzerinde [oMLX](https://omlx.ai) ile çalışan **6 yerel LLM**'in
+> Apple **M1 Max (64 GB)** üzerinde [oMLX](https://omlx.ai) ile çalışan **10 yerel LLM**'in
 > token hızı, model boyutları, profil ayarları ve **uncensored / heretic** sınıflandırması.
 
 [![Platform](https://img.shields.io/badge/platform-Apple%20Silicon%20(arm64)-000?logo=apple&logoColor=white)](#donanım--yazılım)
-[![oMLX](https://img.shields.io/badge/oMLX-0.7.3-blue)](https://omlx.ai)
+[![oMLX](https://img.shields.io/badge/oMLX-0.8.2-blue)](https://omlx.ai)
 [![macOS](https://img.shields.io/badge/macOS-26.7.2-lightgrey)](#donanım--yazılım)
-[![Models](https://img.shields.io/badge/models-6-purple)](#modeller)
+[![Models](https://img.shields.io/badge/models-10-purple)](#modeller)
 [![Security](https://img.shields.io/badge/security-red--team-red)](docs/security/README.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -17,7 +17,7 @@
 ## Genel bakış
 
 Bu depo, **Apple M1 Max + 64 GB** üzerinde tamamen cihaz içinde, **oMLX**
-(MLX tabanlı, OpenAI uyumlu bir sunucu) ile çalışan **6 yerel LLM**'in
+(MLX tabanlı, OpenAI uyumlu bir sunucu) ile çalışan **10 yerel LLM**'in
 tekrarlanabilir bir benchmark'ını belgeler.
 
 İçerdikleri:
@@ -63,7 +63,7 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 | Makine | **Apple M1 Max** (10 çekirdek CPU: 8P + 2E, 32 çekirdek GPU) |
 | Bellek | **64 GB** birleşik |
 | İşletim sistemi | **macOS 26.7.2** (25G332), arm64 |
-| Sunucu | **oMLX 0.7.3** — `http://127.0.0.1:8000/v1` |
+| Sunucu | **oMLX 0.8.2** — `http://127.0.0.1:8000/v1` |
 | Çıkarım | MLX, **4-bit** ağırlık, **4-bit KV cache** (turboquant) |
 | Yükleme | Tembel, aynı anda tek model, 180 s boşta boşaltma |
 | Bellek koruması | tier `aggressive`, soft `0.85`, hard `0.95` |
@@ -73,16 +73,20 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 
 ## Modeller
 
-| Model | Parametre | Disk | Kaynak |
-|---|---|---:|---|
-| `Qwen3-Coder-30B-A3B-Instruct-4bit` | 30B MoE (~3B aktif) | 16 GB | [HF](https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit) |
-| `Qwen3.6-35B-A3B-4bit` | 35B MoE (~3B aktif) | 19 GB | [HF](https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-4bit) |
-| `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | 35B MoE, abliterated | 19 GB | [HF](https://huggingface.co/froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit) |
-| `Ornith-1.5-35B-A3B-MLX-4bit` | 35B MoE | 18 GB | [HF](https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit) |
-| `gemma-4-26B-A4B-it-heretic-4bit` | 26B MoE, abliterated | 15 GB | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
-| `Qwen3.8-27B-Uncensored-MLX` | 27B dense, abliterated | 15 GB | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
+| Model | Parametre | Disk | Niceleme | Kaynak |
+|---|---|---:|---|---|
+| `Qwen3-Coder-30B-A3B-Instruct-4bit` | 30B MoE (~3B aktif) | 16 GB | 4-bit | [HF](https://huggingface.co/mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit) |
+| `Qwen3.6-35B-A3B-4bit` | 35B MoE (~3B aktif) | 19 GB | 4-bit | [HF](https://huggingface.co/mlx-community/Qwen3.6-35B-A3B-4bit) |
+| `Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit` | 35B MoE, abliterated | 19 GB | 4-bit | [HF](https://huggingface.co/froggeric/Qwen3.6-35B-A3B-Uncensored-Heretic-MLX-4bit) |
+| `Ornith-1.5-35B-A3B-MLX-4bit` | 35B MoE | 18 GB | 4-bit | [HF](https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B-MLX-4bit) |
+| `gemma-4-26B-A4B-it-heretic-4bit` | 26B MoE, abliterated | 15 GB | 4-bit | [HF](https://huggingface.co/mlx-community/gemma-4-26B-A4B-it-heretic-4bit) |
+| `Qwen3.8-27B-Uncensored-MLX` | 27B dense, abliterated | 15 GB | 4-bit | [HF](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX) |
+| `Devstral-Small-2-24B-Instruct-2512-8bit` | 24B dense (mistral3) | 25 GB | 8-bit | [HF](https://huggingface.co/mlx-community/Devstral-Small-2-24B-Instruct-2512-8bit) |
+| `GLM-4.7-Flash-8bit` | 30B MoE (~3B aktif) | 31 GB | 8-bit | [HF](https://huggingface.co/mlx-community/GLM-4.7-Flash-8bit) |
+| `Kimi-Linear-48B-A3B-Instruct-4bit` | 48B MoE (~3B aktif, linear-attn) | 27 GB | 4-bit | [HF](https://huggingface.co/mlx-community/Kimi-Linear-48B-A3B-Instruct-4bit) |
+| `Inkling-2-Mini-oQ4e-mtp` | 26.4B MoE (~3.4B aktif, looped, multimodal) | 16 GB | oQ4e karışık (~4.9-bit) | [HF](https://huggingface.co/mlx-community/Inkling-2-Mini-oQ4e-mtp) |
 
-**Disk toplamı:** ~102 GB · **Çalışma zamanı:** model başına ~17–20 GB.
+**Disk toplamı:** ~201 GB · **Çalışma zamanı:** model başına ~17–34 GB (8-bit GLM en büyük ayak izi).
 
 ## Model haritası
 
@@ -104,10 +108,18 @@ Ayarlar: `ctx 65536`, `temp 0.2`, `max_tokens 220`, thinking kapalı.
 | 🥈 | `Qwen3.6-35B-A3B-Uncensored-Heretic` | `qwen36-heretic` | 69.2 | 73.0 | **71.1** | 8.4 |
 | 🥉 | `Ornith-1.5-35B-A3B` | `qwen3` | 60.0 | 60.4 | **60.2** | 6.5 |
 | 4 | `gemma-4-26B-A4B-it-heretic` | `gemma4-heretic` | 59.5 | 60.7 | **60.1** | 9.0 |
-| 5 | `Qwen3-Coder-30B-A3B-Instruct` | `qwen3` | 43.4 | 41.8 | **42.6** | 4.7 |
-| 6 | `Qwen3.8-27B-Uncensored` | `qwen36-heretic` | 18.3 | 18.1 | **18.2** | 6.6 |
+| 5 | `Kimi-Linear-48B-A3B-Instruct` | `kimi-linear` | 58.5 | 59.4 | **59.0** | 7.7 |
+| 6 | `Qwen3-Coder-30B-A3B-Instruct` | `qwen3` | 43.4 | 41.8 | **42.6** | 4.7 |
+| 7 | `GLM-4.7-Flash-8bit` | `glm47` | 34.9 | 35.0 | **34.9** | 9.7 |
+| 8 | `Inkling-2-Mini-oQ4e-mtp` | `inkling` | 25.1 | 25.7 | **25.4** | 4.9 |
+| 9 | `Qwen3.8-27B-Uncensored` | `qwen36-heretic` | 18.3 | 18.1 | **18.2** | 6.6 |
+| 10 | `Devstral-Small-2-24B-Instruct` | `devstral` | 12.3 | 12.6 | **12.4** | 9.1 |
 
-Tam tablo, grafikler ve ham rapor: [`docs/reference/RESULTS.md`](docs/reference/RESULTS.md).
+Kimi-Linear, GLM ve Inkling 2026-11-22 kampanyasında (oMLX 0.8.2) hem
+`temp 0.2` hem `temp 1.0` ile ölçüldü; iki ayar da gürültü sınırında aynı çıktı,
+tablo `temp 0.2` değerlerini gösterir. Tam tablo, grafikler ve ham rapor:
+[`docs/reference/RESULTS.md`](docs/reference/RESULTS.md) ·
+[`benchmarks/2026-11-22-m1max.md`](benchmarks/2026-11-22-m1max.md).
 
 ## Uncensored / Heretic sınıflandırması
 
@@ -123,6 +135,9 @@ Tam tablo, grafikler ve ham rapor: [`docs/reference/RESULTS.md`](docs/reference/
 | **gemma-4-26B-Heretic** | heretic + uncensored | ✅ | ✅ |
 | **Qwen3.6-35B-Heretic** | uncensored + heretic | ✅ | ✅ |
 | **Qwen3.8-27B-Uncensored** | uncensored + abliterated | ✅ | ✅ |
+| GLM-4.7-Flash | standart | ❌ | ❌ |
+| Kimi-Linear-48B | standart | ❌ | ❌ |
+| Inkling-2-Mini | standart | ❌ | ❌ |
 
 Kanıtlar, HF alıntıları ve yerel davranış testleri:
 [`docs/reference/MODELS.md`](docs/reference/MODELS.md).
@@ -140,11 +155,16 @@ Kanıtlar, HF alıntıları ve yerel davranış testleri:
 | Thinking | kapalı | kapalı | kapalı |
 | KV cache 4-bit | ✅ | ✅ | ✅ |
 
+2026-11-22 kampanyası her yeni model için bir **model-özel** profil ekledi
+(`glm47`, `kimi-linear`, `inkling`); üçü de bu temeli klonlar. Her birinin yalnızca
+`temperature`'ı 1.0'a çıkaran bir `*-hot` eşi vardır; Inkling ayrıca kendi
+DSpark **Lightning MTP** draft'ını açan `inkling-mtp` / `inkling-mtp-hot` çiftini taşır.
+
 Tam ayarlar: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
 
 ## Uzun prompt'lar — Context Shrink
 
-64K bilinçli bir tercih: KV cache'i ~17–20 GB'ta ve prefill'i kısa tutuyor. Bedeli
+64K bilinçli bir tercih: KV cache'i ~17–34 GB'ta ve prefill'i kısa tutuyor. Bedeli
 uzun oturumlarda görünür — biriken prompt tavanı aşınca oMLX isteği reddeder:
 
 ```text

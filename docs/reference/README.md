@@ -3,7 +3,7 @@
 The facts: every model, every profile, every measured number. Written from the
 data the scripts produced, not generated, but easy to re-derive.
 
-- [`MODELS.md`](MODELS.md) — all six models: size, source, and uncensored/heretic classification.
+- [`MODELS.md`](MODELS.md) — all ten models: size, source, and uncensored/heretic classification.
 - [`COMPARISON.md`](COMPARISON.md) — **the single page to start from**: which model for coding, chat, long context, uncensored work, or the red-team tasks, with every number traced to its run file.
 - [`PROFILES.md`](PROFILES.md) — every oMLX profile and setting, with the reasoning.
 - [`RESULTS.md`](RESULTS.md) — the throughput table, charts, and the raw report location.

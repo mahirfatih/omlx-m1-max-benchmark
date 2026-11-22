@@ -7,14 +7,14 @@ The benchmark in one page, and the background needed to read the numbers.
 
 ## The one-paragraph version
 
-Six local LLMs, all 4-bit MLX builds, were served by
-[oMLX](https://omlx.ai) 0.7.3 on an **Apple M1 Max with 64 GB** of unified memory
-running **macOS 26.7.2**. Each model was unloaded, loaded on demand, warmed up,
-then asked the same English and Turkish prompt twice. Throughput was
+Ten local LLMs — seven 4-bit MLX builds, two 8-bit and one oQ mixed-precision —
+were served by [oMLX](https://omlx.ai) **0.8.2** (the 2026-11-11 campaign ran on
+0.7.3) on an **Apple M1 Max with 64 GB** of unified memory running **macOS
+26.7.2**. Each model was unloaded, loaded on demand, warmed up, then asked the
+same English and Turkish prompt twice. Throughput was
 `completion_tokens / wall_time`. The fastest model was **Qwen3.6-35B-A3B** at
-**73.4 tok/s** average; the slowest was **Qwen3.8-27B-Uncensored** at
-**18.2 tok/s**. Full numbers are in
-[`../reference/RESULTS.md`](../reference/RESULTS.md).
+**73.4 tok/s** average; the slowest was **Devstral-Small-2** at **12.4 tok/s**.
+Full numbers are in [`../reference/RESULTS.md`](../reference/RESULTS.md).
 
 ## Why this exists
 

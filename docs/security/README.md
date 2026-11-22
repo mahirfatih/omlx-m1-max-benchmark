@@ -34,7 +34,8 @@ off-host) and a privileged local attacker.
 ## Findings on this machine (2026-11-11)
 
 Measured with `scripts/security/security-probe.py` and manual `curl` checks against
-`http://127.0.0.1:8000`, oMLX 0.7.3.
+`http://127.0.0.1:8000`, oMLX **0.7.3** (the version current on that date; the
+server has since moved to 0.8.2 without re-running the probe).
 
 | # | Severity | Finding | Evidence |
 | :--- | :--- | :--- | :--- |
@@ -88,5 +89,5 @@ finding is `HIGH` or `CRITICAL`, which makes it usable as a pre-flight gate.
 
 Server hardening is only half of it. The other half is whether the *models*
 behave safely when fed hostile input. That is measured separately, and — because
-three of the six are deliberately abliterated — the answer differs by model. See
+three of the models are deliberately abliterated — the answer differs by model. See
 [`OFFENSIVE-BENCHMARK.md`](OFFENSIVE-BENCHMARK.md).
