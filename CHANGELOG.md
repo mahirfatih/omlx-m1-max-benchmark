@@ -40,6 +40,11 @@ date-based snapshots rather than semver releases.
     **GLM-4.7-Flash is the first model here to call a fabricated API real** —
     `matlab zerosx` (at confidence 1.00) and Objective-C `NSArrayx`, in both
     temperature runs — with a Brier of 0.11, ~20× the rest.
+  - Code-syntax matrix (`py_compile` / `node --check` / `bash -n` /
+    `swiftc -parse`): GLM and Kimi valid in all four languages; Inkling returned
+    **no code** for Python and Bash in all four profiles (its thinking block, not
+    a syntax error). Transcript in
+    [`evidence/code-matrix-2026-11-22.md`](evidence/code-matrix-2026-11-22.md).
 - **Inkling cannot disable thinking.** It always emits a reasoning block first, so
   a small `max_tokens` yields empty `content`; this affects its short-output runs
   and is documented rather than worked around.

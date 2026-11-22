@@ -16,7 +16,7 @@ data the scripts produced, not generated, but easy to re-derive.
 | Disk size | the model folder | `python3 scripts/measure/model-sizes.py` |
 | Runtime memory | oMLX guard measurements | (recorded in [`RESULTS.md`](RESULTS.md)) |
 | Environment | the live machine | `python3 scripts/measure/collect-system-info.py` |
-| Code-validation matrix | `benchmarks/2026-11-11-m1max.md` | `python3 scripts/measure/code-matrix-test.py` |
+| Code-validation matrix | `evidence/code-matrix-2026-11-22.md` | `python3 scripts/measure/code-matrix-test.py` |
 | Coding (cases passed) | `reference/code-benchmark.json` | `python3 scripts/measure/code-benchmark.py` |
 | Format adherence | `reference/grammar.json` | `python3 scripts/measure/grammar-test.py` |
 | Long-context memory | `reference/context-memory.json` | `python3 scripts/measure/context-memory-test.py` |

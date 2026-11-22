@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "report": "benchmarks/2026-11-22-m1max.md",
-  "report_bytes": 11711,
-  "report_sha256": "f12b795d222ff0bd177ab157bc346720fc06981852e5e20d005d8f8de9822212",
+  "report_bytes": 12752,
+  "report_sha256": "00cdff6ba8ef060d926f6eabd402a9231053d14424ee052faaa547a20193962d",
   "archive_report": "benchmarks/2026-11-11-m1max.md",
   "archive_report_sha256": "907e377bb75eedc0cc980c36b38155166cbf45731e80daa6409fe8d0140597c0",
   "results": "reference/results.json",
@@ -10,5 +10,5 @@
   "generated": "2026-11-22",
   "models": 10,
   "challenges": 5,
-  "generated_unix": 1795347015
+  "generated_unix": 1795347201
 }
