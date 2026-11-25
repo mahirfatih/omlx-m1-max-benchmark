@@ -8,13 +8,17 @@
 [![macOS](https://img.shields.io/badge/macOS-26.7.2-lightgrey)](#donanım--yazılım)
 [![Models](https://img.shields.io/badge/models-10-purple)](#modeller)
 [![Security](https://img.shields.io/badge/security-red--team-red)](docs/security/README.md)
+[![Context Shrink](https://img.shields.io/badge/MCP-context--shrink-blueviolet)](#uzun-promptlar--context-shrink)
+[![Plan Lock](https://img.shields.io/badge/MCP-plan--lock-purple)](#ajan-disiplini--plan-lock)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 [English](README.md) · **Türkçe**
 
 ---
 
-## Genel bakış
+<a id="genel-bakış"></a>
+
+## 📖 Genel bakış
 
 Bu depo, **Apple M1 Max + 64 GB** üzerinde tamamen cihaz içinde, **oMLX**
 (MLX tabanlı, OpenAI uyumlu bir sunucu) ile çalışan **10 yerel LLM**'in
@@ -43,26 +47,38 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 > Tüm sayılar [Donanım & Yazılım](#donanım--yazılım) bölümündeki makinede ölçüldü.
 > Sonuçlar prompt uzunluğuna, nicelemeye ve arka plan yüküne göre değişir.
 
-## İçindekiler
+---
 
-- [Donanım & Yazılım](#donanım--yazılım)
-- [Modeller](#modeller)
-- [Benchmark sonuçları](#benchmark-sonuçları)
-- [Uncensored / Heretic sınıflandırması](#uncensored--heretic-sınıflandırması)
-- [Profiller](#profiller)
-- [Uzun prompt'lar — Context Shrink](#uzun-promptlar--context-shrink)
-- [Güvenlik](#güvenlik)
-- [Depo analizi](#depo-analizi)
-- [Kod benchmark'ı](#kod-benchmarkı)
-- [Halüsinasyon ve hata riski](#halüsinasyon-ve-hata-riski)
-- [Görsel ve video üretimi — ayrı bir depo](#görsel-ve-video-üretimi--ayrı-bir-depo)
-- [Çoğaltma](#çoğaltma)
-- [Depo yapısı](#depo-yapısı)
-- [Lisans](#lisans)
+<a id="içindekiler"></a>
+
+## 🗂️ İçindekiler
+
+- [💻 Donanım & Yazılım](#donanım--yazılım)
+- [🧠 Modeller](#modeller)
+- [🗺️ Model haritası](#model-haritası)
+- [📊 Benchmark sonuçları](#benchmark-sonuçları)
+- [🚫 Uncensored / Heretic sınıflandırması](#uncensored--heretic-sınıflandırması)
+- [⚙️ Profiller](#profiller)
+- [🧩 Uzun prompt'lar — Context Shrink](#uzun-promptlar--context-shrink)
+- [🔐 Ajan disiplini — Plan Lock](#ajan-disiplini--plan-lock)
+- [🛡️ Güvenlik](#güvenlik)
+- [🔍 Depo analizi](#depo-analizi)
+- [🧪 Kod benchmark'ı](#kod-benchmarkı)
+- [⚠️ Halüsinasyon ve hata riski](#halüsinasyon-ve-hata-riski)
+- [🖼️ Görsel ve video üretimi — ayrı bir depo](#görsel-ve-video-üretimi--ayrı-bir-depo)
+- [🔁 Çoğaltma](#çoğaltma)
+  - [1. oMLX'i kur ve başlat](#1-omlxi-kur-ve-başlat)
+  - [2. Modelleri indir](#2-modelleri-indir)
+  - [3. Profilleri uygula](#3-profilleri-uygula)
+  - [4. Benchmark'ı çalıştır](#4-benchmarkı-çalıştır)
+- [📂 Depo yapısı](#depo-yapısı)
+- [📝 Lisans](#lisans)
 
 ---
 
-## Donanım & Yazılım
+<a id="donanım--yazılım"></a>
+
+## 💻 Donanım & Yazılım
 
 | Öğe | Değer |
 |---|---|
@@ -77,7 +93,11 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 - oMLX sitesi: <https://omlx.ai>
 - oMLX kaynağı: <https://github.com/jundot/omlx> (Apache 2.0)
 
-## Modeller
+---
+
+<a id="modeller"></a>
+
+## 🧠 Modeller
 
 | Model | Parametre | Disk | Niceleme | Kaynak |
 |---|---|---:|---|---|
@@ -94,7 +114,11 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 
 **Disk toplamı:** ~201 GB · **Çalışma zamanı:** model başına ~17–34 GB (8-bit GLM en büyük ayak izi).
 
-## Model haritası
+---
+
+<a id="model-haritası"></a>
+
+## 🗺️ Model haritası
 
 ![Model haritası (açık)](docs/diagrams/model-map/model-map-light.png)
 
@@ -102,7 +126,11 @@ Benchmark'lardan biri modellere bu projeyi doğrudan analiz ettirir
 
 Hangi işi hangi modelin taşıdığı ve ölçülen hız, tek sayfada.
 
-## Benchmark sonuçları
+---
+
+<a id="benchmark-sonuçları"></a>
+
+## 📊 Benchmark sonuçları
 
 **Yöntem:** her model boşaltılır, istek üzerine yüklenir (ısınma), sonra aynı
 İngilizce ve Türkçe prompt iki kez sorulur. Hız = `completion_tokens / geçen süre`.
@@ -127,7 +155,11 @@ tablo `temp 0.2` değerlerini gösterir. Tam tablo, grafikler ve ham rapor:
 [`docs/reference/RESULTS.md`](docs/reference/RESULTS.md) ·
 [`benchmarks/2026-11-22-m1max.md`](benchmarks/2026-11-22-m1max.md).
 
-## Uncensored / Heretic sınıflandırması
+---
+
+<a id="uncensored--heretic-sınıflandırması"></a>
+
+## 🚫 Uncensored / Heretic sınıflandırması
 
 > **Heretic** (`p-e-w/heretic`) abliterasyon yapan bir *araç/yöntemdir*;
 > **Uncensored** ise *sonuçtur*. Her Heretic model abliterated'dır, ama her
@@ -149,7 +181,11 @@ tablo `temp 0.2` değerlerini gösterir. Tam tablo, grafikler ve ham rapor:
 Kanıtlar, HF alıntıları ve yerel davranış testleri:
 [`docs/reference/MODELS.md`](docs/reference/MODELS.md).
 
-## Profiller
+---
+
+<a id="profiller"></a>
+
+## ⚙️ Profiller
 
 | Ayar | `qwen3` | `qwen36-heretic` | `gemma4-heretic` |
 |---|---:|---:|---:|
@@ -169,7 +205,11 @@ DSpark **Lightning MTP** draft'ını açan `inkling-mtp` / `inkling-mtp-hot` çi
 
 Tam ayarlar: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
 
-## Uzun prompt'lar — Context Shrink
+---
+
+<a id="uzun-promptlar--context-shrink"></a>
+
+## 🧩 Uzun prompt'lar — Context Shrink
 
 64K bilinçli bir tercih: KV cache'i ~17–34 GB'ta ve prefill'i kısa tutuyor. Bedeli
 uzun oturumlarda görünür — biriken prompt tavanı aşınca oMLX isteği reddeder:
@@ -202,7 +242,56 @@ yapılandırması [README'sinde](https://github.com/mahirfatih/context-shrink-mc
 profil düzeyindeki not [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--context-shrink)
 içinde.
 
-## Güvenlik
+---
+
+<a id="ajan-disiplini--plan-lock"></a>
+
+## 🔐 Ajan disiplini — Plan Lock
+
+Yukarıdaki benchmark'lar tek bir cevabı ölçer. Bu modelleri **kod ajanı** olarak
+kullanmak farklı bir hata ortaya çıkardı: yanlış cevap değil, aynı anda fazla
+cevap. Özellikle 30B sınıfı Qwen modellerinde ([Modeller](#modeller) içindeki
+`Qwen3-Coder-30B-A3B` kod modeli), kodu değiştirme isteği tek turda sekiz-on tool
+ve shell çağrısı olarak geri geliyor. Her çıktı aynı konuşmaya düşüyor, alakasız
+komutların sonuçları iç içe geçiyor, başarısız bir adım başarılıların arasında
+kayboluyor ve bir sonraki tur model "nerede kalmıştım?"ı bu gürültüden yeniden
+çıkarmak zorunda kalıyor. Yerel donanımda KV cache ilerlemeyi değil defter-tutma
+token'larını büyütüyor — [Context Shrink](#uzun-promptlar--context-shrink) ile
+context tavanında korunan 64K bütçe, bu kez tek bir turun içinde de tüketiliyor.
+
+Bir turda birden fazla tool çağrısı üretmenin genel adı *parallel tool calling*;
+buradaki daha özel hata, aralarında **bağımlılık sırası olmayan** çağrılar —
+**koordine edilmemiş fan-out**; aynı anda birkaç dosya düzenleniyorsa
+*scattergun editing*. Konuşma sonra **context thrashing**'e kayıyor: durum
+yerleşmeden sürekli değişiyor. Sorun paralellik değil, koordinasyonun yokluğu.
+
+Bu depo **[Plan Lock MCP](https://github.com/mahirfatih/planlock-mcp)**'yi
+öneriyor: planı modelin dışında, bir markdown dosyasında tutan ve tek seferde
+yalnızca bir atomik, doğrulanabilir adım yapılmasını zorunlu kılan küçük bir
+stdio MCP sunucusu.
+
+| Araç | Ne yapar |
+| :--- | :--- |
+| `plan_create` | Planı yazar (önceki planı yedekler) ve mutlak yolunu bildirir. |
+| `plan_next` | Sıradaki `[ ]` adımı `[~]` olarak açar; başka adım aktifken reddeder. |
+| `plan_done` | Aktif adımı `[x]` işaretler ve bir not ekler. |
+| `plan_fail` | Aktif adımı `[!]` işaretler ve nedenini ekler. |
+
+Disiplin prompt'ta değil sunucuda: bir adım `[~]` iken `plan_next` ikinci bir
+açılışı reddeder. Plan durumu diskte ve atomik yazımlarla tutulur; çökme veya
+yeniden başlatma sonrası model tahmin etmek yerine işaretli adımdan devam eder,
+plan dosyası da otomatik olarak git'ten uzak tutulur. Bu,
+yukarıdaki [Kod benchmark'ını](#kod-benchmarkı) tamamlıyor: o modellerin yazdığı
+kodu puanlar, Plan Lock ise kodu yazarken işin sırasını düzenler.
+
+Kurulum, OpenCode yapılandırması ve tasarım notları
+[README'sinde](https://github.com/mahirfatih/planlock-mcp#readme).
+
+---
+
+<a id="güvenlik"></a>
+
+## 🛡️ Güvenlik
 
 İki katman, ikisi de yerel ve yetkili kullanım için:
 
@@ -220,7 +309,11 @@ Sonuç tablosu: [`docs/security/OFFENSIVE-BENCHMARK.md`](docs/security/OFFENSIVE
 > hedefi reddeder; lab sadece `127.0.0.1` dinler. Üçüncü taraf sistemlere
 > yöneltmek yasadışıdır ve bu araçların amacı değildir.
 
-## Depo analizi
+---
+
+<a id="depo-analizi"></a>
+
+## 🔍 Depo analizi
 
 İkinci bir yetenek benchmark'ı: her modelin gerçek bir depoyu nasıl analiz ettiği.
 Hedef: [`mahirfatih/net-traffic-control-catalog`](https://github.com/mahirfatih/net-traffic-control-catalog)
@@ -248,7 +341,11 @@ bir yapıyla akıcı bir analiz. En yavaş model hiç cevap vermedi. Devstral bu
 
 Tam analiz: [`docs/analysis/net-traffic-control-catalog.md`](docs/analysis/net-traffic-control-catalog.md).
 
-## Kod benchmark'ı
+---
+
+<a id="kod-benchmarkı"></a>
+
+## 🧪 Kod benchmark'ı
 
 Üçüncü yetenek benchmark'ı ve en katı olanı: modelin kodu **çalıştırılır**, sadece
 okunmaz. Her modelden beş problem için Python çözümü istenir
@@ -282,7 +379,11 @@ altındaki bir satır, kodun *yüklenemediği* bir problemdir; hiç vaka çalı�
 
 Tam analiz: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
 
-## Halüsinasyon ve hata riski
+---
+
+<a id="halüsinasyon-ve-hata-riski"></a>
+
+## ⚠️ Halüsinasyon ve hata riski
 
 Bir model var olmayan API'leri uyduruyor mu? 102 dilin her biri, gerçek bir
 dokümante API ile **uydurma bir eşi** (`functools.reducex`, `{#eachx}`) üzerinden
@@ -311,7 +412,11 @@ sayılmaz.
 
 Tam analiz: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
 
-## Görsel ve video üretimi — ayrı bir depo
+---
+
+<a id="görsel-ve-video-üretimi--ayrı-bir-depo"></a>
+
+## 🖼️ Görsel ve video üretimi — ayrı bir depo
 
 **oMLX bir metin sunucusudur; ne bir görsel ne de bir klip üretebilir.** Bu iki
 katman aynı M1 Max üzerinde farklı araçlarla çalışır — görsel için
@@ -354,17 +459,29 @@ her biri kendisini üreten prompt ile birlikte. İlk koşunun çok ötesine geç
 lisans okumasında karara bağlanır. Bu depo ise **metin** benchmark'ı olarak kalır:
 token hızı, kod, format, uzun bağlam, halüsinasyon ve red-team.
 
-## Çoğaltma
+---
 
-1. [oMLX](https://omlx.ai)'i kur ve başlat (`127.0.0.1:8000`, OpenAI uyumlu).
-2. [Modeller](#modeller) listesindeki modelleri indir.
-3. Profilleri uygula ([`profiles/omlx-profiles.json`](profiles/omlx-profiles.json)):
+<a id="çoğaltma"></a>
+
+## 🔁 Çoğaltma
+
+### 1. oMLX'i kur ve başlat
+
+[oMLX](https://omlx.ai)'i kur ve başlat (`127.0.0.1:8000`, OpenAI uyumlu).
+
+### 2. Modelleri indir
+
+[🧠 Modeller](#modeller) listesindeki modelleri indir.
+
+### 3. Profilleri uygula
+
+Profilleri uygula ([`profiles/omlx-profiles.json`](profiles/omlx-profiles.json)):
 
 ```bash
 python3 scripts/config/apply-profiles.py --apply
 ```
 
-1. Benchmark'ı çalıştır:
+### 4. Benchmark'ı çalıştır
 
 ```bash
 python3 scripts/measure/benchmark.py
@@ -376,7 +493,11 @@ python3 scripts/measure/code-benchmark.py --models Qwen3.6-35B-A3B-4bit:qwen3
 
 Ayrıntılı adımlar: [`docs/guides/REPRODUCING.md`](docs/guides/REPRODUCING.md).
 
-## Depo yapısı
+---
+
+<a id="depo-yapısı"></a>
+
+## 📂 Depo yapısı
 
 ```text
 omlx-m1-max-benchmark/
@@ -394,6 +515,10 @@ omlx-m1-max-benchmark/
 └── scripts/          ölçüm + güvenlik araçları
 ```
 
-## Lisans
+---
+
+<a id="lisans"></a>
+
+## 📄 Lisans
 
 [MIT](LICENSE). Model ağırlıkları **dahil değildir** ve kendi lisanslarını korur.

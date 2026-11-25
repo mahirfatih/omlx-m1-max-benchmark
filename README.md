@@ -6,11 +6,15 @@
 [![oMLX](https://img.shields.io/badge/oMLX-0.8.2-blue)](#hardware--software)
 [![macOS](https://img.shields.io/badge/macOS-26.7.2-lightgrey)](#hardware--software)
 [![Models](https://img.shields.io/badge/models-10-purple)](#models)
+[![Context Shrink](https://img.shields.io/badge/MCP-context--shrink-blueviolet)](#long-prompts--context-shrink)
+[![Plan Lock](https://img.shields.io/badge/MCP-plan--lock-purple)](#agent-discipline--plan-lock)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ---
 
-## Overview
+<a id="overview"></a>
+
+## 📖 Overview
 
 This repository documents a reproducible benchmark of **10 local LLMs** running entirely on-device with **oMLX** (an MLX-based OpenAI-compatible server) on an **Apple M1 Max with 64 GB unified memory**.
 
@@ -38,28 +42,49 @@ though the problems and cases here are original.
 
 > All numbers below were measured on the machine described in [Hardware & Software](#hardware--software). Results vary with prompt length, quantization and background load.
 
-## Table of Contents
+---
 
-- [Hardware & Software](#hardware--software)
-- [Models](#models)
-- [**Model comparison — which one for what**](docs/reference/COMPARISON.md)
-- [**Choosing a model — which model, for what job, and why**](docs/guides/CHOOSING-A-MODEL.md)
-- [Benchmark results](#benchmark-results)
-- [Uncensored / Heretic classification](#uncensored--heretic-classification)
-- [Profiles](#profiles)
-- [Long prompts — Context Shrink](#long-prompts--context-shrink)
-- [Repository analysis](#repository-analysis)
-- [Coding benchmark](#coding-benchmark)
-- [Hallucination & error risk](#hallucination--error-risk)
-- [Image and video generation — a separate repository](#image-and-video-generation--a-separate-repository)
-- [Reproducing](#reproducing)
-- [Repository structure](#repository-structure)
-- [Notes & disclaimer](#notes--disclaimer)
-- [License](#license)
+<a id="table-of-contents"></a>
+
+## 🗂️ Table of Contents
+
+- [💻 Hardware & Software](#hardware--software)
+- [🧠 Models](#models)
+  - [Model comparison — which one for what](docs/reference/COMPARISON.md)
+  - [Choosing a model — which model, for what job, and why](docs/guides/CHOOSING-A-MODEL.md)
+- [🗺️ Model map](#model-map)
+- [📊 Benchmark results](#benchmark-results)
+  - [Average throughput (tok/s)](#average-throughput-toks)
+  - [English vs Turkish (tok/s)](#english-vs-turkish-toks)
+  - [Cold load time (s)](#cold-load-time-s)
+  - [Disk size (GB)](#disk-size-gb)
+- [🚫 Uncensored / Heretic classification](#uncensored--heretic-classification)
+  - [Source quotes — Qwen3.8-27B-Uncensored](#source-quotes--qwen38-27b-uncensored)
+- [⚙️ Profiles](#profiles)
+  - [Why these settings?](#why-these-settings)
+- [🧩 Long prompts — Context Shrink](#long-prompts--context-shrink)
+- [🔐 Agent discipline — Plan Lock](#agent-discipline--plan-lock)
+- [🔍 Repository analysis](#repository-analysis)
+- [🧪 Coding benchmark](#coding-benchmark)
+- [⚠️ Hallucination & error risk](#hallucination--error-risk)
+- [🖼️ Image and video generation — a separate repository](#image-and-video-generation--a-separate-repository)
+- [🔁 Reproducing](#reproducing)
+  - [1. Install & start oMLX](#1-install--start-omlx)
+  - [2. Download the models](#2-download-the-models)
+  - [3. Apply the profiles](#3-apply-the-profiles)
+  - [4. Run the benchmark](#4-run-the-benchmark)
+  - [5. Validate multi-language code generation](#5-validate-multi-language-code-generation)
+  - [6. Analyse a real repository](#6-analyse-a-real-repository)
+  - [7. Score coding correctness](#7-score-coding-correctness)
+- [📂 Repository structure](#repository-structure)
+- [📝 Notes & disclaimer](#notes--disclaimer)
+- [📄 License](#license)
 
 ---
 
-## Hardware & Software
+<a id="hardware--software"></a>
+
+## 💻 Hardware & Software
 
 | Item | Value |
 |---|---|
@@ -84,7 +109,11 @@ The server is **oMLX**, a separate project this repository only measures:
 - Source: [github.com/jundot/omlx](https://github.com/jundot/omlx)
 - Project site: [omlx.ai](https://omlx.ai/)
 
-## Models
+---
+
+<a id="models"></a>
+
+## 🧠 Models
 
 | Model | Parameters | Disk | Quant | Source |
 |---|---|---:|---|---|
@@ -106,7 +135,11 @@ puts every model against every task — coding, chat, long context, uncensored
 work, images, video — on one page, with each number traced to the run file it
 came from.
 
-## Model map
+---
+
+<a id="model-map"></a>
+
+## 🗺️ Model map
 
 ![Model map (light)](docs/diagrams/model-map/model-map-light.png)
 
@@ -114,7 +147,11 @@ came from.
 
 Which model for which job, at the speed it actually ran, in one picture.
 
-## Benchmark results
+---
+
+<a id="benchmark-results"></a>
+
+## 📊 Benchmark results
 
 **Method:** each model is unloaded, then loaded on demand (warm-up), then asked the same English and Turkish prompts twice. Speed = `completion_tokens / wall_time`. Settings: `ctx 65536`, `temp 0.2`, `max_tokens 220`, thinking off.
 
@@ -141,7 +178,9 @@ Rows 5, 7 and 8 are the 2026-11-22 campaign on oMLX 0.8.2 (see
 GLM and Inkling were each swept at both `temp 0.2` and `temp 1.0` and the two
 settings agree to within noise, so the table shows the `temp 0.2` values.
 
-### Average throughput (tok/s)
+<a id="average-throughput-toks"></a>
+
+### 📈 Average throughput (tok/s)
 
 ```mermaid
 xychart-beta horizontal
@@ -151,7 +190,9 @@ xychart-beta horizontal
     bar [73.4, 71.1, 60.2, 60.1, 59.0, 42.6, 34.9, 25.4, 18.2, 12.4]
 ```
 
-### English vs Turkish (tok/s)
+<a id="english-vs-turkish-toks"></a>
+
+### 🌐 English vs Turkish (tok/s)
 
 ```mermaid
 %%{init: {"xyChart": {"xAxis": {"labelRotation": -45, "labelFontSize": 12}}}}%%
@@ -165,7 +206,9 @@ xychart-beta
 
 *Series order: 1st bar = EN, 2nd bar = TR.*
 
-### Cold load time (s)
+<a id="cold-load-time-s"></a>
+
+### ⏱️ Cold load time (s)
 
 ```mermaid
 xychart-beta horizontal
@@ -175,7 +218,9 @@ xychart-beta horizontal
     bar [4.7, 4.9, 6.5, 6.6, 7.7, 8.4, 8.9, 9.0, 9.1, 9.7]
 ```
 
-### Disk size (GB)
+<a id="disk-size-gb"></a>
+
+### 💽 Disk size (GB)
 
 ```mermaid
 xychart-beta horizontal
@@ -185,7 +230,11 @@ xychart-beta horizontal
     bar [15, 15, 16, 16, 18, 19, 19, 25, 27, 31]
 ```
 
-## Uncensored / Heretic classification
+---
+
+<a id="uncensored--heretic-classification"></a>
+
+## 🚫 Uncensored / Heretic classification
 
 > **Terminology.** **Heretic** (`p-e-w/heretic`) is a *tool/method* that performs **abliteration** — removing the refusal direction from the weights. **Uncensored** is the *result*. Every Heretic model is abliterated; not every abliterated model was made with Heretic.
 
@@ -202,7 +251,9 @@ xychart-beta horizontal
 | `Kimi-Linear-48B-A3B-Instruct-4bit` | Standard instruct | ❌ | ❌ | Official Moonshot instruct model; standard alignment. |
 | `Inkling-2-Mini-oQ4e-mtp` | Standard instruct | ❌ | ❌ | Official Thinking Machines multimodal MoE; standard alignment. |
 
-### Source quotes — Qwen3.8-27B-Uncensored
+<a id="source-quotes--qwen38-27b-uncensored"></a>
+
+### 📄 Source quotes — Qwen3.8-27B-Uncensored
 
 > *"An **abliterated** (refusal-removed) MLX build of Qwen's Qwen3.8-27B."*
 > — [HF model card](https://huggingface.co/orcarouter/Qwen3.8-27B-Uncensored-MLX)
@@ -218,7 +269,11 @@ xychart-beta horizontal
 - **Standard / censored:** Qwen3-Coder, Qwen3.6-35B, Ornith-1.5, Devstral-Small-2, GLM-4.7-Flash, Kimi-Linear-48B, Inkling-2-Mini
 - **Fastest uncensored:** Qwen3.6-35B-Heretic (~71 tok/s)
 
-## Profiles
+---
+
+<a id="profiles"></a>
+
+## ⚙️ Profiles
 
 The three original global oMLX profiles are still the core set. `qwen3` is tuned
 for coding (larger output); the heretic profiles are tuned for chat. The
@@ -261,13 +316,19 @@ Full table: [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md).
 
 The full, machine-readable configuration is in [`profiles/omlx-profiles.json`](profiles/omlx-profiles.json). API keys are **not** included.
 
-### Why these settings?
+<a id="why-these-settings"></a>
+
+### 💡 Why these settings?
 
 - **64K context + 4-bit KV cache** keeps the runtime footprint around ~17–34 GB per model, preventing the memory guard from rejecting loads.
 - **`is_pinned = false` for all models** → no startup RAM spike; models load on demand and unload after 180 s idle.
 - **temperature 0.2 + presence 0.3 + repetition 1.1** → stable code, fewer loops.
 
-## Long prompts — Context Shrink
+---
+
+<a id="long-prompts--context-shrink"></a>
+
+## 🧩 Long prompts — Context Shrink
 
 64K is a deliberate trade-off, not a limit imposed by the models: it keeps the KV
 cache at ~17–34 GB and keeps prefill short. The cost shows up in a long session,
@@ -301,7 +362,58 @@ matching `"limit": { "context": 65536, "output": 4096 }`. Details and the
 OpenCode configuration are in [its README](https://github.com/mahirfatih/context-shrink-mcp#readme);
 the profile-level note is in [`docs/reference/PROFILES.md`](docs/reference/PROFILES.md#long-prompts--context-shrink).
 
-## Repository analysis
+---
+
+<a id="agent-discipline--plan-lock"></a>
+
+## 🔐 Agent discipline — Plan Lock
+
+The benchmarks above measure a single answer. Using these models as *coding
+agents* exposed a different failure — not a wrong answer, but too many at once.
+With the 30B-class Qwen models in particular (`Qwen3-Coder-30B-A3B` is the code
+model in [Models](#models)), a request to change code comes back as eight to ten
+tool and shell calls in a single turn. Every output lands in the same
+conversation, results from unrelated commands interleave, a failed step is buried
+among the successes, and the next turn has to re-derive "where was I" from that
+noise. On local hardware the KV cache grows with bookkeeping tokens instead of
+progress — the same 64K budget that [Context Shrink](#long-prompts--context-shrink)
+guards at the context ceiling is also spent from inside a single turn.
+
+The generic name for several tool calls in one turn is *parallel tool calling*;
+the narrower failure here is calls with **no dependency order** — **uncoordinated
+fan-out**, also called *tool-call flooding*, or *scattergun editing* when several
+files are edited at once. The conversation then drifts into **context thrashing**:
+state keeps changing without settling. Parallelism is not the problem; the
+missing coordination is.
+
+This repository recommends
+**[Plan Lock MCP](https://github.com/mahirfatih/planlock-mcp)** — a small stdio
+MCP server that keeps the plan in a markdown file outside the model and enforces
+one atomic, verifiable step at a time:
+
+| Tool | What it does |
+| :--- | :--- |
+| `plan_create` | Writes the plan (backing up the previous one) and reports its absolute path. |
+| `plan_next` | Activates the next `[ ]` step as `[~]`; refuses while another step is active. |
+| `plan_done` | Marks the active step `[x]` and appends a note. |
+| `plan_fail` | Marks the active step `[!]` and appends the reason. |
+
+The discipline lives in the server, not in a prompt: while a step is `[~]`,
+`plan_next` rejects any second activation. Plan state is on disk with atomic
+writes, so after a crash or restart the model continues from the marked step
+instead of guessing, and the plan file is kept out of git automatically. This
+complements the [Coding benchmark](#coding-benchmark) above: that one scores the
+code the models write, while Plan Lock is about how they sequence the work while
+writing it.
+
+Setup, the OpenCode configuration and the design notes are in
+[its README](https://github.com/mahirfatih/planlock-mcp#readme).
+
+---
+
+<a id="repository-analysis"></a>
+
+## 🔍 Repository analysis
 
 A second capability benchmark: how each model analyses a real repository. The
 target is [`mahirfatih/net-traffic-control-catalog`](https://github.com/mahirfatih/net-traffic-control-catalog)
@@ -330,7 +442,11 @@ slowest model returned nothing at all. Devstral was not run on this task.
 
 Full reading: [`docs/analysis/net-traffic-control-catalog.md`](docs/analysis/net-traffic-control-catalog.md).
 
-## Coding benchmark
+---
+
+<a id="coding-benchmark"></a>
+
+## 🧪 Coding benchmark
 
 A third capability benchmark, and the strictest: the model's code is **executed**,
 not read. Each model is asked for a Python solution to five problems
@@ -364,7 +480,11 @@ zero, reported as ❌.
 
 Full reading: [`docs/analysis/code-benchmark.md`](docs/analysis/code-benchmark.md).
 
-## Hallucination & error risk
+---
+
+<a id="hallucination--error-risk"></a>
+
+## ⚠️ Hallucination & error risk
 
 Does a model invent APIs that do not exist? Each of 102 languages is probed with a
 **real** documented API and a **fabricated twin** (`functools.reducex`, `{#eachx}`),
@@ -394,7 +514,11 @@ counted as misses.
 
 Full reading: [`docs/analysis/hallucination.md`](docs/analysis/hallucination.md).
 
-## Image and video generation — a separate repository
+---
+
+<a id="image-and-video-generation--a-separate-repository"></a>
+
+## 🖼️ Image and video generation — a separate repository
 
 **oMLX is a text server; it cannot generate an image or a clip.** Those two layers
 run on different tools — [mflux](https://github.com/filipstrand/mflux) for images
@@ -427,30 +551,49 @@ harshest licences — Anima Turbo (**Circlestone, non-commercial**) and FLUX 3 (
 Kommunity) — are decided in its licence reading. This repository stays the **text**
 benchmark: throughput, coding, format, long context, hallucination and red-team.
 
-## Reproducing
+---
 
-1. Install and start [oMLX](https://omlx.ai) (OpenAI-compatible server on `127.0.0.1:8000`).
-2. Download the models listed in [Models](#models).
-3. Apply the profiles from [`profiles/omlx-profiles.json`](profiles/omlx-profiles.json) (or edit them in the oMLX UI).
-4. Run the benchmark:
+<a id="reproducing"></a>
+
+## 🔁 Reproducing
+
+### 1. Install & start oMLX
+
+Install and start [oMLX](https://omlx.ai), an OpenAI-compatible server on `127.0.0.1:8000`.
+
+### 2. Download the models
+
+Download the models listed in [🧠 Models](#models).
+
+### 3. Apply the profiles
+
+Apply the profiles from [`profiles/omlx-profiles.json`](profiles/omlx-profiles.json) (or edit them in the oMLX UI).
+
+### 4. Run the benchmark
 
 ```bash
 python3 scripts/measure/benchmark.py
 ```
 
-1. Validate multi-language code generation (Python / Node.js / Bash / Swift):
+### 5. Validate multi-language code generation
+
+Python / Node.js / Bash / Swift:
 
 ```bash
 python3 scripts/measure/code-matrix-test.py
 ```
 
-1. Analyse a real repository and score the models on it:
+### 6. Analyse a real repository
+
+Score the models on the facts they recover from a real project:
 
 ```bash
 python3 scripts/measure/repo-analysis-test.py --repo ~/Sites/net-traffic-control-catalog
 ```
 
-1. Score coding correctness — the model's code is *run* against hidden cases:
+### 7. Score coding correctness
+
+The model's code is *run* against hidden cases:
 
 ```bash
 python3 scripts/measure/code-benchmark.py --selftest   # no model needed
@@ -459,7 +602,11 @@ python3 scripts/measure/code-benchmark.py --models Qwen3.6-35B-A3B-4bit:qwen3
 
 > The scripts read the API key from `~/.omlx/settings.json` and write a Markdown report.
 
-## Repository structure
+---
+
+<a id="repository-structure"></a>
+
+## 📂 Repository structure
 
 ```text
 omlx-m1-max-benchmark/
@@ -483,12 +630,20 @@ omlx-m1-max-benchmark/
 └── test/test.sh                # offline gate
 ```
 
-## Notes & disclaimer
+---
+
+<a id="notes--disclaimer"></a>
+
+## 📝 Notes & disclaimer
 
 - Throughput depends on prompt length, quantization, context size and background load; treat the numbers as a snapshot, not a ranking of model quality.
 - Uncensored models have had safety alignment removed and can produce harmful content. This repository documents behavior for research and comparison only; you are responsible for how you use these models.
 - Model weights remain under their own licenses (see each HuggingFace page).
 
-## License
+---
+
+<a id="license"></a>
+
+## 📄 License
 
 Released under the [MIT License](LICENSE). Model weights are **not** included and keep their original licenses.
